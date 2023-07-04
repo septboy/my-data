@@ -1,0 +1,11 @@
+/**
+ * Contains the core mvvmFX classes, interfaces and annotations. 
+ * Everything you will need to create and load views is located here.
+ */
+module de.saxsys.mvvmfx {
+    requires javafx.controls;
+    requires javafx.fxml;
+
+    opens de.saxsys.mvvmfx to javafx.fxml;
+    exports de.saxsys.mvvmfx;
+}

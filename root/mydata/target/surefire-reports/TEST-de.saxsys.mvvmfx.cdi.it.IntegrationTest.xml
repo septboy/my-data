@@ -1,0 +1,444 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="de.saxsys.mvvmfx.cdi.it.IntegrationTest" time="0.871" tests="1" errors="1" skipped="0" failures="0">
+  <properties>
+    <property name="java.specification.version" value="20"/>
+    <property name="javafx.runtime.version" value="20+19"/>
+    <property name="sun.cpu.isalist" value="amd64"/>
+    <property name="sun.jnu.encoding" value="MS949"/>
+    <property name="java.class.path" value="D:\DEV\MY-DATA\root\mydata\target\test-classes;D:\DEV\MY-DATA\root\mydata\target\classes;C:\Users\4710\.m2\repository\org\openjfx\javafx-controls\20\javafx-controls-20.jar;C:\Users\4710\.m2\repository\org\openjfx\javafx-controls\20\javafx-controls-20-win.jar;C:\Users\4710\.m2\repository\org\openjfx\javafx-graphics\20\javafx-graphics-20.jar;C:\Users\4710\.m2\repository\org\openjfx\javafx-graphics\20\javafx-graphics-20-win.jar;C:\Users\4710\.m2\repository\org\openjfx\javafx-base\20\javafx-base-20.jar;C:\Users\4710\.m2\repository\org\openjfx\javafx-base\20\javafx-base-20-win.jar;C:\Users\4710\.m2\repository\org\openjfx\javafx-fxml\20\javafx-fxml-20.jar;C:\Users\4710\.m2\repository\org\openjfx\javafx-fxml\20\javafx-fxml-20-win.jar;C:\Users\4710\.m2\repository\org\openjfx\javafx-swing\20\javafx-swing-20.jar;C:\Users\4710\.m2\repository\org\openjfx\javafx-swing\20\javafx-swing-20-win.jar;C:\Users\4710\.m2\repository\eu\lestard\assertj-javafx\0.3.0\assertj-javafx-0.3.0.jar;C:\Users\4710\.m2\repository\eu\lestard\advanced-bindings\0.4.0\advanced-bindings-0.4.0.jar;C:\Users\4710\.m2\repository\eu\lestard\doc-annotations\0.2\doc-annotations-0.2.jar;C:\Users\4710\.m2\repository\net\jodah\typetools\0.6.1\typetools-0.6.1.jar;C:\Users\4710\.m2\repository\org\slf4j\slf4j-api\1.7.12\slf4j-api-1.7.12.jar;C:\Users\4710\.m2\repository\org\assertj\assertj-core\1.7.1\assertj-core-1.7.1.jar;C:\Users\4710\.m2\repository\ch\qos\logback\logback-classic\1.2.3\logback-classic-1.2.3.jar;C:\Users\4710\.m2\repository\ch\qos\logback\logback-core\1.2.3\logback-core-1.2.3.jar;C:\Users\4710\.m2\repository\com\cedarsoft\commons\test-utils\6.1.1\test-utils-6.1.1.jar;C:\Users\4710\.m2\repository\com\cedarsoft\commons\xml-commons\6.1.1\xml-commons-6.1.1.jar;C:\Users\4710\.m2\repository\com\cedarsoft\commons\crypt\6.1.1\crypt-6.1.1.jar;C:\Users\4710\.m2\repository\commons-codec\commons-codec\1.10\commons-codec-1.10.jar;C:\Users\4710\.m2\repository\com\google\guava\guava\18.0\guava-18.0.jar;C:\Users\4710\.m2\repository\commons-lang\commons-lang\2.6\commons-lang-2.6.jar;C:\Users\4710\.m2\repository\commons-io\commons-io\2.4\commons-io-2.4.jar;C:\Users\4710\.m2\repository\org\mockito\mockito-core\2.0.5-beta\mockito-core-2.0.5-beta.jar;C:\Users\4710\.m2\repository\org\objenesis\objenesis\2.1\objenesis-2.1.jar;C:\Users\4710\.m2\repository\org\easytesting\fest-reflect\1.4.1\fest-reflect-1.4.1.jar;C:\Users\4710\.m2\repository\org\easytesting\fest-util\1.2.4\fest-util-1.2.4.jar;C:\Users\4710\.m2\repository\com\fasterxml\jackson\core\jackson-core\2.5.1\jackson-core-2.5.1.jar;C:\Users\4710\.m2\repository\com\fasterxml\jackson\core\jackson-databind\2.5.1\jackson-databind-2.5.1.jar;C:\Users\4710\.m2\repository\com\fasterxml\jackson\core\jackson-annotations\2.5.0\jackson-annotations-2.5.0.jar;C:\Users\4710\.m2\repository\xmlunit\xmlunit\1.6\xmlunit-1.6.jar;C:\Users\4710\.m2\repository\com\google\code\findbugs\jsr305\3.0.0\jsr305-3.0.0.jar;C:\Users\4710\.m2\repository\javax\inject\javax.inject\1\javax.inject-1.jar;C:\Users\4710\.m2\repository\org\controlsfx\controlsfx\8.40.12\controlsfx-8.40.12.jar;C:\Users\4710\.m2\repository\javax\enterprise\cdi-api\2.0\cdi-api-2.0.jar;C:\Users\4710\.m2\repository\javax\el\javax.el-api\3.0.0\javax.el-api-3.0.0.jar;C:\Users\4710\.m2\repository\javax\interceptor\javax.interceptor-api\1.2\javax.interceptor-api-1.2.jar;C:\Users\4710\.m2\repository\org\jboss\weld\se\weld-se-core\3.0.0.Final\weld-se-core-3.0.0.Final.jar;C:\Users\4710\.m2\repository\org\jboss\weld\environment\weld-environment-common\3.0.0.Final\weld-environment-common-3.0.0.Final.jar;C:\Users\4710\.m2\repository\org\jboss\weld\weld-core-impl\3.0.0.Final\weld-core-impl-3.0.0.Final.jar;C:\Users\4710\.m2\repository\org\jboss\weld\weld-api\3.0.Final\weld-api-3.0.Final.jar;C:\Users\4710\.m2\repository\org\jboss\weld\weld-spi\3.0.Final\weld-spi-3.0.Final.jar;C:\Users\4710\.m2\repository\org\jboss\classfilewriter\jboss-classfilewriter\1.1.2.Final\jboss-classfilewriter-1.1.2.Final.jar;C:\Users\4710\.m2\repository\javax\annotation\javax.annotation-api\1.3\javax.annotation-api-1.3.jar;C:\Users\4710\.m2\repository\org\jboss\spec\javax\el\jboss-el-api_3.0_spec\1.0.7.Final\jboss-el-api_3.0_spec-1.0.7.Final.jar;C:\Users\4710\.m2\repository\org\jboss\spec\javax\interceptor\jboss-interceptors-api_1.2_spec\1.0.0.Final\jboss-interceptors-api_1.2_spec-1.0.0.Final.jar;C:\Users\4710\.m2\repository\org\jboss\logging\jboss-logging\3.2.1.Final\jboss-logging-3.2.1.Final.jar;C:\Users\4710\.m2\repository\org\jboss\weld\probe\weld-probe-core\3.0.0.Final\weld-probe-core-3.0.0.Final.jar;C:\Users\4710\.m2\repository\junit\junit\4.12\junit-4.12.jar;C:\Users\4710\.m2\repository\org\hamcrest\hamcrest-core\1.3\hamcrest-core-1.3.jar;C:\Users\4710\.m2\repository\org\junit\jupiter\junit-jupiter-api\5.3.1\junit-jupiter-api-5.3.1.jar;C:\Users\4710\.m2\repository\org\apiguardian\apiguardian-api\1.0.0\apiguardian-api-1.0.0.jar;C:\Users\4710\.m2\repository\org\opentest4j\opentest4j\1.1.1\opentest4j-1.1.1.jar;C:\Users\4710\.m2\repository\org\junit\platform\junit-platform-commons\1.3.1\junit-platform-commons-1.3.1.jar;C:\Users\4710\.m2\repository\org\mockito\mockito-all\1.10.19\mockito-all-1.10.19.jar;"/>
+    <property name="java.vm.vendor" value="Eclipse Adoptium"/>
+    <property name="sun.arch.data.model" value="64"/>
+    <property name="user.variant" value=""/>
+    <property name="java.vendor.url" value="https://adoptium.net/"/>
+    <property name="user.timezone" value="Asia/Seoul"/>
+    <property name="javafx.version" value="20"/>
+    <property name="os.name" value="Windows 11"/>
+    <property name="java.vm.specification.version" value="20"/>
+    <property name="sun.java.launcher" value="SUN_STANDARD"/>
+    <property name="user.country" value="KR"/>
+    <property name="sun.boot.library.path" value="C:\Users\4710\.p2\pool\plugins\org.eclipse.justj.openjdk.hotspot.jre.full.win32.x86_64_20.0.1.v20230425-1611\jre\bin"/>
+    <property name="sun.java.command" value="C:\Users\4710\AppData\Local\Temp\surefire7218780373372588665\surefirebooter-20230703224746893_3.jar C:\Users\4710\AppData\Local\Temp\surefire7218780373372588665 2023-07-03T22-47-46_741-jvmRun1 surefire-20230703224746893_1tmp surefire_0-20230703224746893_2tmp"/>
+    <property name="jdk.debug" value="release"/>
+    <property name="surefire.test.class.path" value="D:\DEV\MY-DATA\root\mydata\target\test-classes;D:\DEV\MY-DATA\root\mydata\target\classes;C:\Users\4710\.m2\repository\org\openjfx\javafx-controls\20\javafx-controls-20.jar;C:\Users\4710\.m2\repository\org\openjfx\javafx-controls\20\javafx-controls-20-win.jar;C:\Users\4710\.m2\repository\org\openjfx\javafx-graphics\20\javafx-graphics-20.jar;C:\Users\4710\.m2\repository\org\openjfx\javafx-graphics\20\javafx-graphics-20-win.jar;C:\Users\4710\.m2\repository\org\openjfx\javafx-base\20\javafx-base-20.jar;C:\Users\4710\.m2\repository\org\openjfx\javafx-base\20\javafx-base-20-win.jar;C:\Users\4710\.m2\repository\org\openjfx\javafx-fxml\20\javafx-fxml-20.jar;C:\Users\4710\.m2\repository\org\openjfx\javafx-fxml\20\javafx-fxml-20-win.jar;C:\Users\4710\.m2\repository\org\openjfx\javafx-swing\20\javafx-swing-20.jar;C:\Users\4710\.m2\repository\org\openjfx\javafx-swing\20\javafx-swing-20-win.jar;C:\Users\4710\.m2\repository\eu\lestard\assertj-javafx\0.3.0\assertj-javafx-0.3.0.jar;C:\Users\4710\.m2\repository\eu\lestard\advanced-bindings\0.4.0\advanced-bindings-0.4.0.jar;C:\Users\4710\.m2\repository\eu\lestard\doc-annotations\0.2\doc-annotations-0.2.jar;C:\Users\4710\.m2\repository\net\jodah\typetools\0.6.1\typetools-0.6.1.jar;C:\Users\4710\.m2\repository\org\slf4j\slf4j-api\1.7.12\slf4j-api-1.7.12.jar;C:\Users\4710\.m2\repository\org\assertj\assertj-core\1.7.1\assertj-core-1.7.1.jar;C:\Users\4710\.m2\repository\ch\qos\logback\logback-classic\1.2.3\logback-classic-1.2.3.jar;C:\Users\4710\.m2\repository\ch\qos\logback\logback-core\1.2.3\logback-core-1.2.3.jar;C:\Users\4710\.m2\repository\com\cedarsoft\commons\test-utils\6.1.1\test-utils-6.1.1.jar;C:\Users\4710\.m2\repository\com\cedarsoft\commons\xml-commons\6.1.1\xml-commons-6.1.1.jar;C:\Users\4710\.m2\repository\com\cedarsoft\commons\crypt\6.1.1\crypt-6.1.1.jar;C:\Users\4710\.m2\repository\commons-codec\commons-codec\1.10\commons-codec-1.10.jar;C:\Users\4710\.m2\repository\com\google\guava\guava\18.0\guava-18.0.jar;C:\Users\4710\.m2\repository\commons-lang\commons-lang\2.6\commons-lang-2.6.jar;C:\Users\4710\.m2\repository\commons-io\commons-io\2.4\commons-io-2.4.jar;C:\Users\4710\.m2\repository\org\mockito\mockito-core\2.0.5-beta\mockito-core-2.0.5-beta.jar;C:\Users\4710\.m2\repository\org\objenesis\objenesis\2.1\objenesis-2.1.jar;C:\Users\4710\.m2\repository\org\easytesting\fest-reflect\1.4.1\fest-reflect-1.4.1.jar;C:\Users\4710\.m2\repository\org\easytesting\fest-util\1.2.4\fest-util-1.2.4.jar;C:\Users\4710\.m2\repository\com\fasterxml\jackson\core\jackson-core\2.5.1\jackson-core-2.5.1.jar;C:\Users\4710\.m2\repository\com\fasterxml\jackson\core\jackson-databind\2.5.1\jackson-databind-2.5.1.jar;C:\Users\4710\.m2\repository\com\fasterxml\jackson\core\jackson-annotations\2.5.0\jackson-annotations-2.5.0.jar;C:\Users\4710\.m2\repository\xmlunit\xmlunit\1.6\xmlunit-1.6.jar;C:\Users\4710\.m2\repository\com\google\code\findbugs\jsr305\3.0.0\jsr305-3.0.0.jar;C:\Users\4710\.m2\repository\javax\inject\javax.inject\1\javax.inject-1.jar;C:\Users\4710\.m2\repository\org\controlsfx\controlsfx\8.40.12\controlsfx-8.40.12.jar;C:\Users\4710\.m2\repository\javax\enterprise\cdi-api\2.0\cdi-api-2.0.jar;C:\Users\4710\.m2\repository\javax\el\javax.el-api\3.0.0\javax.el-api-3.0.0.jar;C:\Users\4710\.m2\repository\javax\interceptor\javax.interceptor-api\1.2\javax.interceptor-api-1.2.jar;C:\Users\4710\.m2\repository\org\jboss\weld\se\weld-se-core\3.0.0.Final\weld-se-core-3.0.0.Final.jar;C:\Users\4710\.m2\repository\org\jboss\weld\environment\weld-environment-common\3.0.0.Final\weld-environment-common-3.0.0.Final.jar;C:\Users\4710\.m2\repository\org\jboss\weld\weld-core-impl\3.0.0.Final\weld-core-impl-3.0.0.Final.jar;C:\Users\4710\.m2\repository\org\jboss\weld\weld-api\3.0.Final\weld-api-3.0.Final.jar;C:\Users\4710\.m2\repository\org\jboss\weld\weld-spi\3.0.Final\weld-spi-3.0.Final.jar;C:\Users\4710\.m2\repository\org\jboss\classfilewriter\jboss-classfilewriter\1.1.2.Final\jboss-classfilewriter-1.1.2.Final.jar;C:\Users\4710\.m2\repository\javax\annotation\javax.annotation-api\1.3\javax.annotation-api-1.3.jar;C:\Users\4710\.m2\repository\org\jboss\spec\javax\el\jboss-el-api_3.0_spec\1.0.7.Final\jboss-el-api_3.0_spec-1.0.7.Final.jar;C:\Users\4710\.m2\repository\org\jboss\spec\javax\interceptor\jboss-interceptors-api_1.2_spec\1.0.0.Final\jboss-interceptors-api_1.2_spec-1.0.0.Final.jar;C:\Users\4710\.m2\repository\org\jboss\logging\jboss-logging\3.2.1.Final\jboss-logging-3.2.1.Final.jar;C:\Users\4710\.m2\repository\org\jboss\weld\probe\weld-probe-core\3.0.0.Final\weld-probe-core-3.0.0.Final.jar;C:\Users\4710\.m2\repository\junit\junit\4.12\junit-4.12.jar;C:\Users\4710\.m2\repository\org\hamcrest\hamcrest-core\1.3\hamcrest-core-1.3.jar;C:\Users\4710\.m2\repository\org\junit\jupiter\junit-jupiter-api\5.3.1\junit-jupiter-api-5.3.1.jar;C:\Users\4710\.m2\repository\org\apiguardian\apiguardian-api\1.0.0\apiguardian-api-1.0.0.jar;C:\Users\4710\.m2\repository\org\opentest4j\opentest4j\1.1.1\opentest4j-1.1.1.jar;C:\Users\4710\.m2\repository\org\junit\platform\junit-platform-commons\1.3.1\junit-platform-commons-1.3.1.jar;C:\Users\4710\.m2\repository\org\mockito\mockito-all\1.10.19\mockito-all-1.10.19.jar;"/>
+    <property name="sun.cpu.endian" value="little"/>
+    <property name="user.home" value="C:\Users\4710"/>
+    <property name="user.language" value="ko"/>
+    <property name="java.specification.vendor" value="Oracle Corporation"/>
+    <property name="java.version.date" value="2023-04-18"/>
+    <property name="java.home" value="C:\Users\4710\.p2\pool\plugins\org.eclipse.justj.openjdk.hotspot.jre.full.win32.x86_64_20.0.1.v20230425-1611\jre"/>
+    <property name="file.separator" value="\"/>
+    <property name="basedir" value="D:\DEV\MY-DATA\root\mydata"/>
+    <property name="style.color" value="always"/>
+    <property name="java.vm.compressedOopsMode" value="Zero based"/>
+    <property name="line.separator" value="&#10;"/>
+    <property name="java.vm.specification.vendor" value="Oracle Corporation"/>
+    <property name="java.specification.name" value="Java Platform API Specification"/>
+    <property name="surefire.real.class.path" value="C:\Users\4710\AppData\Local\Temp\surefire7218780373372588665\surefirebooter-20230703224746893_3.jar"/>
+    <property name="user.script" value=""/>
+    <property name="sun.management.compiler" value="HotSpot 64-Bit Tiered Compilers"/>
+    <property name="java.runtime.version" value="20.0.1+9"/>
+    <property name="user.name" value="4710"/>
+    <property name="stdout.encoding" value="MS949"/>
+    <property name="path.separator" value=";"/>
+    <property name="os.version" value="10.0"/>
+    <property name="java.runtime.name" value="OpenJDK Runtime Environment"/>
+    <property name="file.encoding" value="UTF-8"/>
+    <property name="java.vm.name" value="OpenJDK 64-Bit Server VM"/>
+    <property name="java.vendor.version" value="Temurin-20.0.1+9"/>
+    <property name="localRepository" value="C:\Users\4710\.m2\repository"/>
+    <property name="java.vendor.url.bug" value="https://github.com/adoptium/adoptium-support/issues"/>
+    <property name="java.io.tmpdir" value="C:\Users\4710\AppData\Local\Temp\"/>
+    <property name="java.version" value="20.0.1"/>
+    <property name="user.dir" value="D:\DEV\MY-DATA\root\mydata"/>
+    <property name="os.arch" value="amd64"/>
+    <property name="java.vm.specification.name" value="Java Virtual Machine Specification"/>
+    <property name="sun.os.patch.level" value=""/>
+    <property name="native.encoding" value="MS949"/>
+    <property name="java.library.path" value="C:\Users\4710\.p2\pool\plugins\org.eclipse.justj.openjdk.hotspot.jre.full.win32.x86_64_20.0.1.v20230425-1611\jre\bin;C:\WINDOWS\Sun\Java\bin;C:\WINDOWS\system32;C:\WINDOWS;C:\Users\4710\.p2\pool\plugins\org.eclipse.justj.openjdk.hotspot.jre.full.win32.x86_64_20.0.1.v20230425-1611\jre\bin;C:/Users/4710/.p2/pool/plugins/org.eclipse.justj.openjdk.hotspot.jre.full.win32.x86_64_20.0.1.v20230425-1611/jre/bin/server;C:/Users/4710/.p2/pool/plugins/org.eclipse.justj.openjdk.hotspot.jre.full.win32.x86_64_20.0.1.v20230425-1611/jre/bin;C:\Program Files (x86)\NAT Service;D:\DEV\JAVA\OpenJava1.8\bin;D:\DEV\apache-maven-3.8.6\bin;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0\;C:\WINDOWS\System32\OpenSSH\;C:\Program Files\Git\cmd;C:\Users\4710\AppData\Local\Microsoft\WindowsApps;C:\Users\4710\AppData\Local\GitHubDesktop\bin;D:\DEV\MY-DATA\eclipse2023.06;;."/>
+    <property name="java.vm.info" value="mixed mode"/>
+    <property name="stderr.encoding" value="MS949"/>
+    <property name="java.vendor" value="Eclipse Adoptium"/>
+    <property name="java.vm.version" value="20.0.1+9"/>
+    <property name="sun.io.unicode.encoding" value="UnicodeLittle"/>
+    <property name="java.class.version" value="64.0"/>
+  </properties>
+  <testcase name="test" classname="de.saxsys.mvvmfx.cdi.it.IntegrationTest" time="0.861">
+    <error message="Unable to construct Application instance: class de.saxsys.mvvmfx.cdi.it.MyApp" type="java.lang.RuntimeException"><![CDATA[java.lang.RuntimeException: Unable to construct Application instance: class de.saxsys.mvvmfx.cdi.it.MyApp
+	at com.sun.javafx.application.LauncherImpl.launchApplication1(LauncherImpl.java:883)
+	at com.sun.javafx.application.LauncherImpl.lambda$launchApplication$2(LauncherImpl.java:195)
+	at java.base/java.lang.Thread.run(Thread.java:1623)
+Caused by: java.lang.reflect.InvocationTargetException
+	at java.base/jdk.internal.reflect.DirectConstructorHandleAccessor.newInstance(DirectConstructorHandleAccessor.java:79)
+	at java.base/java.lang.reflect.Constructor.newInstanceWithCaller(Constructor.java:500)
+	at java.base/java.lang.reflect.Constructor.newInstance(Constructor.java:484)
+	at com.sun.javafx.application.LauncherImpl.lambda$launchApplication1$8(LauncherImpl.java:795)
+	at com.sun.javafx.application.PlatformImpl.lambda$runAndWait$12(PlatformImpl.java:483)
+	at com.sun.javafx.application.PlatformImpl.lambda$runLater$10(PlatformImpl.java:456)
+	at java.base/java.security.AccessController.doPrivileged(AccessController.java:400)
+	at com.sun.javafx.application.PlatformImpl.lambda$runLater$11(PlatformImpl.java:455)
+	at com.sun.glass.ui.InvokeLaterDispatcher$Future.run(InvokeLaterDispatcher.java:95)
+	at com.sun.glass.ui.win.WinApplication._runLoop(Native Method)
+	at com.sun.glass.ui.win.WinApplication.lambda$runLoop$3(WinApplication.java:185)
+	... 1 more
+Caused by: org.jboss.weld.exceptions.WeldException: WELD-001524: Unable to load proxy class for bean Implicit Bean [javax.enterprise.inject.Instance] with qualifiers [@Default] with class interface javax.enterprise.inject.Instance using classloader jdk.internal.loader.ClassLoaders$AppClassLoader@1b4fb997
+	at java.base/jdk.internal.reflect.DirectConstructorHandleAccessor.newInstance(DirectConstructorHandleAccessor.java:67)
+	at java.base/java.lang.reflect.Constructor.newInstanceWithCaller(Constructor.java:500)
+	at java.base/java.lang.reflect.Constructor.newInstance(Constructor.java:484)
+	at java.base/java.util.concurrent.ForkJoinTask.getThrowableException(ForkJoinTask.java:540)
+	at java.base/java.util.concurrent.ForkJoinTask.reportExecutionException(ForkJoinTask.java:580)
+	at java.base/java.util.concurrent.ForkJoinTask.get(ForkJoinTask.java:993)
+	at org.jboss.weld.executor.AbstractExecutorServices.checkForExceptions(AbstractExecutorServices.java:72)
+	at org.jboss.weld.executor.AbstractExecutorServices.invokeAllAndCheckForExceptions(AbstractExecutorServices.java:58)
+	at org.jboss.weld.executor.AbstractExecutorServices.invokeAllAndCheckForExceptions(AbstractExecutorServices.java:66)
+	at org.jboss.weld.bootstrap.ConcurrentBeanDeployer.doAfterBeanDiscovery(ConcurrentBeanDeployer.java:88)
+	at org.jboss.weld.bootstrap.BeanDeployment.afterBeanDiscovery(BeanDeployment.java:268)
+	at org.jboss.weld.bootstrap.WeldStartup.deployBeans(WeldStartup.java:467)
+	at org.jboss.weld.bootstrap.WeldBootstrap.deployBeans(WeldBootstrap.java:83)
+	at org.jboss.weld.environment.se.Weld.initialize(Weld.java:770)
+	at org.jboss.weld.environment.se.Weld.initialize(Weld.java:174)
+	at de.saxsys.mvvmfx.cdi.MvvmfxCdiApplication.<init>(MvvmfxCdiApplication.java:50)
+	at de.saxsys.mvvmfx.cdi.it.MyApp.<init>(MyApp.java:12)
+	at java.base/jdk.internal.reflect.DirectConstructorHandleAccessor.newInstance(DirectConstructorHandleAccessor.java:67)
+	... 11 more
+Caused by: org.jboss.weld.exceptions.WeldException: WELD-001524: Unable to load proxy class for bean Implicit Bean [javax.enterprise.inject.Instance] with qualifiers [@Default] with class interface javax.enterprise.inject.Instance using classloader jdk.internal.loader.ClassLoaders$AppClassLoader@1b4fb997
+	at org.jboss.weld.bean.proxy.ProxyFactory.getProxyClass(ProxyFactory.java:382)
+	at org.jboss.weld.bean.builtin.AbstractFacadeBean.initializeAfterBeanDiscovery(AbstractFacadeBean.java:61)
+	at org.jboss.weld.bootstrap.ConcurrentBeanDeployer$AfterBeanDiscoveryInitializerFactory.doWork(ConcurrentBeanDeployer.java:111)
+	at org.jboss.weld.bootstrap.ConcurrentBeanDeployer$AfterBeanDiscoveryInitializerFactory.doWork(ConcurrentBeanDeployer.java:102)
+	at org.jboss.weld.executor.IterativeWorkerTaskFactory$1.call(IterativeWorkerTaskFactory.java:62)
+	at org.jboss.weld.executor.IterativeWorkerTaskFactory$1.call(IterativeWorkerTaskFactory.java:55)
+	at java.base/java.util.concurrent.ForkJoinTask$AdaptedInterruptibleCallable.exec(ForkJoinTask.java:1489)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:387)
+	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1312)
+	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1843)
+	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1808)
+	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:188)
+Caused by: java.lang.NoClassDefFoundError: Could not initialize class org.jboss.classfilewriter.ClassFile
+	at org.jboss.weld.bean.proxy.ProxyFactory.newClassFile(ProxyFactory.java:489)
+	at org.jboss.weld.bean.proxy.ProxyFactory.createProxyClass(ProxyFactory.java:446)
+	at org.jboss.weld.bean.proxy.ProxyFactory.getProxyClass(ProxyFactory.java:374)
+	... 11 more
+Caused by: java.lang.ExceptionInInitializerError: Exception java.lang.reflect.InaccessibleObjectException: Unable to make protected final java.lang.Class java.lang.ClassLoader.defineClass(java.lang.String,byte[],int,int) throws java.lang.ClassFormatError accessible: module java.base does not "opens java.lang" to unnamed module @35ef1869 [in thread "ForkJoinPool.commonPool-worker-1"]
+	at java.base/java.lang.reflect.AccessibleObject.throwInaccessibleObjectException(AccessibleObject.java:387)
+	at java.base/java.lang.reflect.AccessibleObject.checkCanSetAccessible(AccessibleObject.java:363)
+	at java.base/java.lang.reflect.AccessibleObject.checkCanSetAccessible(AccessibleObject.java:311)
+	at java.base/java.lang.reflect.Method.checkCanSetAccessible(Method.java:201)
+	at java.base/java.lang.reflect.Method.setAccessible(Method.java:195)
+	at org.jboss.classfilewriter.ClassFile$1.run(ClassFile.java:238)
+	at java.base/java.security.AccessController.doPrivileged(AccessController.java:571)
+	at org.jboss.classfilewriter.ClassFile.<clinit>(ClassFile.java:233)
+	... 14 more
+]]></error>
+    <system-out><![CDATA[22:47:47.750 [JavaFX Application Thread] DEBUG org.jboss.logging - Logging Provider: org.jboss.logging.Slf4jLoggerProvider
+22:47:47.755 [JavaFX Application Thread] INFO org.jboss.weld.Version - WELD-000900: 3.0.0 (Final)
+22:47:47.769 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-ENV-000030: Cannot load class using the ResourceLoader: org.jboss.jandex.Index
+22:47:47.844 [JavaFX Application Thread] DEBUG org.jboss.weld.environment.deployment.discovery.DefaultBeanArchiveScanner - Resolved bean archive reference: D:\DEV\MY-DATA\root\mydata\target\test-classes for URL: file:/D:/DEV/MY-DATA/root/mydata/target/test-classes/META-INF/beans.xml
+22:47:47.852 [JavaFX Application Thread] DEBUG org.jboss.weld.environment.deployment.discovery.DefaultBeanArchiveScanner - Resolved bean archive reference: D:\DEV\MY-DATA\root\mydata\target\classes for URL: file:/D:/DEV/MY-DATA/root/mydata/target/classes/META-INF/beans.xml
+22:47:47.853 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-ENV-000032: Processing bean archive reference: D:\DEV\MY-DATA\root\mydata\target\test-classes
+22:47:47.853 [JavaFX Application Thread] DEBUG org.jboss.weld.environment.deployment.discovery.FileSystemBeanArchiveHandler - Handle path: D:\DEV\MY-DATA\root\mydata\target\test-classes
+22:47:47.853 [JavaFX Application Thread] DEBUG org.jboss.weld.environment.deployment.discovery.FileSystemBeanArchiveHandler - Handle directory: D:\DEV\MY-DATA\root\mydata\target\test-classes
+22:47:47.854 [JavaFX Application Thread] DEBUG org.jboss.weld.environment.deployment.discovery.FileSystemBeanArchiveHandler - Handle directory: D:\DEV\MY-DATA\root\mydata\target\test-classes\de
+22:47:47.854 [JavaFX Application Thread] DEBUG org.jboss.weld.environment.deployment.discovery.FileSystemBeanArchiveHandler - Handle directory: D:\DEV\MY-DATA\root\mydata\target\test-classes\de\saxsys
+22:47:47.854 [JavaFX Application Thread] DEBUG org.jboss.weld.environment.deployment.discovery.FileSystemBeanArchiveHandler - Handle directory: D:\DEV\MY-DATA\root\mydata\target\test-classes\de\saxsys\mvvmfx
+22:47:47.854 [JavaFX Application Thread] DEBUG org.jboss.weld.environment.deployment.discovery.FileSystemBeanArchiveHandler - Handle directory: D:\DEV\MY-DATA\root\mydata\target\test-classes\de\saxsys\mvvmfx\cdi
+22:47:47.854 [JavaFX Application Thread] DEBUG org.jboss.weld.environment.deployment.discovery.FileSystemBeanArchiveHandler - Handle directory: D:\DEV\MY-DATA\root\mydata\target\test-classes\de\saxsys\mvvmfx\cdi\it
+22:47:47.854 [JavaFX Application Thread] DEBUG org.jboss.weld.environment.deployment.discovery.FileSystemBeanArchiveHandler - Handle directory: D:\DEV\MY-DATA\root\mydata\target\test-classes\META-INF
+22:47:47.855 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-ENV-000039: Bean archive reference D:\DEV\MY-DATA\root\mydata\target\test-classes handled by org.jboss.weld.environment.deployment.discovery.FileSystemBeanArchiveHandler@741109b
+22:47:47.855 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-ENV-000032: Processing bean archive reference: D:\DEV\MY-DATA\root\mydata\target\classes
+22:47:47.855 [JavaFX Application Thread] DEBUG org.jboss.weld.environment.deployment.discovery.FileSystemBeanArchiveHandler - Handle path: D:\DEV\MY-DATA\root\mydata\target\classes
+22:47:47.855 [JavaFX Application Thread] DEBUG org.jboss.weld.environment.deployment.discovery.FileSystemBeanArchiveHandler - Handle directory: D:\DEV\MY-DATA\root\mydata\target\classes
+22:47:47.855 [JavaFX Application Thread] DEBUG org.jboss.weld.environment.deployment.discovery.FileSystemBeanArchiveHandler - Handle directory: D:\DEV\MY-DATA\root\mydata\target\classes\datalife
+22:47:47.855 [JavaFX Application Thread] DEBUG org.jboss.weld.environment.deployment.discovery.FileSystemBeanArchiveHandler - Handle directory: D:\DEV\MY-DATA\root\mydata\target\classes\datalife\ds
+22:47:47.855 [JavaFX Application Thread] DEBUG org.jboss.weld.environment.deployment.discovery.FileSystemBeanArchiveHandler - Handle directory: D:\DEV\MY-DATA\root\mydata\target\classes\datalife\ds\mydata
+22:47:47.855 [JavaFX Application Thread] DEBUG org.jboss.weld.environment.deployment.discovery.FileSystemBeanArchiveHandler - Handle directory: D:\DEV\MY-DATA\root\mydata\target\classes\de
+22:47:47.855 [JavaFX Application Thread] DEBUG org.jboss.weld.environment.deployment.discovery.FileSystemBeanArchiveHandler - Handle directory: D:\DEV\MY-DATA\root\mydata\target\classes\de\saxsys
+22:47:47.856 [JavaFX Application Thread] DEBUG org.jboss.weld.environment.deployment.discovery.FileSystemBeanArchiveHandler - Handle directory: D:\DEV\MY-DATA\root\mydata\target\classes\de\saxsys\mvvmfx
+22:47:47.856 [JavaFX Application Thread] DEBUG org.jboss.weld.environment.deployment.discovery.FileSystemBeanArchiveHandler - Handle directory: D:\DEV\MY-DATA\root\mydata\target\classes\de\saxsys\mvvmfx\cdi
+22:47:47.856 [JavaFX Application Thread] DEBUG org.jboss.weld.environment.deployment.discovery.FileSystemBeanArchiveHandler - Handle directory: D:\DEV\MY-DATA\root\mydata\target\classes\de\saxsys\mvvmfx\cdi\internal
+22:47:47.856 [JavaFX Application Thread] DEBUG org.jboss.weld.environment.deployment.discovery.FileSystemBeanArchiveHandler - Handle directory: D:\DEV\MY-DATA\root\mydata\target\classes\de\saxsys\mvvmfx\examples
+22:47:47.856 [JavaFX Application Thread] DEBUG org.jboss.weld.environment.deployment.discovery.FileSystemBeanArchiveHandler - Handle directory: D:\DEV\MY-DATA\root\mydata\target\classes\de\saxsys\mvvmfx\examples\async_todoapp_futures
+22:47:47.856 [JavaFX Application Thread] DEBUG org.jboss.weld.environment.deployment.discovery.FileSystemBeanArchiveHandler - Handle directory: D:\DEV\MY-DATA\root\mydata\target\classes\de\saxsys\mvvmfx\examples\async_todoapp_futures\model
+22:47:47.857 [JavaFX Application Thread] DEBUG org.jboss.weld.environment.deployment.discovery.FileSystemBeanArchiveHandler - Handle directory: D:\DEV\MY-DATA\root\mydata\target\classes\de\saxsys\mvvmfx\examples\async_todoapp_futures\ui
+22:47:47.857 [JavaFX Application Thread] DEBUG org.jboss.weld.environment.deployment.discovery.FileSystemBeanArchiveHandler - Handle directory: D:\DEV\MY-DATA\root\mydata\target\classes\de\saxsys\mvvmfx\internal
+22:47:47.857 [JavaFX Application Thread] DEBUG org.jboss.weld.environment.deployment.discovery.FileSystemBeanArchiveHandler - Handle directory: D:\DEV\MY-DATA\root\mydata\target\classes\de\saxsys\mvvmfx\internal\viewloader
+22:47:47.858 [JavaFX Application Thread] DEBUG org.jboss.weld.environment.deployment.discovery.FileSystemBeanArchiveHandler - Handle directory: D:\DEV\MY-DATA\root\mydata\target\classes\de\saxsys\mvvmfx\testingutils
+22:47:47.858 [JavaFX Application Thread] DEBUG org.jboss.weld.environment.deployment.discovery.FileSystemBeanArchiveHandler - Handle directory: D:\DEV\MY-DATA\root\mydata\target\classes\de\saxsys\mvvmfx\testingutils\jfxrunner
+22:47:47.858 [JavaFX Application Thread] DEBUG org.jboss.weld.environment.deployment.discovery.FileSystemBeanArchiveHandler - Handle directory: D:\DEV\MY-DATA\root\mydata\target\classes\de\saxsys\mvvmfx\utils
+22:47:47.858 [JavaFX Application Thread] DEBUG org.jboss.weld.environment.deployment.discovery.FileSystemBeanArchiveHandler - Handle directory: D:\DEV\MY-DATA\root\mydata\target\classes\de\saxsys\mvvmfx\utils\commands
+22:47:47.858 [JavaFX Application Thread] DEBUG org.jboss.weld.environment.deployment.discovery.FileSystemBeanArchiveHandler - Handle directory: D:\DEV\MY-DATA\root\mydata\target\classes\de\saxsys\mvvmfx\utils\itemlist
+22:47:47.858 [JavaFX Application Thread] DEBUG org.jboss.weld.environment.deployment.discovery.FileSystemBeanArchiveHandler - Handle directory: D:\DEV\MY-DATA\root\mydata\target\classes\de\saxsys\mvvmfx\utils\listener
+22:47:47.858 [JavaFX Application Thread] DEBUG org.jboss.weld.environment.deployment.discovery.FileSystemBeanArchiveHandler - Handle directory: D:\DEV\MY-DATA\root\mydata\target\classes\de\saxsys\mvvmfx\utils\mapping
+22:47:47.859 [JavaFX Application Thread] DEBUG org.jboss.weld.environment.deployment.discovery.FileSystemBeanArchiveHandler - Handle directory: D:\DEV\MY-DATA\root\mydata\target\classes\de\saxsys\mvvmfx\utils\mapping\accessorfunctions
+22:47:47.859 [JavaFX Application Thread] DEBUG org.jboss.weld.environment.deployment.discovery.FileSystemBeanArchiveHandler - Handle directory: D:\DEV\MY-DATA\root\mydata\target\classes\de\saxsys\mvvmfx\utils\notifications
+22:47:47.859 [JavaFX Application Thread] DEBUG org.jboss.weld.environment.deployment.discovery.FileSystemBeanArchiveHandler - Handle directory: D:\DEV\MY-DATA\root\mydata\target\classes\de\saxsys\mvvmfx\utils\sizebinding
+22:47:47.860 [JavaFX Application Thread] DEBUG org.jboss.weld.environment.deployment.discovery.FileSystemBeanArchiveHandler - Handle directory: D:\DEV\MY-DATA\root\mydata\target\classes\de\saxsys\mvvmfx\utils\sizebinding\internal
+22:47:47.860 [JavaFX Application Thread] DEBUG org.jboss.weld.environment.deployment.discovery.FileSystemBeanArchiveHandler - Handle directory: D:\DEV\MY-DATA\root\mydata\target\classes\de\saxsys\mvvmfx\utils\validation
+22:47:47.860 [JavaFX Application Thread] DEBUG org.jboss.weld.environment.deployment.discovery.FileSystemBeanArchiveHandler - Handle directory: D:\DEV\MY-DATA\root\mydata\target\classes\de\saxsys\mvvmfx\utils\validation\visualization
+22:47:47.860 [JavaFX Application Thread] DEBUG org.jboss.weld.environment.deployment.discovery.FileSystemBeanArchiveHandler - Handle directory: D:\DEV\MY-DATA\root\mydata\target\classes\de\saxsys\mvvmfx\utils\viewlist
+22:47:47.860 [JavaFX Application Thread] DEBUG org.jboss.weld.environment.deployment.discovery.FileSystemBeanArchiveHandler - Handle directory: D:\DEV\MY-DATA\root\mydata\target\classes\META-INF
+22:47:47.861 [JavaFX Application Thread] DEBUG org.jboss.weld.environment.deployment.discovery.FileSystemBeanArchiveHandler - Handle directory: D:\DEV\MY-DATA\root\mydata\target\classes\META-INF\maven
+22:47:47.861 [JavaFX Application Thread] DEBUG org.jboss.weld.environment.deployment.discovery.FileSystemBeanArchiveHandler - Handle directory: D:\DEV\MY-DATA\root\mydata\target\classes\META-INF\maven\datalife.ds
+22:47:47.861 [JavaFX Application Thread] DEBUG org.jboss.weld.environment.deployment.discovery.FileSystemBeanArchiveHandler - Handle directory: D:\DEV\MY-DATA\root\mydata\target\classes\META-INF\maven\datalife.ds\mydata
+22:47:47.861 [JavaFX Application Thread] DEBUG org.jboss.weld.environment.deployment.discovery.FileSystemBeanArchiveHandler - Handle directory: D:\DEV\MY-DATA\root\mydata\target\classes\net
+22:47:47.861 [JavaFX Application Thread] DEBUG org.jboss.weld.environment.deployment.discovery.FileSystemBeanArchiveHandler - Handle directory: D:\DEV\MY-DATA\root\mydata\target\classes\net\bekwam
+22:47:47.861 [JavaFX Application Thread] DEBUG org.jboss.weld.environment.deployment.discovery.FileSystemBeanArchiveHandler - Handle directory: D:\DEV\MY-DATA\root\mydata\target\classes\net\bekwam\bkcourse
+22:47:47.861 [JavaFX Application Thread] DEBUG org.jboss.weld.environment.deployment.discovery.FileSystemBeanArchiveHandler - Handle directory: D:\DEV\MY-DATA\root\mydata\target\classes\net\bekwam\bkcourse\modelchangeapp
+22:47:47.861 [JavaFX Application Thread] DEBUG org.jboss.weld.environment.deployment.discovery.FileSystemBeanArchiveHandler - Handle directory: D:\DEV\MY-DATA\root\mydata\target\classes\net\bekwam\bkcourse\mvvmapp
+22:47:47.862 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-ENV-000039: Bean archive reference D:\DEV\MY-DATA\root\mydata\target\classes handled by org.jboss.weld.environment.deployment.discovery.FileSystemBeanArchiveHandler@741109b
+22:47:47.864 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-ENV-000024: Archive isolation enabled - creating multiple isolated bean archives if needed
+22:47:47.899 [JavaFX Application Thread] DEBUG org.jboss.weld.BootstrapTracker - START bootstrap 
+22:47:47.899 [JavaFX Application Thread] DEBUG org.jboss.weld.BootstrapTracker - START bootstrap > startContainer 
+22:47:47.903 [JavaFX Application Thread] DEBUG org.jboss.weld.Configuration - WELD-001902: Following configuration was detected and applied: {org.jboss.weld.executor.threadPoolType=COMMON, org.jboss.weld.construction.relaxed=true}
+22:47:47.903 [JavaFX Application Thread] DEBUG org.jboss.weld.BootstrapTracker - START bootstrap > startContainer > initServices 
+22:47:47.911 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - Using Weld modules: []
+22:47:47.921 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - Using instantiator: org.jboss.weld.bean.proxy.UnsafeProxyInstantiator
+22:47:47.929 [JavaFX Application Thread] DEBUG org.jboss.weld.BootstrapTracker -   END bootstrap > startContainer > initServices (26 ms)
+22:47:47.930 [JavaFX Application Thread] INFO org.jboss.weld.Bootstrap - WELD-000101: Transactional services not available. Injection of @Inject UserTransaction not available. Transactional observers will be invoked synchronously.
+22:47:47.939 [JavaFX Application Thread] DEBUG org.jboss.weld.BootstrapTracker - START bootstrap > startContainer > builtinContexts 
+22:47:47.967 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-000106: Bean: WELD%AbstractBuiltInBean%deployment%ApplicationContext
+22:47:47.969 [JavaFX Application Thread] DEBUG org.jboss.weld.Reflection - WELD-000601: interface javax.inject.Singleton is missing @Target. Weld will use this annotation, however this may make the application unportable.
+22:47:47.969 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-000106: Bean: WELD%AbstractBuiltInBean%deployment%SingletonContext
+22:47:47.970 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-000106: Bean: WELD%AbstractBuiltInBean%deployment%BoundSessionContext
+22:47:47.971 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-000106: Bean: WELD%AbstractBuiltInBean%deployment%BoundConversationContext
+22:47:47.971 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-000106: Bean: WELD%AbstractBuiltInBean%deployment%BoundRequestContext
+22:47:47.971 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-000106: Bean: WELD%AbstractBuiltInBean%deployment%RequestContext
+22:47:47.972 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-000106: Bean: WELD%AbstractBuiltInBean%deployment%DependentContext
+22:47:47.972 [JavaFX Application Thread] DEBUG org.jboss.weld.BootstrapTracker -   END bootstrap > startContainer > builtinContexts (32 ms)
+22:47:47.972 [JavaFX Application Thread] DEBUG org.jboss.weld.BootstrapTracker - START bootstrap > startContainer > readDeploymentStructure 
+22:47:47.982 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-000106: Bean: Built-in Bean [javax.enterprise.inject.spi.BeanManager] with qualifiers [@Default]
+22:47:47.983 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-000106: Bean: Built-in Bean [org.jboss.weld.manager.BeanManagerImpl] with qualifiers [@Default]
+22:47:47.983 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-000106: Bean: Built-in Bean [javax.enterprise.inject.spi.BeanManager] with qualifiers [@Default]
+22:47:47.983 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-000106: Bean: Built-in Bean [org.jboss.weld.manager.BeanManagerImpl] with qualifiers [@Default]
+22:47:47.984 [JavaFX Application Thread] DEBUG org.jboss.weld.BootstrapTracker -   END bootstrap > startContainer > readDeploymentStructure (10 ms)
+22:47:47.984 [JavaFX Application Thread] DEBUG org.jboss.weld.BootstrapTracker -   END bootstrap > startContainer (84 ms)
+22:47:47.985 [JavaFX Application Thread] DEBUG org.jboss.weld.BootstrapTracker - START bootstrap > startInitialization 
+22:47:47.986 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-000106: Bean: Built-in Bean [javax.enterprise.inject.spi.BeanManager] with qualifiers [@Default]
+22:47:47.987 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-000106: Bean: Built-in Bean [org.jboss.weld.manager.BeanManagerImpl] with qualifiers [@Default]
+22:47:48.000 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-000106: Bean: Extension [class org.jboss.weld.bootstrap.WeldExtension] with qualifiers [@Default]; n/a
+22:47:48.000 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-000168: Extension bean deployed: Extension [class org.jboss.weld.bootstrap.WeldExtension] with qualifiers [@Default]; n/a
+22:47:48.003 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-000106: Bean: Extension [class org.jboss.weld.environment.se.WeldSEBeanRegistrant] with qualifiers [@Default]; jar:file:/C:/Users/4710/.m2/repository/org/jboss/weld/se/weld-se-core/3.0.0.Final/weld-se-core-3.0.0.Final.jar!/META-INF/services/javax.enterprise.inject.spi.Extension@1[org.jboss.weld.environment.se.WeldSEBeanRegistrant@2b87c93a]
+22:47:48.003 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-000168: Extension bean deployed: Extension [class org.jboss.weld.environment.se.WeldSEBeanRegistrant] with qualifiers [@Default]; jar:file:/C:/Users/4710/.m2/repository/org/jboss/weld/se/weld-se-core/3.0.0.Final/weld-se-core-3.0.0.Final.jar!/META-INF/services/javax.enterprise.inject.spi.Extension@1[org.jboss.weld.environment.se.WeldSEBeanRegistrant@2b87c93a]
+22:47:48.003 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-000106: Bean: Built-in Bean [javax.enterprise.inject.spi.BeanManager] with qualifiers [@Default]
+22:47:48.003 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-000106: Bean: Built-in Bean [org.jboss.weld.manager.BeanManagerImpl] with qualifiers [@Default]
+22:47:48.004 [JavaFX Application Thread] DEBUG org.jboss.weld.BootstrapTracker - START bootstrap > startInitialization > BeforeBeanDiscovery 
+22:47:48.017 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-000162: BeforeBeanDiscovery.addAnnotatedType() called by org.jboss.weld.bootstrap.WeldExtension@7f8ae7a2 for [BackedAnnotatedType] public @Vetoed @Interceptor @ActivateRequestContext @Priority class org.jboss.weld.contexts.activator.ActivateRequestContextInterceptor
+22:47:48.019 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-000162: BeforeBeanDiscovery.addAnnotatedType() called by org.jboss.weld.bootstrap.WeldExtension@7f8ae7a2 for [BackedAnnotatedType] public @Vetoed @Interceptor @ActivateRequestContext @Priority class org.jboss.weld.contexts.activator.CdiRequestContextActivatorInterceptor
+22:47:48.021 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-000162: BeforeBeanDiscovery.addAnnotatedType() called by org.jboss.weld.environment.se.WeldSEBeanRegistrant@2b87c93a for [BackedAnnotatedType] public @Vetoed @ApplicationScoped class org.jboss.weld.environment.se.beans.ParametersFactory
+22:47:48.024 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-000162: BeforeBeanDiscovery.addAnnotatedType() called by org.jboss.weld.environment.se.WeldSEBeanRegistrant@2b87c93a for [BackedAnnotatedType] public @Decorator class org.jboss.weld.environment.se.threading.RunnableDecorator
+22:47:48.026 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-000162: BeforeBeanDiscovery.addAnnotatedType() called by org.jboss.weld.environment.se.WeldSEBeanRegistrant@2b87c93a for [BackedAnnotatedType] public @Vetoed @Interceptor @ActivateThreadScope @Priority class org.jboss.weld.environment.se.contexts.activators.ActivateThreadScopeInterceptor
+22:47:48.026 [JavaFX Application Thread] DEBUG org.jboss.weld.BootstrapTracker -   END bootstrap > startInitialization > BeforeBeanDiscovery (22 ms)
+22:47:48.102 [JavaFX Application Thread] DEBUG org.jboss.weld.BootstrapTracker - START bootstrap > startInitialization > AfterTypeDiscovery 
+22:47:48.103 [JavaFX Application Thread] DEBUG org.jboss.weld.BootstrapTracker -   END bootstrap > startInitialization > AfterTypeDiscovery (0 ms)
+22:47:48.106 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-000103: Enabled alternatives for Weld BeanManager for org.jboss.weld.environment.deployment.WeldDeployment.additionalClasses [bean count=4]: (empty collection)
+22:47:48.106 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-000104: Enabled decorator types for Weld BeanManager for org.jboss.weld.environment.deployment.WeldDeployment.additionalClasses [bean count=4]: (empty collection)
+22:47:48.106 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-000105: Enabled interceptor types for Weld BeanManager for org.jboss.weld.environment.deployment.WeldDeployment.additionalClasses [bean count=4]: 
+  - class org.jboss.weld.contexts.activator.ActivateRequestContextInterceptor,
+  - class org.jboss.weld.contexts.activator.CdiRequestContextActivatorInterceptor,
+  - class org.jboss.weld.environment.se.contexts.activators.ActivateThreadScopeInterceptor
+22:47:48.110 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-000103: Enabled alternatives for Weld BeanManager for D:\DEV\MY-DATA\root\mydata\target\test-classes [bean count=2]: (empty collection)
+22:47:48.110 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-000104: Enabled decorator types for Weld BeanManager for D:\DEV\MY-DATA\root\mydata\target\test-classes [bean count=2]: (empty collection)
+22:47:48.110 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-000105: Enabled interceptor types for Weld BeanManager for D:\DEV\MY-DATA\root\mydata\target\test-classes [bean count=2]: 
+  - class org.jboss.weld.contexts.activator.ActivateRequestContextInterceptor,
+  - class org.jboss.weld.contexts.activator.CdiRequestContextActivatorInterceptor,
+  - class org.jboss.weld.environment.se.contexts.activators.ActivateThreadScopeInterceptor
+22:47:48.110 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-000103: Enabled alternatives for Weld BeanManager for D:\DEV\MY-DATA\root\mydata\target\classes [bean count=2]: (empty collection)
+22:47:48.110 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-000104: Enabled decorator types for Weld BeanManager for D:\DEV\MY-DATA\root\mydata\target\classes [bean count=2]: (empty collection)
+22:47:48.110 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-000105: Enabled interceptor types for Weld BeanManager for D:\DEV\MY-DATA\root\mydata\target\classes [bean count=2]: 
+  - class org.jboss.weld.contexts.activator.ActivateRequestContextInterceptor,
+  - class org.jboss.weld.contexts.activator.CdiRequestContextActivatorInterceptor,
+  - class org.jboss.weld.environment.se.contexts.activators.ActivateThreadScopeInterceptor
+22:47:48.110 [JavaFX Application Thread] DEBUG org.jboss.weld.BootstrapTracker -   END bootstrap > startInitialization (125 ms)
+22:47:48.110 [JavaFX Application Thread] DEBUG org.jboss.weld.BootstrapTracker - START bootstrap > deployBeans 
+22:47:48.226 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-000108: Decorator: Decorator [class org.jboss.weld.environment.se.threading.RunnableDecorator] decorates [Runnable] with delegate type [Runnable] and delegate qualifiers [@Default]
+22:47:48.226 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-000107: Interceptor: Interceptor [class org.jboss.weld.contexts.activator.CdiRequestContextActivatorInterceptor intercepts @ActivateRequestContext]
+22:47:48.226 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-000107: Interceptor: Interceptor [class org.jboss.weld.environment.se.contexts.activators.ActivateThreadScopeInterceptor intercepts @ActivateThreadScope]
+22:47:48.226 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-000107: Interceptor: Interceptor [class org.jboss.weld.contexts.activator.ActivateRequestContextInterceptor intercepts @ActivateRequestContext]
+22:47:48.227 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-000106: Bean: WELD%AbstractBuiltInBean%org.jboss.weld.environment.deployment.WeldDeployment.additionalClasses%DependentContext
+22:47:48.227 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-000106: Bean: Implicit Bean [javax.enterprise.inject.spi.Bean] with qualifiers [@Decorated]
+22:47:48.227 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-000106: Bean: WELD%AbstractBuiltInBean%org.jboss.weld.environment.deployment.WeldDeployment.additionalClasses%BoundConversationContext
+22:47:48.227 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-000106: Bean: Implicit Bean [javax.enterprise.inject.spi.Bean] with qualifiers [@Intercepted]
+22:47:48.227 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-000106: Bean: Implicit Bean [javax.enterprise.inject.spi.Bean] with qualifiers [@Default]
+22:47:48.227 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-000106: Bean: Producer Method [List<String>] with qualifiers [@Parameters @Any] declared as [[UnbackedAnnotatedMethod] @Produces @Parameters public org.jboss.weld.environment.se.beans.ParametersFactory.getArgs()]
+22:47:48.229 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-000106: Bean: Producer Method [String[]] with qualifiers [@Parameters @Any] declared as [[UnbackedAnnotatedMethod] @Produces @Parameters public org.jboss.weld.environment.se.beans.ParametersFactory.getArgsAsArray()]
+22:47:48.229 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-000106: Bean: WELD%AbstractBuiltInBean%org.jboss.weld.environment.deployment.WeldDeployment.additionalClasses%BoundSessionContext
+22:47:48.229 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-000106: Bean: WELD%AbstractBuiltInBean%org.jboss.weld.environment.deployment.WeldDeployment.additionalClasses%ApplicationContext
+22:47:48.229 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-000106: Bean: Implicit Bean [javax.enterprise.inject.spi.Decorator] with qualifiers [@Default]
+22:47:48.229 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-000106: Bean: WELD%AbstractBuiltInBean%org.jboss.weld.environment.deployment.WeldDeployment.additionalClasses%RequestContext
+22:47:48.229 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-000106: Bean: Implicit Bean [javax.enterprise.event.Event] with qualifiers [@Default]
+22:47:48.229 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-000106: Bean: Implicit Bean [javax.enterprise.inject.spi.InjectionPoint] with qualifiers [@Default]
+22:47:48.229 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-000106: Bean: Implicit Bean [javax.enterprise.inject.spi.InterceptionFactory] with qualifiers [@Default]
+22:47:48.229 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-000106: Bean: WELD%AbstractBuiltInBean%org.jboss.weld.environment.deployment.WeldDeployment.additionalClasses%Conversation
+22:47:48.229 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-000106: Bean: WELD%AbstractBuiltInBean%org.jboss.weld.environment.deployment.WeldDeployment.additionalClasses%RequestContextController
+22:47:48.229 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-000106: Bean: Implicit Bean [javax.enterprise.inject.spi.Interceptor] with qualifiers [@Default]
+22:47:48.229 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-000106: Bean: Implicit Bean [javax.enterprise.inject.Instance] with qualifiers [@Default]
+22:47:48.229 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-000106: Bean: Implicit Bean [javax.enterprise.inject.spi.EventMetadata] with qualifiers [@Default]
+22:47:48.229 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-000106: Bean: WELD%AbstractBuiltInBean%org.jboss.weld.environment.deployment.WeldDeployment.additionalClasses%BoundRequestContext
+22:47:48.229 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-000106: Bean: Managed Bean [class org.jboss.weld.environment.se.beans.ParametersFactory] with qualifiers [@Any @Default]
+22:47:48.230 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-000106: Bean: WELD%AbstractBuiltInBean%org.jboss.weld.environment.deployment.WeldDeployment.additionalClasses%SingletonContext
+22:47:48.230 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-000106: Bean: WELD%AbstractBuiltInBean%D:\DEV\MY-DATA\root\mydata\target\test-classes%Conversation
+22:47:48.230 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-000106: Bean: Implicit Bean [javax.enterprise.inject.spi.Interceptor] with qualifiers [@Default]
+22:47:48.230 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-000106: Bean: Implicit Bean [javax.enterprise.inject.spi.InjectionPoint] with qualifiers [@Default]
+22:47:48.230 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-000106: Bean: Implicit Bean [javax.enterprise.inject.spi.Bean] with qualifiers [@Intercepted]
+22:47:48.230 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-000106: Bean: WELD%AbstractBuiltInBean%D:\DEV\MY-DATA\root\mydata\target\test-classes%BoundRequestContext
+22:47:48.230 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-000106: Bean: Managed Bean [class de.saxsys.mvvmfx.cdi.it.IntegrationTest] with qualifiers [@Any @Default]
+22:47:48.230 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-000106: Bean: WELD%AbstractBuiltInBean%D:\DEV\MY-DATA\root\mydata\target\test-classes%BoundConversationContext
+22:47:48.230 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-000106: Bean: Implicit Bean [javax.enterprise.inject.spi.Decorator] with qualifiers [@Default]
+22:47:48.230 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-000106: Bean: Managed Bean [class de.saxsys.mvvmfx.cdi.it.MyViewModel] with qualifiers [@Any @Default]
+22:47:48.230 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-000106: Bean: WELD%AbstractBuiltInBean%D:\DEV\MY-DATA\root\mydata\target\test-classes%RequestContextController
+22:47:48.230 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-000106: Bean: Implicit Bean [javax.enterprise.inject.Instance] with qualifiers [@Default]
+22:47:48.230 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-000106: Bean: Managed Bean [class de.saxsys.mvvmfx.cdi.it.MyApp] with qualifiers [@Any @Default]
+22:47:48.231 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-000106: Bean: WELD%AbstractBuiltInBean%D:\DEV\MY-DATA\root\mydata\target\test-classes%BoundSessionContext
+22:47:48.231 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-000106: Bean: Managed Bean [class de.saxsys.mvvmfx.cdi.it.MyView] with qualifiers [@Any @Default]
+22:47:48.231 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-000106: Bean: Implicit Bean [javax.enterprise.inject.spi.Bean] with qualifiers [@Default]
+22:47:48.231 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-000106: Bean: Implicit Bean [javax.enterprise.event.Event] with qualifiers [@Default]
+22:47:48.231 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-000106: Bean: Implicit Bean [javax.enterprise.inject.spi.Bean] with qualifiers [@Decorated]
+22:47:48.231 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-000106: Bean: Implicit Bean [javax.enterprise.inject.spi.EventMetadata] with qualifiers [@Default]
+22:47:48.231 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-000106: Bean: WELD%AbstractBuiltInBean%D:\DEV\MY-DATA\root\mydata\target\test-classes%DependentContext
+22:47:48.231 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-000106: Bean: WELD%AbstractBuiltInBean%D:\DEV\MY-DATA\root\mydata\target\test-classes%SingletonContext
+22:47:48.231 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-000106: Bean: Implicit Bean [javax.enterprise.inject.spi.InterceptionFactory] with qualifiers [@Default]
+22:47:48.231 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-000106: Bean: Managed Bean [class de.saxsys.mvvmfx.cdi.it.MyService] with qualifiers [@Any @Default]
+22:47:48.231 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-000106: Bean: WELD%AbstractBuiltInBean%D:\DEV\MY-DATA\root\mydata\target\test-classes%ApplicationContext
+22:47:48.231 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-000106: Bean: WELD%AbstractBuiltInBean%D:\DEV\MY-DATA\root\mydata\target\test-classes%RequestContext
+22:47:48.232 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-000106: Bean: Managed Bean [class datalife.ds.mydata.PrimaryController] with qualifiers [@Any @Default]
+22:47:48.232 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-000106: Bean: WELD%AbstractBuiltInBean%D:\DEV\MY-DATA\root\mydata\target\classes%RequestContext
+22:47:48.232 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-000106: Bean: Managed Bean [class de.saxsys.mvvmfx.utils.validation.CompositeValidationStatus] with qualifiers [@Any @Default]
+22:47:48.232 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-000106: Bean: Managed Bean [class de.saxsys.mvvmfx.testingutils.JfxToolkitExtension] with qualifiers [@Any @Default]
+22:47:48.232 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-000106: Bean: Managed Bean [class net.bekwam.bkcourse.mvvmapp.MVVMApp] with qualifiers [@Any @Default]
+22:47:48.232 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-000106: Bean: Managed Bean [class net.bekwam.bkcourse.modelchangeapp.ModelChangeApp] with qualifiers [@Any @Default]
+22:47:48.232 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-000106: Bean: Managed Bean [class net.bekwam.bkcourse.modelchangeapp.URLTestModel] with qualifiers [@Any @Default]
+22:47:48.232 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-000106: Bean: Managed Bean [class de.saxsys.mvvmfx.examples.async_todoapp_futures.model.TodoItemServiceImpl] with qualifiers [@Any @Default]
+22:47:48.232 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-000106: Bean: Managed Bean [class de.saxsys.mvvmfx.internal.viewloader.GlobalBuilderFactory] with qualifiers [@Any @Default]
+22:47:48.232 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-000106: Bean: Implicit Bean [javax.enterprise.inject.spi.Bean] with qualifiers [@Intercepted]
+22:47:48.232 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-000106: Bean: Managed Bean [class de.saxsys.mvvmfx.internal.viewloader.PreventGarbageCollectionStore] with qualifiers [@Any @Default]
+22:47:48.232 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-000106: Bean: Implicit Bean [javax.enterprise.inject.spi.InjectionPoint] with qualifiers [@Default]
+22:47:48.232 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-000106: Bean: Managed Bean [class de.saxsys.mvvmfx.utils.sizebinding.internal.UnbindWidthBuilderStepImpl] with qualifiers [@Any @Default]
+22:47:48.232 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-000106: Bean: Managed Bean [class de.saxsys.mvvmfx.utils.sizebinding.SizeBindingsBuilder] with qualifiers [@Any @Default]
+22:47:48.232 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-000106: Bean: Managed Bean [class de.saxsys.mvvmfx.utils.mapping.ModelWrapper] with qualifiers [@Any @Default]
+22:47:48.232 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-000106: Bean: Managed Bean [class de.saxsys.mvvmfx.examples.async_todoapp_futures.ui.MainViewModel] with qualifiers [@Any @Default]
+22:47:48.232 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-000106: Bean: Implicit Bean [javax.enterprise.inject.spi.Decorator] with qualifiers [@Default]
+22:47:48.232 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-000106: Bean: Managed Bean [class de.saxsys.mvvmfx.utils.sizebinding.internal.UnbindHeightBuilderStepImpl] with qualifiers [@Any @Default]
+22:47:48.232 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-000106: Bean: Managed Bean [class de.saxsys.mvvmfx.internal.viewloader.ResourceBundleManager] with qualifiers [@Any @Default]
+22:47:48.232 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-000106: Bean: Managed Bean [class net.bekwam.bkcourse.mvvmapp.EmploymentRequestConverter] with qualifiers [@Any @Default]
+22:47:48.232 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-000106: Bean: Implicit Bean [javax.enterprise.inject.spi.InterceptionFactory] with qualifiers [@Default]
+22:47:48.233 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-000106: Bean: Managed Bean [class de.saxsys.mvvmfx.utils.listener.ListenerManager] with qualifiers [@Any @Default]
+22:47:48.233 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-000106: Bean: WELD%AbstractBuiltInBean%D:\DEV\MY-DATA\root\mydata\target\classes%Conversation
+22:47:48.233 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-000106: Bean: WELD%AbstractBuiltInBean%D:\DEV\MY-DATA\root\mydata\target\classes%RequestContextController
+22:47:48.233 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-000106: Bean: Managed Bean [class de.saxsys.mvvmfx.internal.viewloader.ReflectionUtils] with qualifiers [@Any @Default]
+22:47:48.233 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-000106: Bean: WELD%AbstractBuiltInBean%D:\DEV\MY-DATA\root\mydata\target\classes%BoundSessionContext
+22:47:48.233 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-000106: Bean: Managed Bean [class de.saxsys.mvvmfx.utils.sizebinding.internal.BindWidthBuilderStepImpl] with qualifiers [@Any @Default]
+22:47:48.233 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-000106: Bean: Managed Bean [class de.saxsys.mvvmfx.utils.validation.visualization.ControlsFxVisualizer] with qualifiers [@Any @Default]
+22:47:48.233 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-000106: Bean: Managed Bean [class de.saxsys.mvvmfx.utils.validation.ValidationStatus] with qualifiers [@Any @Default]
+22:47:48.233 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-000106: Bean: Managed Bean [class net.bekwam.bkcourse.mvvmapp.EmploymentRequestViewModel] with qualifiers [@Any @Default]
+22:47:48.233 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-000106: Bean: Managed Bean [class de.saxsys.mvvmfx.utils.validation.ObservableRuleBasedValidator] with qualifiers [@Any @Default]
+22:47:48.233 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-000106: Bean: Managed Bean [class de.saxsys.mvvmfx.testingutils.FxTestingUtils] with qualifiers [@Any @Default]
+22:47:48.233 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-000106: Bean: Managed Bean [class de.saxsys.mvvmfx.utils.sizebinding.internal.BindHeightBuilderStepImpl] with qualifiers [@Any @Default]
+22:47:48.233 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-000106: Bean: Producer Method [Parameters] with qualifiers [@Any @Default] declared as [[BackedAnnotatedMethod] @Produces public de.saxsys.mvvmfx.cdi.internal.MvvmfxProducer.produceApplicationParameters()]
+22:47:48.233 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-000106: Bean: Producer Method [HostServices] with qualifiers [@Any @Default] declared as [[BackedAnnotatedMethod] @Produces public de.saxsys.mvvmfx.cdi.internal.MvvmfxProducer.produceHostServices()]
+22:47:48.233 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-000106: Bean: Managed Bean [class de.saxsys.mvvmfx.utils.notifications.NotificationCenterFactory] with qualifiers [@Any @Default]
+22:47:48.233 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-000106: Bean: Producer Method [NotificationCenter] with qualifiers [@Any @Default] declared as [[BackedAnnotatedMethod] @Produces public de.saxsys.mvvmfx.cdi.internal.MvvmfxProducer.produceNotificationCenter()]
+22:47:48.233 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-000106: Bean: Producer Method [Stage] with qualifiers [@Any @Default] declared as [[BackedAnnotatedMethod] @Produces public de.saxsys.mvvmfx.cdi.internal.MvvmfxProducer.producePrimaryStage()]
+22:47:48.233 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-000106: Bean: WELD%AbstractBuiltInBean%D:\DEV\MY-DATA\root\mydata\target\classes%DependentContext
+22:47:48.233 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-000106: Bean: Implicit Bean [javax.enterprise.inject.spi.Bean] with qualifiers [@Default]
+22:47:48.234 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-000106: Bean: WELD%AbstractBuiltInBean%D:\DEV\MY-DATA\root\mydata\target\classes%SingletonContext
+22:47:48.234 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-000106: Bean: Managed Bean [class de.saxsys.mvvmfx.examples.async_todoapp_futures.ui.ControlsView] with qualifiers [@Any @Default]
+22:47:48.234 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-000106: Bean: WELD%AbstractBuiltInBean%D:\DEV\MY-DATA\root\mydata\target\classes%BoundRequestContext
+22:47:48.234 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-000106: Bean: Managed Bean [class de.saxsys.mvvmfx.testingutils.ExceptionUtils] with qualifiers [@Any @Default]
+22:47:48.234 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-000106: Bean: Managed Bean [class de.saxsys.mvvmfx.examples.async_todoapp_futures.ui.ItemListView] with qualifiers [@Any @Default]
+22:47:48.234 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-000106: Bean: Managed Bean [class de.saxsys.mvvmfx.utils.notifications.ThreadlessNotificationTestHelper] with qualifiers [@Any @Default]
+22:47:48.234 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-000106: Bean: Managed Bean [class de.saxsys.mvvmfx.cdi.internal.MvvmfxProducer] with qualifiers [@Any @Default]
+22:47:48.234 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-000106: Bean: Managed Bean [class net.bekwam.bkcourse.mvvmapp.EmploymentRequestView] with qualifiers [@Any @Default]
+22:47:48.234 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-000106: Bean: Managed Bean [class de.saxsys.mvvmfx.utils.notifications.DefaultNotificationCenter] with qualifiers [@Any @Default]
+22:47:48.234 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-000106: Bean: WELD%AbstractBuiltInBean%D:\DEV\MY-DATA\root\mydata\target\classes%ApplicationContext
+22:47:48.234 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-000106: Bean: Managed Bean [class de.saxsys.mvvmfx.FluentViewLoader] with qualifiers [@Any @Default]
+22:47:48.234 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-000106: Bean: Managed Bean [class net.bekwam.bkcourse.modelchangeapp.URLTestView] with qualifiers [@Any @Default]
+22:47:48.234 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-000106: Bean: Implicit Bean [javax.enterprise.inject.spi.Bean] with qualifiers [@Decorated]
+22:47:48.234 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-000106: Bean: Managed Bean [class de.saxsys.mvvmfx.internal.viewloader.ResourceBundleInjector] with qualifiers [@Any @Default]
+22:47:48.234 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-000106: Bean: Managed Bean [class datalife.ds.mydata.SecondaryController] with qualifiers [@Any @Default]
+22:47:48.234 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-000106: Bean: Managed Bean [class de.saxsys.mvvmfx.utils.sizebinding.internal.UnbindSizeBuilderStepImpl] with qualifiers [@Any @Default]
+22:47:48.234 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-000106: Bean: Managed Bean [class de.saxsys.mvvmfx.MvvmFX] with qualifiers [@Any @Default]
+22:47:48.234 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-000106: Bean: Managed Bean [class de.saxsys.mvvmfx.internal.viewloader.ViewLoaderScopeUtils] with qualifiers [@Any @Default]
+22:47:48.234 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-000106: Bean: Managed Bean [class net.bekwam.bkcourse.modelchangeapp.URLTestViewModel] with qualifiers [@Any @Default]
+22:47:48.234 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-000106: Bean: Managed Bean [class de.saxsys.mvvmfx.utils.sizebinding.internal.BindSizeBuilderStepImpl] with qualifiers [@Any @Default]
+22:47:48.234 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-000106: Bean: Managed Bean [class de.saxsys.mvvmfx.utils.notifications.NotificationTestHelper] with qualifiers [@Any @Default]
+22:47:48.234 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-000106: Bean: Managed Bean [class de.saxsys.mvvmfx.internal.viewloader.DependencyInjector] with qualifiers [@Any @Default]
+22:47:48.234 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-000106: Bean: Managed Bean [class de.saxsys.mvvmfx.utils.validation.CompositeValidator] with qualifiers [@Any @Default]
+22:47:48.234 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-000106: Bean: Managed Bean [class net.bekwam.bkcourse.modelchangeapp.Notifications] with qualifiers [@Any @Default]
+22:47:48.234 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-000106: Bean: Managed Bean [class de.saxsys.mvvmfx.internal.WeakValueHashMap] with qualifiers [@Any @Default]
+22:47:48.235 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-000106: Bean: Implicit Bean [javax.enterprise.event.Event] with qualifiers [@Default]
+22:47:48.235 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-000106: Bean: Managed Bean [class de.saxsys.mvvmfx.internal.viewloader.JavaViewLoader] with qualifiers [@Any @Default]
+22:47:48.235 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-000106: Bean: Implicit Bean [javax.enterprise.inject.spi.EventMetadata] with qualifiers [@Default]
+22:47:48.235 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-000106: Bean: Managed Bean [class de.saxsys.mvvmfx.internal.viewloader.FxmlViewLoader] with qualifiers [@Any @Default]
+22:47:48.235 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-000106: Bean: Implicit Bean [javax.enterprise.inject.Instance] with qualifiers [@Default]
+22:47:48.235 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-000106: Bean: Managed Bean [class de.saxsys.mvvmfx.internal.viewloader.ViewLoaderReflectionUtils] with qualifiers [@Any @Default]
+22:47:48.235 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-000106: Bean: Managed Bean [class de.saxsys.mvvmfx.utils.validation.ObservableRules] with qualifiers [@Any @Default]
+22:47:48.235 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-000106: Bean: Managed Bean [class de.saxsys.mvvmfx.internal.ContextImpl] with qualifiers [@Any @Default]
+22:47:48.235 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-000106: Bean: WELD%AbstractBuiltInBean%D:\DEV\MY-DATA\root\mydata\target\classes%BoundConversationContext
+22:47:48.235 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-000106: Bean: Managed Bean [class de.saxsys.mvvmfx.examples.async_todoapp_futures.ui.MainView] with qualifiers [@Any @Default]
+22:47:48.235 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-000106: Bean: Managed Bean [class de.saxsys.mvvmfx.examples.async_todoapp_futures.ui.TodoScope] with qualifiers [@Any @Default]
+22:47:48.235 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-000106: Bean: Managed Bean [class net.bekwam.bkcourse.mvvmapp.EmploymentRequestModel] with qualifiers [@Any @Default]
+22:47:48.235 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-000106: Bean: Managed Bean [class datalife.ds.mydata.App] with qualifiers [@Any @Default]
+22:47:48.235 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-000106: Bean: Implicit Bean [javax.enterprise.inject.spi.Interceptor] with qualifiers [@Default]
+22:47:48.235 [JavaFX Application Thread] DEBUG org.jboss.weld.BootstrapTracker - START bootstrap > deployBeans > AfterBeanDiscovery 
+22:47:48.240 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-000156: AfterBeanDiscovery.addContext() called by org.jboss.weld.environment.se.WeldSEBeanRegistrant@2b87c93a for org.jboss.weld.environment.se.contexts.ThreadContext@98c37cb
+22:47:48.246 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-000154: AfterBeanDiscovery.addBean() called by org.jboss.weld.environment.se.WeldSEBeanRegistrant@2b87c93a for Configurator Bean [class org.jboss.weld.environment.se.WeldSEBeanRegistrant, types: Object, WeldContainer, qualifiers: @Any @Default]
+22:47:48.247 [JavaFX Application Thread] DEBUG org.jboss.weld.Bootstrap - WELD-000106: Bean: Configurator Bean [class org.jboss.weld.environment.se.WeldSEBeanRegistrant, types: Object, WeldContainer, qualifiers: @Any @Default]
+22:47:48.247 [JavaFX Application Thread] DEBUG org.jboss.weld.BootstrapTracker -   END bootstrap > deployBeans > AfterBeanDiscovery (11 ms)
+22:47:48.264 [ForkJoinPool.commonPool-worker-1] DEBUG org.jboss.weld.Bean - Catching
+java.lang.ExceptionInInitializerError: null
+	at org.jboss.weld.bean.proxy.ProxyFactory.newClassFile(ProxyFactory.java:489)
+	at org.jboss.weld.bean.proxy.ProxyFactory.createProxyClass(ProxyFactory.java:446)
+	at org.jboss.weld.bean.proxy.ProxyFactory.getProxyClass(ProxyFactory.java:374)
+	at org.jboss.weld.bean.builtin.AbstractFacadeBean.initializeAfterBeanDiscovery(AbstractFacadeBean.java:61)
+	at org.jboss.weld.bootstrap.ConcurrentBeanDeployer$AfterBeanDiscoveryInitializerFactory.doWork(ConcurrentBeanDeployer.java:111)
+	at org.jboss.weld.bootstrap.ConcurrentBeanDeployer$AfterBeanDiscoveryInitializerFactory.doWork(ConcurrentBeanDeployer.java:102)
+	at org.jboss.weld.executor.IterativeWorkerTaskFactory$1.call(IterativeWorkerTaskFactory.java:62)
+	at org.jboss.weld.executor.IterativeWorkerTaskFactory$1.call(IterativeWorkerTaskFactory.java:55)
+	at java.base/java.util.concurrent.ForkJoinTask$AdaptedInterruptibleCallable.exec(ForkJoinTask.java:1489)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:387)
+	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1312)
+	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1843)
+	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1808)
+	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:188)
+Caused by: java.lang.reflect.InaccessibleObjectException: Unable to make protected final java.lang.Class java.lang.ClassLoader.defineClass(java.lang.String,byte[],int,int) throws java.lang.ClassFormatError accessible: module java.base does not "opens java.lang" to unnamed module @35ef1869
+	at java.base/java.lang.reflect.AccessibleObject.throwInaccessibleObjectException(AccessibleObject.java:387)
+	at java.base/java.lang.reflect.AccessibleObject.checkCanSetAccessible(AccessibleObject.java:363)
+	at java.base/java.lang.reflect.AccessibleObject.checkCanSetAccessible(AccessibleObject.java:311)
+	at java.base/java.lang.reflect.Method.checkCanSetAccessible(Method.java:201)
+	at java.base/java.lang.reflect.Method.setAccessible(Method.java:195)
+	at org.jboss.classfilewriter.ClassFile$1.run(ClassFile.java:238)
+	at java.base/java.security.AccessController.doPrivileged(AccessController.java:571)
+	at org.jboss.classfilewriter.ClassFile.<clinit>(ClassFile.java:233)
+	... 14 common frames omitted
+22:47:48.264 [ForkJoinPool.commonPool-worker-2] DEBUG org.jboss.weld.Bean - Catching
+java.lang.NoClassDefFoundError: Could not initialize class org.jboss.classfilewriter.ClassFile
+	at org.jboss.weld.bean.proxy.ProxyFactory.newClassFile(ProxyFactory.java:489)
+	at org.jboss.weld.bean.proxy.ProxyFactory.createProxyClass(ProxyFactory.java:446)
+	at org.jboss.weld.bean.proxy.ProxyFactory.getProxyClass(ProxyFactory.java:374)
+	at org.jboss.weld.bean.builtin.AbstractFacadeBean.initializeAfterBeanDiscovery(AbstractFacadeBean.java:61)
+	at org.jboss.weld.bootstrap.ConcurrentBeanDeployer$AfterBeanDiscoveryInitializerFactory.doWork(ConcurrentBeanDeployer.java:111)
+	at org.jboss.weld.bootstrap.ConcurrentBeanDeployer$AfterBeanDiscoveryInitializerFactory.doWork(ConcurrentBeanDeployer.java:102)
+	at org.jboss.weld.executor.IterativeWorkerTaskFactory$1.call(IterativeWorkerTaskFactory.java:62)
+	at org.jboss.weld.executor.IterativeWorkerTaskFactory$1.call(IterativeWorkerTaskFactory.java:55)
+	at java.base/java.util.concurrent.ForkJoinTask$AdaptedInterruptibleCallable.exec(ForkJoinTask.java:1489)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:387)
+	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1312)
+	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1843)
+	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1808)
+	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:188)
+Caused by: java.lang.ExceptionInInitializerError: Exception java.lang.reflect.InaccessibleObjectException: Unable to make protected final java.lang.Class java.lang.ClassLoader.defineClass(java.lang.String,byte[],int,int) throws java.lang.ClassFormatError accessible: module java.base does not "opens java.lang" to unnamed module @35ef1869 [in thread "ForkJoinPool.commonPool-worker-1"]
+	at java.base/java.lang.reflect.AccessibleObject.throwInaccessibleObjectException(AccessibleObject.java:387)
+	at java.base/java.lang.reflect.AccessibleObject.checkCanSetAccessible(AccessibleObject.java:363)
+	at java.base/java.lang.reflect.AccessibleObject.checkCanSetAccessible(AccessibleObject.java:311)
+	at java.base/java.lang.reflect.Method.checkCanSetAccessible(Method.java:201)
+	at java.base/java.lang.reflect.Method.setAccessible(Method.java:195)
+	at org.jboss.classfilewriter.ClassFile$1.run(ClassFile.java:238)
+	at java.base/java.security.AccessController.doPrivileged(AccessController.java:571)
+	at org.jboss.classfilewriter.ClassFile.<clinit>(ClassFile.java:233)
+	... 14 common frames omitted
+]]></system-out>
+    <system-err><![CDATA[7월 03, 2023 10:47:47 오후 com.sun.javafx.application.PlatformImpl startup
+경고: Unsupported JavaFX configuration: classes were loaded from 'unnamed module @35ef1869'
+Exception in Application constructor
+]]></system-err>
+  </testcase>
+</testsuite>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<workingSetManager>
+<workingSet editPageId="org.eclipse.jdt.internal.ui.DynamicSourcesWorkingSet" factoryID="org.eclipse.ui.internal.WorkingSetFactory" id="1688250029251_0" label="Java Main Sources" name="Java Main Sources"/>
+<workingSet editPageId="org.eclipse.jdt.internal.ui.DynamicSourcesWorkingSet" factoryID="org.eclipse.ui.internal.WorkingSetFactory" id="1688250029262_1" label="Java Test Sources" name="Java Test Sources"/>
+<workingSet editPageId="org.eclipse.ui.resourceWorkingSetPage" factoryID="org.eclipse.ui.internal.WorkingSetFactory" id="1688302392279_3" label="mvvmfx-parent" name="mvvmfx-parent">
+<item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/mvvmfx-parent" type="4"/>
+<item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/mvvmfx" type="4"/>
+<item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/mvvmfx-cdi" type="4"/>
+<item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/mvvmfx-guice" type="4"/>
+<item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/mvvmfx-easydi" type="4"/>
+<item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/mvvmfx-spring-boot" type="4"/>
+<item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/examples" type="4"/>
+<item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/contacts-example" type="4"/>
+<item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/books-example" type="4"/>
+<item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/todomvc-example" type="4"/>
+<item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/mini-examples" type="4"/>
+<item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/synchronizefx-example" type="4"/>
+<item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/fx-root-example" type="4"/>
+<item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/helloworld" type="4"/>
+<item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/helloworld-without-fxml" type="4"/>
+<item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/welcome-example" type="4"/>
+<item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/scopes-example" type="4"/>
+<item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/async-todoapp-futures" type="4"/>
+<item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/helloworld-custom-fxml-path" type="4"/>
+<item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/helloworld-spring-boot" type="4"/>
+<item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/mvvmfx-archetype" type="4"/>
+<item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/mvvmfx-utils" type="4"/>
+<item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/mvvmfx-testing-utils" type="4"/>
+<item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/mvvmfx-validation" type="4"/>
+</workingSet>
+<workingSet aggregate="true" factoryID="org.eclipse.ui.internal.WorkingSetFactory" id="1688250030256_2" label="Window Working Set" name="Aggregate for window 1688250030256"/>
+</workingSetManager>

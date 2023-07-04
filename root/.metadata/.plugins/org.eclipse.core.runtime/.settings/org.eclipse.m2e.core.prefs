@@ -1,0 +1,9 @@
+eclipse.m2.WorkspacelifecycleMappingsLocation=D\:/DEV/MY-DATA/root/.metadata/.plugins/org.eclipse.m2e.core/lifecycle-mapping-metadata.xml
+eclipse.m2.defaultRuntime=apache-maven-3.9.3
+eclipse.m2.globalSettingsFile=D\:\\DEV\\MY-DATA\\apache-maven-3.9.3\\conf\\settings.xml
+eclipse.m2.runtimes=apache-maven-3.9.3
+eclipse.m2.runtimesNodes/apache-maven-3.9.3/location=D\:\\DEV\\MY-DATA\\apache-maven-3.9.3
+eclipse.m2.runtimesNodes/apache-maven-3.9.3/type=EXTERNAL
+eclipse.m2.unkownMojoExecutionAction=execute
+eclipse.m2.userSettingsFile=D\:\\DEV\\MY-DATA\\apache-maven-3.9.3\\conf\\settings.xml
+eclipse.preferences.version=1

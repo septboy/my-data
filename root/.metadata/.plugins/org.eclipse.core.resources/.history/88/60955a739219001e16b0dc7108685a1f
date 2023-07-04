@@ -1,0 +1,9 @@
+module datalife.ds.mydata {
+    requires javafx.controls;
+    requires javafx.fxml;
+    
+	requires slf4j.api;
+
+    opens datalife.ds.mydata to javafx.fxml;
+    exports datalife.ds.mydata;
+}
