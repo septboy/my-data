@@ -45,7 +45,7 @@ public class MvvmfxProducer {
 	private Stage primaryStage;
 	private Application.Parameters parameters;
 	
-	@Produces
+	//@Produces
 	public NotificationCenter produceNotificationCenter() {
 		return MvvmFX.getNotificationCenter();
 	}
