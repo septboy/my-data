@@ -15,16 +15,19 @@
  ******************************************************************************/
 package de.saxsys.mvvmfx.cdi;
 
-import javax.enterprise.context.spi.CreationalContext;
-import javax.enterprise.inject.se.SeContainer;
-import javax.enterprise.inject.se.SeContainerInitializer;
-import javax.enterprise.inject.spi.BeanManager;
-import javax.enterprise.inject.spi.InjectionTarget;
-import javax.inject.Inject;
-
 import de.saxsys.mvvmfx.MvvmFX;
 import de.saxsys.mvvmfx.cdi.internal.MvvmfxProducer;
 import de.saxsys.mvvmfx.internal.MvvmfxApplication;
+import jakarta.enterprise.context.spi.CreationalContext;
+import jakarta.enterprise.inject.se.SeContainer;
+import jakarta.enterprise.inject.se.SeContainerInitializer;
+import jakarta.enterprise.inject.spi.AnnotatedType;
+import jakarta.enterprise.inject.spi.Bean;
+import jakarta.enterprise.inject.spi.BeanAttributes;
+import jakarta.enterprise.inject.spi.BeanManager;
+import jakarta.enterprise.inject.spi.InjectionTarget;
+import jakarta.enterprise.inject.spi.InjectionTargetFactory;
+import jakarta.inject.Inject;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
@@ -84,9 +87,20 @@ public abstract class MvvmfxCdiApplication extends Application implements Mvvmfx
 	@Override
 	public final void init() throws Exception {
 		ctx = beanManager.createCreationalContext(null);
-		injectionTarget = beanManager.createInjectionTarget(
-				beanManager.createAnnotatedType((Class<MvvmfxCdiApplication>) this.getClass()));
+		AnnotatedType<MvvmfxCdiApplication> annotatedType = beanManager.createAnnotatedType((Class<MvvmfxCdiApplication>) this.getClass());
+		InjectionTargetFactory<MvvmfxCdiApplication> injectionTargetFactory = beanManager.getInjectionTargetFactory(
+				annotatedType
+				);
 
+		BeanAttributes<MvvmfxCdiApplication> beanAttributes = beanManager.createBeanAttributes(annotatedType);
+		
+		Bean<MvvmfxCdiApplication> beanMvvmfxCdiApplication = beanManager.createBean(
+				beanAttributes
+				, MvvmfxCdiApplication.class
+				, injectionTargetFactory
+			);
+		
+		injectionTarget = injectionTargetFactory.createInjectionTarget(beanMvvmfxCdiApplication);
 		injectionTarget.inject(this, ctx);
 		injectionTarget.postConstruct(this);
 

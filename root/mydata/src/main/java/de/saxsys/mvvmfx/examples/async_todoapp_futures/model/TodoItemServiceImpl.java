@@ -1,9 +1,10 @@
 package de.saxsys.mvvmfx.examples.async_todoapp_futures.model;
 
 
-import javax.inject.Singleton;
 import java.util.ArrayList;
 import java.util.List;
+
+import jakarta.inject.Singleton;
 
 @Singleton
 public class TodoItemServiceImpl implements TodoItemService {

@@ -15,16 +15,13 @@
  ******************************************************************************/
 package de.saxsys.mvvmfx.cdi.internal;
 
+import de.saxsys.mvvmfx.MvvmFX;
+import de.saxsys.mvvmfx.utils.notifications.NotificationCenter;
+import jakarta.enterprise.inject.Produces;
+import jakarta.inject.Singleton;
 import javafx.application.Application;
 import javafx.application.HostServices;
 import javafx.stage.Stage;
-
-import javax.enterprise.inject.Produces;
-import javax.inject.Named;
-import javax.inject.Singleton;
-
-import de.saxsys.mvvmfx.MvvmFX;
-import de.saxsys.mvvmfx.utils.notifications.NotificationCenter;
 
 
 /**
@@ -45,7 +42,7 @@ public class MvvmfxProducer {
 	private Stage primaryStage;
 	private Application.Parameters parameters;
 	
-	//@Produces
+	@Produces
 	public NotificationCenter produceNotificationCenter() {
 		return MvvmFX.getNotificationCenter();
 	}

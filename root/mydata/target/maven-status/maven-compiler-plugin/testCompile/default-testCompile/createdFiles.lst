@@ -1,0 +1,13 @@
+de\saxsys\mvvmfx\testingutils\ExceptionUtils.class
+de\saxsys\mvvmfx\testingutils\GCVerifier.class
+ds\mydata\manager\MydataManager.class
+de\saxsys\mvvmfx\cdi\it\MyView.class
+ds\mydata\test\DsQueryTest.class
+de\saxsys\mvvmfx\testingutils\FxTestingUtils.class
+de\saxsys\mvvmfx\cdi\it\IntegrationTest.class
+de\saxsys\mvvmfx\cdi\it\MyApp.class
+de\saxsys\mvvmfx\testingutils\jfxrunner\TestInJfxThread.class
+de\saxsys\mvvmfx\testingutils\jfxrunner\JfxRunner.class
+de\saxsys\mvvmfx\cdi\it\MyViewModel.class
+de\saxsys\mvvmfx\testingutils\JfxToolkitExtension.class
+de\saxsys\mvvmfx\cdi\it\MyService.class

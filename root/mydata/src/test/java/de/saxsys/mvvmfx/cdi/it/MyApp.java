@@ -3,11 +3,10 @@ package de.saxsys.mvvmfx.cdi.it;
 import de.saxsys.mvvmfx.FluentViewLoader;
 import de.saxsys.mvvmfx.ViewTuple;
 import de.saxsys.mvvmfx.cdi.MvvmfxCdiApplication;
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.PreDestroy;
 import javafx.application.Platform;
 import javafx.stage.Stage;
-
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
 
 public class MyApp extends MvvmfxCdiApplication {
 	

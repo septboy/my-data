@@ -1,8 +1,9 @@
 package de.saxsys.mvvmfx.examples.async_todoapp_futures.model;
 
 
-import javax.inject.Singleton;
 import java.util.List;
+
+import jakarta.inject.Singleton;
 
 @Singleton
 public interface TodoItemService {
