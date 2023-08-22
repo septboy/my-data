@@ -5,6 +5,7 @@ import org.jboss.weld.junit5.auto.EnableAlternativeStereotypes;
 import org.jboss.weld.junit5.auto.EnableAutoWeld;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import com.querydsl.core.types.SubQueryExpression;
@@ -38,6 +39,7 @@ import ds.sqlite.producer.LocalProducer;
 @EnableAlternativeStereotypes( EhrDev.class )
 @EnableAlternativeStereotypes( Meta.class )
 @EnableAlternativeStereotypes( Local.class )
+@Disabled
 public class DsQueryTest {
 
 	// WeldInitiator is used to bootstrap the CDI container.

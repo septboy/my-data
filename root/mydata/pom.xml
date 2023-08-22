@@ -8,20 +8,25 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.test.skip>false</maven.test.skip>
-		
+
 		<maven.compiler.source>20</maven.compiler.source>
 		<maven.compiler.target>20</maven.compiler.target>
 		<datalife-ds-version>1.0-SNAPSHOT</datalife-ds-version>
 		<junit-jupiter-version>5.9.3</junit-jupiter-version>
 		<weld-junit5-version>4.0.0.Final</weld-junit5-version>
-		
+
 		<weld-se-core-version>5.1.1.Final</weld-se-core-version>
 		<jakarta-cdi-api-version>4.0.1</jakarta-cdi-api-version>
 		<jakarta.validation-api-version>3.0.2</jakarta.validation-api-version>
-		<weld-junit5-version>4.0.0.Final</weld-junit5-version>
+
+		<!-- log -->
+		<slf4j-version>2.0.7</slf4j-version>
+		<log4j-core-version>2.18.0</log4j-core-version>
+		<jboss-logging-version>3.5.0.Final</jboss-logging-version>
+		<logback-classic-version>1.4.5</logback-classic-version>
 		
 	</properties>
-	
+
 	<dependencies>
 		<dependency>
 			<groupId>org.openjfx</groupId>
@@ -63,18 +68,13 @@
 			<artifactId>typetools</artifactId>
 			<version>0.6.1</version>
 		</dependency>
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-api</artifactId>
-			<version>1.7.12</version>
-		</dependency>
+
 		<dependency>
 			<groupId>org.assertj</groupId>
 			<artifactId>assertj-core</artifactId>
 			<version>1.7.1</version>
 			<scope>test</scope>
 		</dependency>
-
 		<dependency>
 			<groupId>com.cedarsoft.commons</groupId>
 			<artifactId>test-utils</artifactId>
@@ -87,69 +87,69 @@
 			<version>8.40.12</version>
 			<scope>provided</scope>
 		</dependency>
-		
+
 		<!-- DS lib -->
 		<dependency>
-				<groupId>datalife.ds</groupId>
-				<artifactId>ds-common</artifactId>
-				<version>${datalife-ds-version}</version>
-			</dependency>
+			<groupId>datalife.ds</groupId>
+			<artifactId>ds-common</artifactId>
+			<version>${datalife-ds-version}</version>
+		</dependency>
 		<dependency>
-				<groupId>datalife.ds</groupId>
-				<artifactId>ds-data-core</artifactId>
-				<version>${datalife-ds-version}</version>
-			</dependency>
-			<dependency>
-				<groupId>datalife.ds</groupId>
-				<artifactId>ds-ui</artifactId>
-				<version>${datalife-ds-version}</version>
-			</dependency>	
-			<dependency>
-				<groupId>datalife.ds</groupId>
-				<artifactId>ds-sqlite</artifactId>
-				<version>${datalife-ds-version}</version>
-			</dependency>
-			<dependency>
-				<groupId>datalife.ds</groupId>
-				<artifactId>ds-condition</artifactId>
-				<version>${datalife-ds-version}</version>
-			</dependency>
-			<dependency>
-				<groupId>datalife.ds</groupId>
-				<artifactId>ehr-code</artifactId>
-				<version>${datalife-ds-version}</version>
-			</dependency>
-			<dependency>
-				<groupId>datalife.ds</groupId>
-				<artifactId>ehr-querydsl</artifactId>
-				<version>${datalife-ds-version}</version>
-			</dependency>
-			<dependency>
-				<groupId>datalife.ds</groupId>
-				<artifactId>ehr-dao</artifactId>
-				<version>${datalife-ds-version}</version>
-			</dependency>
-			<dependency>
-				<groupId>datalife.ds</groupId>
-				<artifactId>ehr-meta-dao</artifactId>
-				<version>${datalife-ds-version}</version>
-			</dependency>
-			<dependency>
-				<groupId>datalife.ds</groupId>
-				<artifactId>ehr-meta</artifactId>
-				<version>${datalife-ds-version}</version>
-			</dependency>
-			<dependency>
-				<groupId>datalife.ds</groupId>
-				<artifactId>ehr-function</artifactId>
-				<version>${datalife-ds-version}</version>
-			</dependency>
+			<groupId>datalife.ds</groupId>
+			<artifactId>ds-data-core</artifactId>
+			<version>${datalife-ds-version}</version>
+		</dependency>
 		<dependency>
-				<groupId>datalife.ds</groupId>
-				<artifactId>ehr-research</artifactId>
-				<version>${datalife-ds-version}</version>
-			</dependency>
-			<!--
+			<groupId>datalife.ds</groupId>
+			<artifactId>ds-ui</artifactId>
+			<version>${datalife-ds-version}</version>
+		</dependency>
+		<dependency>
+			<groupId>datalife.ds</groupId>
+			<artifactId>ds-sqlite</artifactId>
+			<version>${datalife-ds-version}</version>
+		</dependency>
+		<dependency>
+			<groupId>datalife.ds</groupId>
+			<artifactId>ds-condition</artifactId>
+			<version>${datalife-ds-version}</version>
+		</dependency>
+		<dependency>
+			<groupId>datalife.ds</groupId>
+			<artifactId>ehr-code</artifactId>
+			<version>${datalife-ds-version}</version>
+		</dependency>
+		<dependency>
+			<groupId>datalife.ds</groupId>
+			<artifactId>ehr-querydsl</artifactId>
+			<version>${datalife-ds-version}</version>
+		</dependency>
+		<dependency>
+			<groupId>datalife.ds</groupId>
+			<artifactId>ehr-dao</artifactId>
+			<version>${datalife-ds-version}</version>
+		</dependency>
+		<dependency>
+			<groupId>datalife.ds</groupId>
+			<artifactId>ehr-meta-dao</artifactId>
+			<version>${datalife-ds-version}</version>
+		</dependency>
+		<dependency>
+			<groupId>datalife.ds</groupId>
+			<artifactId>ehr-meta</artifactId>
+			<version>${datalife-ds-version}</version>
+		</dependency>
+		<dependency>
+			<groupId>datalife.ds</groupId>
+			<artifactId>ehr-function</artifactId>
+			<version>${datalife-ds-version}</version>
+		</dependency>
+		<dependency>
+			<groupId>datalife.ds</groupId>
+			<artifactId>ehr-research</artifactId>
+			<version>${datalife-ds-version}</version>
+		</dependency>
+		<!--
 			<dependency>
 				<groupId>datalife.ds</groupId>
 				<artifactId>ehr-emrdoc</artifactId>
@@ -157,29 +157,43 @@
 			</dependency>
 			-->
 
-			<!-- CDI  -->
-			<dependency>
-				<groupId>org.jboss.weld.se</groupId>
-				<artifactId>weld-se-core</artifactId>
-				<version>${weld-se-core-version}</version>
-			</dependency>
-			<dependency>
-				<groupId>jakarta.enterprise</groupId>
-				<artifactId>jakarta.enterprise.cdi-api</artifactId>
-				<version>${jakarta-cdi-api-version}</version>
-			</dependency>
-			<dependency>
-				<groupId>jakarta.validation</groupId>
-				<artifactId>jakarta.validation-api</artifactId>
-				<version>${jakarta.validation-api-version}</version>
-			</dependency>
-		
+		<!-- CDI  -->
 		<dependency>
-		    <groupId>commons-io</groupId>
-		    <artifactId>commons-io</artifactId>
-		    <version>2.13.0</version>
+			<groupId>org.jboss.weld.se</groupId>
+			<artifactId>weld-se-core</artifactId>
+			<version>${weld-se-core-version}</version>
 		</dependency>
-		
+		<dependency>
+			<groupId>jakarta.enterprise</groupId>
+			<artifactId>jakarta.enterprise.cdi-api</artifactId>
+			<version>${jakarta-cdi-api-version}</version>
+		</dependency>
+		<dependency>
+			<groupId>jakarta.validation</groupId>
+			<artifactId>jakarta.validation-api</artifactId>
+			<version>${jakarta.validation-api-version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+			<version>2.13.0</version>
+		</dependency>
+
+		<!-- logger -->
+		<dependency>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-classic</artifactId>
+			<version>${logback-classic-version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss.logging</groupId>
+			<artifactId>jboss-logging</artifactId>
+			<version>${jboss-logging-version}</version>
+			<scope>test</scope>
+		</dependency>
+
 		<!-- Testing Frameworks -->
 		<dependency>
 			<groupId>junit</groupId>
@@ -205,14 +219,14 @@
 			<version>${weld-junit5-version}</version>
 			<scope>test</scope>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>org.mockito</groupId>
 			<artifactId>mockito-all</artifactId>
 			<version>1.10.19</version>
 			<scope>test</scope>
 		</dependency>
-		
+
 	</dependencies>
 	<build>
 		<plugins>

@@ -37,19 +37,19 @@ public class MydataManager implements DatabaseManager {
 	@Named(EHR.DataSource.AAEHRTEST)
 	private EntityManager mEntityManagerTest;
 	
-	@Inject
-	@EhrDev
-	@Named(EHR.DataSource.EHRDEV)
+//	@Inject
+//	@EhrDev
+//	@Named(EHR.DataSource.EHRDEV)
 	private EntityManager mEntityManagerDev;
 	
-	@Inject
-	@Meta
-	@Named(META.DataSource.META)
+//	@Inject
+//	@Meta
+//	@Named(META.DataSource.META)
 	private EntityManager mEntityManagerMeta;
 	
-	@Inject
-	@Local
-	@Named(LOCAL.DataSource.LOCAL)
+//	@Inject
+//	@Local
+//	@Named(LOCAL.DataSource.LOCAL)
 	private EntityManager mEntityManagerLocal;
 	
 	private String mLocate = null;

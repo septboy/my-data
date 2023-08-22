@@ -58,6 +58,7 @@ public abstract class MvvmfxCdiApplication extends Application implements Mvvmfx
 		mvvmfxProducer.setHostServices(getHostServices());
 
 		beanManager = container.getBeanManager();
+		
 	}
 
 	/**
