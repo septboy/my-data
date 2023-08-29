@@ -1,0 +1,154 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>datalife.mydata</groupId>
+		<artifactId>mydata-root</artifactId>
+		<version>1.0-SNAPSHOT</version>
+	</parent>
+	<artifactId>mydata-ds-view</artifactId>
+	<name>mydata-ds-view</name>
+
+	<dependencies>
+		<dependency>
+			<groupId>datalife.mydata</groupId>
+			<artifactId>mydata-mvvmfx</artifactId>
+		</dependency>
+
+		<!-- DataSet -->
+		<dependency>
+			<groupId>datalife.ds</groupId>
+			<artifactId>ehr-code</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>datalife.ds</groupId>
+			<artifactId>ehr-querydsl</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>datalife.ds</groupId>
+			<artifactId>ehr-dao</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>datalife.ds</groupId>
+			<artifactId>ehr-meta-dao</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>datalife.ds</groupId>
+			<artifactId>ehr-meta</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>datalife.ds</groupId>
+			<artifactId>ehr-function</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>datalife.ds</groupId>
+			<artifactId>ehr-research</artifactId>
+		</dependency>
+		
+		<!-- XML -->
+		<dependency>
+		    <groupId>javax.xml.bind</groupId>
+		    <artifactId>jaxb-api</artifactId>
+		</dependency>
+
+
+		<!-- Font Icon -->
+		<dependency>
+			<groupId>de.jensd</groupId>
+			<artifactId>fontawesomefx</artifactId>
+			<version>8.0.9</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.javafxdata</groupId>
+			<artifactId>datafx-core</artifactId>
+			<version>8.0b5</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.javafxdata</groupId>
+			<artifactId>datafx-datareader</artifactId>
+			<version>8.0b5</version>
+		</dependency>
+		
+		<!-- Test -->
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter-api</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter-engine</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss.weld</groupId>
+			<artifactId>weld-junit5</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-all</artifactId>
+			<scope>test</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.controlsfx</groupId>
+			<artifactId>controlsfx</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		
+		<!-- logger -->
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-classic</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss.logging</groupId>
+			<artifactId>jboss-logging</artifactId>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+	
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.8.0</version>
+				<configuration>
+					<release>20</release>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.openjfx</groupId>
+				<artifactId>javafx-maven-plugin</artifactId>
+				<version>0.0.8</version>
+				<configuration>
+					<mainClass>mydata.ds.view.MainApp</mainClass>
+				</configuration>
+			</plugin>
+		</plugins>
+
+		<resources>
+			<resource>
+				<directory>src/main/java</directory>
+			</resource>
+			<resource>
+				<directory>src/main/resources</directory>
+			</resource>
+		</resources>
+	</build>
+</project>
