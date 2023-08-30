@@ -8,10 +8,10 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
 
-<AnchorPane maxHeight="462.0" maxWidth="713.0" minHeight="400" minWidth="600" opacity="0.49" prefHeight="462.0" prefWidth="650.0" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.saxsys.mvvmfx.cdi.it.MyView">
+<AnchorPane id="dataSetAnchorPane" fx:id="dataSetAnchorPane" maxHeight="462.0" maxWidth="713.0" minHeight="400" minWidth="600" prefHeight="462.0" prefWidth="650.0" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mydata.ds.view.dataset.DataSetView">
 	
 	<children>
-      <Pane maxHeight="25.0" minHeight="25.0" prefHeight="25.0" style="-fx-border-color: green; -fx-border-width: 1; -fx-background-color: green;" AnchorPane.leftAnchor="30.0" AnchorPane.rightAnchor="30.0" AnchorPane.topAnchor="30.0" />
+      <Pane id="dataSetTitlePane" fx:id="dataSetTitlePane" maxHeight="25.0" minHeight="25.0" prefHeight="25.0" style="-fx-border-color: green; -fx-border-width: 1; -fx-background-color: green;" AnchorPane.leftAnchor="30.0" AnchorPane.rightAnchor="30.0" AnchorPane.topAnchor="30.0" />
       <SplitPane dividerPositions="0.3, 0.5" layoutX="60.0" layoutY="60.0" prefHeight="368.0" prefWidth="551.0" AnchorPane.bottomAnchor="50.0" AnchorPane.leftAnchor="30.0" AnchorPane.rightAnchor="30.0" AnchorPane.topAnchor="56.0">
         <items>
           <AnchorPane maxWidth="100.0" minWidth="100.0" prefWidth="100.0">
@@ -23,7 +23,7 @@
                   </VBox>
                </children>
             </AnchorPane>
-            <TableView id="table_view" fx:id="table_view" prefHeight="400.0" prefWidth="469.0" />
+            <TableView id="dataSetTableView" fx:id="dataSetTableView" prefHeight="400.0" prefWidth="469.0" />
           <AnchorPane maxWidth="100.0" minWidth="100.0" prefWidth="100.0">
                <children>
                   <VBox alignment="TOP_CENTER" maxWidth="100.0" minWidth="100.0" nodeOrientation="RIGHT_TO_LEFT" prefWidth="100.0">

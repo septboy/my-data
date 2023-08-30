@@ -8,13 +8,14 @@ import de.saxsys.mvvmfx.ViewModel;
 import jakarta.enterprise.inject.Instance;
 import jakarta.inject.Inject;
 import mydata.ds.view.scopes.ContactDialogScope;
+import mydata.ds.view.scopes.DataSetScope;
 
 public class ToolbarViewModel implements ViewModel {
 
 	@Inject
-	private Instance<ContactDialogScope> scopeInstance;
+	private Instance<DataSetScope> scopeInstance;
 
-	public List<Scope> getScopesForAddDialog() {
+	public List<Scope> getScopesForDataSet() {
 		return Collections.singletonList(scopeInstance.get());
 	}
 }

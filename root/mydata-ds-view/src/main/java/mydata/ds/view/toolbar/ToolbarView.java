@@ -10,15 +10,21 @@ import jakarta.inject.Inject;
 import javafx.fxml.FXML;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
+import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
-import mydata.ds.view.dataset.AddContactDialogView;
-import mydata.ds.view.dataset.AddContactDialogViewModel;
+import mydata.ds.view.dataset.DataSetView;
+import mydata.ds.view.dataset.DataSetViewModel;
+import mydata.ds.view.main.MainView;
+import mydata.ds.view.util.DataSetHelper;
 import mydata.ds.view.util.DialogHelper;
 
 public class ToolbarView implements FxmlView<ToolbarViewModel> {
 
 	@FXML
-	public Button addNewContactButton;
+	public Button appatEHRButton;
+
+	@FXML
+	public Button emrdocFormButton;
 
 	@InjectViewModel
 	private ToolbarViewModel viewModel;
@@ -27,18 +33,20 @@ public class ToolbarView implements FxmlView<ToolbarViewModel> {
 	private Stage primaryStage;
 
 	public void initialize() {
-		AwesomeDude.setIcon(addNewContactButton, AwesomeIcon.PLUS);
+		AwesomeDude.setIcon(appatEHRButton, AwesomeIcon.PLUS);
+		AwesomeDude.setIcon(emrdocFormButton, AwesomeIcon.PLUS);
 	}
 
 	@FXML
-	public void addNewContact() {
-		ViewTuple<AddContactDialogView, AddContactDialogViewModel> load = FluentViewLoader
-				.fxmlView(AddContactDialogView.class)
-				.providedScopes(viewModel.getScopesForAddDialog())
+	public void openNewDataSet() {
+
+		ViewTuple<DataSetView, DataSetViewModel> load = FluentViewLoader
+				.fxmlView(DataSetView.class)
+				.providedScopes(viewModel.getScopesForDataSet())
 				.load();
-		Parent view = load.getView();
-		Stage showDialog = DialogHelper.showDialog(view, primaryStage, "/contacts.css");
-		load.getCodeBehind().setDisplayingStage(showDialog);
+		Parent dataSetView = load.getView();
+		AnchorPane retrievedAnchorPane = (AnchorPane) primaryStage.getScene().getRoot();
+		DataSetHelper.openDataSet(retrievedAnchorPane, dataSetView );
 	}
 
 }

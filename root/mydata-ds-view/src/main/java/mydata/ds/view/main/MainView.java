@@ -7,4 +7,9 @@ public class MainView implements FxmlView<MainViewModel> {
 
 	@InjectViewModel
 	private MainViewModel viewModel;
+	
+	public void initialize() {
+		
+	}
+
 }
