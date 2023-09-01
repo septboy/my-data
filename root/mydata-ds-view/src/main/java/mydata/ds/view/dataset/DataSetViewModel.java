@@ -2,63 +2,58 @@ package mydata.ds.view.dataset;
 
 import java.util.ResourceBundle;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.querydsl.core.types.SubQueryExpression;
 
-import de.saxsys.mvvmfx.InjectScope;
 import de.saxsys.mvvmfx.ViewModel;
+import ds.ui.condition.UIQuerySearch;
 import jakarta.inject.Inject;
-import mydata.ds.view.model.Contact;
-import mydata.ds.view.scopes.ContactDialogScope;
-import mydata.ds.view.scopes.DataSetScope;
 
 public class DataSetViewModel implements ViewModel {
 
+	public static final Logger logger = LoggerFactory.getLogger(DataSetViewModel.class);
+	
 	public static final String CLOSE_DATASET_NOTIFICATION = "closeDialog";
 
 	static final String TITLE_LABEL_KEY = "dialog.addcontact.title";
+	
+	public static final String MEDICAL_VISIT_HISTORY = "appatEHRButton";
 
+	public static final String TEXT_EMR_RECORD = "emrdocFormButton";
+	
+	private String dataSetName;
+	
 	@Inject
 	private DataSetService dataSetService;
 
-	@InjectScope
-	private DataSetScope dataSetScope;
 
 	@Inject
 	private ResourceBundle defaultResourceBundle;
 
-	public void initialize() {
-		dataSetScope.subscribe(ContactDialogScope.OK_BEFORE_COMMIT, (key, payload) -> {
-			addContactAction();
-		});
-
-		dataSetScope.dialogTitleProperty().set(defaultResourceBundle.getString(TITLE_LABEL_KEY));
-		dataSetScope.publish(ContactDialogScope.RESET_FORMS);
-		Contact contact = new Contact();
-		dataSetScope.setContactToEdit(contact);
-	}
-
-	public void addContactAction() {
-		if (dataSetScope.isContactFormValid()) {
-
-			dataSetScope.publish(ContactDialogScope.COMMIT);
-
-			Contact contact = dataSetScope.getContactToEdit();
-
-//			repository.save(contact);
-
-			dataSetScope.publish(ContactDialogScope.RESET_DIALOG_PAGE);
-			dataSetScope.setContactToEdit(null);
-
-			publish(CLOSE_DATASET_NOTIFICATION);
-		}
-	}
 	
-	public SubQueryExpression<?> getEmrTerm() {
-		return dataSetService.getEmrTerm();
+
+	public void initialize() {
+	}
+
+	public SubQueryExpression<?> getQuerySearch() {
+		UIQuerySearch uiQuery = dataSetService.selectDataSet(getDataSetName());
+		
+		
 	}
 
 	public DataSetService getDataSetService() {
+		logger.debug("getDataSetService execute. and return {}", getDataSetName());
 		return dataSetService;
+	}
+
+	public void setDataSetName(String dataSetName) {
+		this.dataSetName = dataSetName; 
+	}
+	
+	public String getDataSetName() {
+		return this.dataSetName ;
 	}
 
 }

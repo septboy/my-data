@@ -1,5 +1,11 @@
 package mydata.ds.view.dataset;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.SubQueryExpression;
 
@@ -12,28 +18,25 @@ import javafx.application.Application;
 import javafx.application.HostServices;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
 import javafx.scene.control.TableView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import mydata.ds.view.util.LinkUtils;
 import mydata.ds.view.util.ViewUtils;
 
 public class DataSetView implements FxmlView<DataSetViewModel> {
 
+	private static final Logger logger = LoggerFactory.getLogger(DataSetView.class);
+	
 	@FXML
 	public TableView<Tuple> dataSetTableView;
 	
 	@FXML
-	public AnchorPane dataSetAnchorPane;
+	public AnchorPane dataSetRootAnchorPane;
 	
 	@FXML
-	public Pane dataSetTitlePane;
-	
-	@FXML
-	public Button btn;
+	public AnchorPane dataSetTitlePane;
 	
 	@Inject
 	Stage primaryStage;
@@ -62,13 +65,14 @@ public class DataSetView implements FxmlView<DataSetViewModel> {
     
 	public void initialize() {
 		
+		
 		dataSetTitlePane.setOnMousePressed(this::handleMousePressedTitlePane);
 		dataSetTitlePane.setOnMouseDragged(this::handleMouseDraggedTitlePane);
 		dataSetTitlePane.setOnMouseClicked(this::handleMouseClickedTitlePane);
 		
-		dataSetAnchorPane.setOnMousePressed(this::handleMousePressedDataSetAnchorPane);
-		dataSetAnchorPane.setOnMouseDragged(this::handleMouseDraggedDataSetAnchorPane);
-		dataSetAnchorPane.setOnMouseClicked(this::handleMouseClickedDataSetAnchorPane);
+		dataSetRootAnchorPane.setOnMousePressed(this::handleMousePressedDataSetAnchorPane);
+		dataSetRootAnchorPane.setOnMouseDragged(this::handleMouseDraggedDataSetAnchorPane);
+		dataSetRootAnchorPane.setOnMouseClicked(this::handleMouseClickedDataSetAnchorPane);
 		
 		viewModel.subscribe(DataSetViewModel.CLOSE_DATASET_NOTIFICATION, (key, payload) -> {
 			dataSetStage.close();
@@ -85,37 +89,35 @@ public class DataSetView implements FxmlView<DataSetViewModel> {
 	// dataSetTitlePane
 	
 	private void handleMousePressedTitlePane(MouseEvent event) {
-	  dataSetAnchorPane.toFront();
+	  logger.debug("handleMousePressedTitlePane execute.");
+	  
+	  dataSetRootAnchorPane.toFront();
       xOffset = event.getSceneX();
       yOffset = event.getSceneY();
 	}
 	
 	private void handleMouseDraggedTitlePane(MouseEvent event) {
+	  logger.debug("handleMouseDraggedTitlePane execute.");
+		
       double deltaX = event.getSceneX() - xOffset;
       double deltaY = event.getSceneY() - yOffset;
-      dataSetAnchorPane.setLayoutX(dataSetAnchorPane.getLayoutX() + deltaX);
-      dataSetAnchorPane.setLayoutY(dataSetAnchorPane.getLayoutY() + deltaY);
+      dataSetRootAnchorPane.setLayoutX(dataSetRootAnchorPane.getLayoutX() + deltaX);
+      dataSetRootAnchorPane.setLayoutY(dataSetRootAnchorPane.getLayoutY() + deltaY);
       xOffset = event.getSceneX();
       yOffset = event.getSceneY();		
 	}
 	
 	private void handleMouseClickedTitlePane(MouseEvent event) {
-		dataSetAnchorPane.toFront();
-		
-		if (event.getClickCount() == 2) {
-			 Scene scene = dataSetTitlePane.getScene();
-            if (scene != null) {
-                AnchorPane parentPane = (AnchorPane) scene.getRoot();
-                parentPane.getChildren().remove(dataSetAnchorPane);
-            }
-        } 
+		logger.debug("handleMouseClickedTitlePane execute.");
+		dataSetRootAnchorPane.toFront();
 
 	}
 	
 	//////////////////////////////////////////////////////////////////////////
 	// dataSetAnchorPane
 	private void handleMousePressedDataSetAnchorPane(MouseEvent event) {
-		 dataSetAnchorPane.toFront();
+		logger.debug("handleMousePressedDataSetAnchorPane execute.");
+		 dataSetRootAnchorPane.toFront();
 		 
 		 initialX = event.getX();
          initialY = event.getY();
@@ -124,6 +126,7 @@ public class DataSetView implements FxmlView<DataSetViewModel> {
 	}
 	
 	private void handleMouseDraggedDataSetAnchorPane(MouseEvent event) {
+		logger.debug("handleMouseDraggedDataSetAnchorPane execute.");
 		 double deltaX_ = event.getX() - initialX;
          double deltaY_ = event.getY() - initialY;
 
@@ -137,16 +140,31 @@ public class DataSetView implements FxmlView<DataSetViewModel> {
 	}
 	
 	private void handleMouseClickedDataSetAnchorPane(MouseEvent event) {
-		dataSetAnchorPane.toFront();
+		logger.debug("handleMouseClickedDataSetAnchorPane execute.");
+		dataSetRootAnchorPane.toFront();
 	}
 	
 	@FXML
 	private void search() {
-				
-		SubQueryExpression<?> query = viewModel.getDataSetService().getEmrTerm();
+		Map<String, ?> uiValue = getUIValue();		
+		SubQueryExpression<?> query = viewModel.getDataSetService().getQuerySearch(uiValue);
 		
 		TableViewData tableViewData = ViewUtils.getTableViewData(query);
 		
 		LinkUtils.link(dataSetTableView, tableViewData);
+	}
+	
+	private Map<String, ?> getUIValue() {
+		Map<String, ?> map = new HashMap<>();
+		return map;
+	}
+
+	@FXML
+	private void close() {
+		 Scene scene = dataSetTitlePane.getScene();
+         if (scene != null) {
+             AnchorPane parentPane = (AnchorPane) scene.getRoot();
+             parentPane.getChildren().remove(dataSetRootAnchorPane);
+         }
 	}
 }

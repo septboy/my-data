@@ -1,21 +1,20 @@
 package mydata.ds.view.toolbar;
 
-import java.util.Collections;
-import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import de.saxsys.mvvmfx.Scope;
 import de.saxsys.mvvmfx.ViewModel;
-import jakarta.enterprise.inject.Instance;
 import jakarta.inject.Inject;
-import mydata.ds.view.scopes.ContactDialogScope;
-import mydata.ds.view.scopes.DataSetScope;
+import mydata.ds.view.scopes.ToolbarScope;
 
 public class ToolbarViewModel implements ViewModel {
 
+	private static Logger logger = LoggerFactory.getLogger(ToolbarViewModel.class);
+	
 	@Inject
-	private Instance<DataSetScope> scopeInstance;
+	private ToolbarScope toolbarScope;
 
-	public List<Scope> getScopesForDataSet() {
-		return Collections.singletonList(scopeInstance.get());
+	public ToolbarScope getToolbarScope() {
+		return toolbarScope;
 	}
 }

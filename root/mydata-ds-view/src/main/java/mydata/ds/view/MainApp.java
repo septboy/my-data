@@ -13,7 +13,11 @@ import de.saxsys.mvvmfx.cdi.MvvmfxCdiApplication;
 import jakarta.enterprise.event.Observes;
 import jakarta.inject.Inject;
 import javafx.application.Platform;
+import javafx.event.Event;
+import javafx.event.EventTarget;
+import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import mydata.ds.view.events.TriggerShutdownEvent;
@@ -22,7 +26,7 @@ import mydata.ds.view.main.MainViewModel;
 
 public class MainApp extends MvvmfxCdiApplication {
 
-	private static final Logger LOG = LoggerFactory.getLogger(MainApp.class);
+	private static final Logger logger = LoggerFactory.getLogger(MainApp.class);
 
 	public static void main(String... args) {
 
@@ -39,7 +43,7 @@ public class MainApp extends MvvmfxCdiApplication {
 	 */
 	@Override
 	public void initMvvmfx() throws Exception {
-		LOG.info("initializeing the DataSet View Application");
+		logger.info("initializeing the DataSet View Application");
 	}
 
 	/**
@@ -47,13 +51,14 @@ public class MainApp extends MvvmfxCdiApplication {
 	 */
 	@Override
 	public void startMvvmfx(Stage stage) throws Exception {
-		LOG.info("Starting the Application");
+		logger.info("Starting the Application");
 		MvvmFX.setGlobalResourceBundle(resourceBundle);
 
 		stage.setTitle(resourceBundle.getString("window.title"));
 		// 전체화면
-		ViewTuple<MainView, MainViewModel> main = FluentViewLoader.fxmlView(MainView.class).load();
-
+		ViewTuple<MainView, MainViewModel> main = FluentViewLoader
+				.fxmlView(MainView.class)
+				.load();
 		
 		Scene rootScene = new Scene(main.getView());
 		
@@ -68,7 +73,7 @@ public class MainApp extends MvvmfxCdiApplication {
         });
 				
 		rootScene.getStylesheets().add("/ds-view.css");
-		
+		rootScene.setOnMousePressed(this::handleMousePressedOnRootScene );
 		stage.setScene(rootScene);
 	    stage.setMaximized(true);
 		stage.show();
@@ -79,8 +84,17 @@ public class MainApp extends MvvmfxCdiApplication {
 	 * {@link TriggerShutdownEvent} CDI event.
 	 */
 	public void triggerShutdown(@Observes TriggerShutdownEvent event) {
-		LOG.info("Application will now shut down");
+		logger.info("Application will now shut down");
 		Platform.exit();
 	}
-
+	
+	private void handleMousePressedOnRootScene(MouseEvent event) {
+		
+		EventTarget target = event.getTarget();
+        if (target instanceof Node) {
+            Node targetNode = (Node) target;
+            logger.debug("Clicked on: " + targetNode);
+        }
+        
+	}
 }
