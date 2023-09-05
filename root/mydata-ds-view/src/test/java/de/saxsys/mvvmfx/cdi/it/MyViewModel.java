@@ -6,7 +6,7 @@ import jakarta.inject.Inject;
 public class MyViewModel implements ViewModel {
 	public static int instanceCounter = 0;
 	
-	@Inject
+	//@Inject
 	private MyService myService;
 	
 	public MyViewModel() {

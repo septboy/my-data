@@ -23,6 +23,7 @@ import javafx.stage.Stage;
 import mydata.ds.view.events.TriggerShutdownEvent;
 import mydata.ds.view.main.MainView;
 import mydata.ds.view.main.MainViewModel;
+import mydata.ds.view.util.EventUtils;
 
 public class MainApp extends MvvmfxCdiApplication {
 
@@ -56,19 +57,21 @@ public class MainApp extends MvvmfxCdiApplication {
 
 		stage.setTitle(resourceBundle.getString("window.title"));
 		// 전체화면
-		ViewTuple<MainView, MainViewModel> main = FluentViewLoader
+		ViewTuple<MainView, MainViewModel> mainRoot = FluentViewLoader
 				.fxmlView(MainView.class)
 				.load();
 		
-		Scene rootScene = new Scene(main.getView());
+		Scene rootScene = new Scene(mainRoot.getView());
 		
-		AnchorPane toolbar = (AnchorPane) main.getView().lookup("#main_toolbar");
+		AnchorPane toolbar = (AnchorPane) mainRoot.getView().lookup("#main_toolbar");
+		
 		
 		// Add a listener to detect when the stage (window) size changes
 		rootScene.heightProperty().addListener((observable, oldValue, newValue) -> {
             double height = newValue.doubleValue();
             System.out.println("Window Height: " + height);
-            AnchorPane.setTopAnchor(toolbar, height/2);
+            double toolbarHeight = toolbar.heightProperty().get();
+            AnchorPane.setTopAnchor(toolbar, (height/2) - (toolbarHeight/2));
     	    AnchorPane.setLeftAnchor(toolbar, 10.0);
         });
 				
@@ -89,12 +92,6 @@ public class MainApp extends MvvmfxCdiApplication {
 	}
 	
 	private void handleMousePressedOnRootScene(MouseEvent event) {
-		
-		EventTarget target = event.getTarget();
-        if (target instanceof Node) {
-            Node targetNode = (Node) target;
-            logger.debug("Clicked on: " + targetNode);
-        }
-        
+		logger.debug(EventUtils.getNodeNameWhenMousePressed(event));
 	}
 }

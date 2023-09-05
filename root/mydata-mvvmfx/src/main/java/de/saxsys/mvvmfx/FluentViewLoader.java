@@ -191,6 +191,7 @@ public class FluentViewLoader {
         private Collection<Scope> providedScopes;
 
         private List<BuilderFactory> builderFactories;
+		private String fxmlPath;
 
         FxmlViewStep(Class<? extends ViewType> viewType) {
             this.viewType = viewType;
@@ -330,8 +331,16 @@ public class FluentViewLoader {
 
 			final ResourceBundle bundle = ResourceBundleManager.getInstance().mergeListWithGlobal(resourceBundles);
 
-			return fxmlViewLoader.loadFxmlViewTuple(viewType, bundle, codeBehind, root, viewModel,
-					context, providedScopes, builderFactories);
+			if (this.fxmlPath == null)
+				return fxmlViewLoader.loadFxmlViewTuple(viewType, bundle, codeBehind, root, viewModel,
+						context, providedScopes, builderFactories);
+			else 
+				return fxmlViewLoader.loadFxmlViewTuple(fxmlPath, viewType, bundle, codeBehind, root, viewModel,
+						context, providedScopes, builderFactories);
+		}
+
+		public void setFxmlPath(String fxmlPath) {
+			this.fxmlPath = fxmlPath ;
 		}
     }
 
@@ -367,6 +376,7 @@ public class FluentViewLoader {
      *            has to implement {@link de.saxsys.mvvmfx.FxmlView}.
      * @param <ViewModelType>
      *            the generic type of the ViewModel. This type has to implement
+     *            
      *            {@link de.saxsys.mvvmfx.ViewModel}.
      * 
      * @return a builder step that can be further configured and then load the
@@ -375,6 +385,13 @@ public class FluentViewLoader {
     public static <ViewType extends FxmlView<? extends ViewModelType>, ViewModelType extends ViewModel> FxmlViewStep<ViewType, ViewModelType> fxmlView(
             Class<? extends ViewType> viewType) {
         return new FxmlViewStep<>(viewType);
+    }
+
+    public static <ViewType extends FxmlView<? extends ViewModelType>, ViewModelType extends ViewModel> FxmlViewStep<ViewType, ViewModelType> fxmlView(
+            Class<? extends ViewType> viewType, String fxmlPath ) {
+    	FxmlViewStep<ViewType, ViewModelType> fxmlViewStep= new FxmlViewStep<>(viewType);
+    	fxmlViewStep.setFxmlPath(fxmlPath);
+        return fxmlViewStep;
     }
 
 }

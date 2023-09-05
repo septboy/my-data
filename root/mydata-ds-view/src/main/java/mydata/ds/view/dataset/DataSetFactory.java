@@ -5,14 +5,16 @@ import java.util.Map;
 import com.querydsl.core.types.SubQueryExpression;
 
 import ds.condition.medicare.emr.EmrTerm;
+import ds.data.core.condition.ui.UIConditions;
 import ds.ehr.research.condition.UIEhrResearchConditions;
 import ds.ehr.research.dataset.UIDataSetEHR;
 import ds.ehr.research.dataset.emr.EmrEhrDataSet;
-import ds.ui.condition.UIQuerySearch;
+import ds.ehr.research.dataset.medvisit.ApPatientEhrDataSet;
+import ds.ui.condition.DataSetUI;
 
-public class DataSetService {
+public class DataSetFactory {
 	
-	private UIQuerySearch mUIQueryDataSet ;
+	private DataSetUI mUIQueryDataSet ;
 	
 	public SubQueryExpression<?> getQuerySearch(Map<String, ?> uiParam) {
 		//EMR 기록 조회////////////////////////////////////////////////////////////////////////////
@@ -25,14 +27,19 @@ public class DataSetService {
 		return query1;
 	}
 
-	public UIQuerySearch selectDataSet(String dataSetName) {
+	public DataSetUI getDataSetUI(String dataSetName) {
 		
 		if (DataSetViewModel.MEDICAL_VISIT_HISTORY.equals(dataSetName))
-			mUIQueryDataSet =  EmrEhrDataSet.getInstance();
+			mUIQueryDataSet =  ApPatientEhrDataSet.getInstance();
+		
 		else if ( DataSetViewModel.TEXT_EMR_RECORD.equals(dataSetName) )
 			mUIQueryDataSet =  EmrEhrDataSet.getInstance();
 		
 		return mUIQueryDataSet;
+	}
+
+	public UIConditions getUIConditions(Map<String, ?> uiValue) {
+		return null;
 	}
 	
 }

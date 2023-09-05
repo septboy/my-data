@@ -1,5 +1,6 @@
 package mydata.ds.view.dataset;
 
+import java.util.Map;
 import java.util.ResourceBundle;
 
 import org.slf4j.Logger;
@@ -7,9 +8,17 @@ import org.slf4j.LoggerFactory;
 
 import com.querydsl.core.types.SubQueryExpression;
 
+import de.saxsys.mvvmfx.InjectScope;
 import de.saxsys.mvvmfx.ViewModel;
-import ds.ui.condition.UIQuerySearch;
+import de.saxsys.mvvmfx.data.TableViewData;
+import ds.data.core.column.ColumnInfo;
+import ds.data.core.column.ColumnSet;
+import ds.data.core.condition.ConditionInfo;
+import ds.data.core.condition.ui.UIConditions;
+import ds.ui.condition.DataSetUI;
 import jakarta.inject.Inject;
+import mydata.ds.view.scopes.DataSetScope;
+import mydata.ds.view.util.ViewUtils;
 
 public class DataSetViewModel implements ViewModel {
 
@@ -23,37 +32,44 @@ public class DataSetViewModel implements ViewModel {
 
 	public static final String TEXT_EMR_RECORD = "emrdocFormButton";
 	
-	private String dataSetName;
-	
 	@Inject
-	private DataSetService dataSetService;
-
+	private DataSetFactory dataSetFactory;
 
 	@Inject
 	private ResourceBundle defaultResourceBundle;
-
 	
+	@InjectScope
+	private DataSetScope dataSetScope ;
+
+	private DataSetUI dataSetUI ;
 
 	public void initialize() {
-	}
-
-	public SubQueryExpression<?> getQuerySearch() {
-		UIQuerySearch uiQuery = dataSetService.selectDataSet(getDataSetName());
+		String dataSetId = dataSetScope.getDataSetId();
+		logger.info("dataSetId is selected '{}'", dataSetId);
 		
-		
+		dataSetUI = dataSetFactory.getDataSetUI(dataSetId);
 	}
 
-	public DataSetService getDataSetService() {
-		logger.debug("getDataSetService execute. and return {}", getDataSetName());
-		return dataSetService;
+	public String getDataSetTitle() {
+		return this.dataSetUI.getDataSetTitle();
 	}
 
-	public void setDataSetName(String dataSetName) {
-		this.dataSetName = dataSetName; 
+	public ColumnInfo[] getColumnInfos() {
+		ColumnSet columnSet = dataSetUI.getColumnSet();
+		ColumnInfo[] columnInfos = columnSet.getColumnInfos();
+		return columnInfos;
+	}
+
+	public ConditionInfo[] getConditionInfos() {
+		ConditionInfo[] conditionInfos = dataSetUI.getConditionInfos();
+		return conditionInfos;
 	}
 	
-	public String getDataSetName() {
-		return this.dataSetName ;
+	public TableViewData getTableViewData(Map<String, ?> uiValue) {
+		UIConditions c = dataSetFactory.getUIConditions(uiValue);
+		SubQueryExpression<?> query = dataSetUI.getQuerySearch(c);
+		TableViewData tableViewData = ViewUtils.getTableViewData(query);
+		return tableViewData;
 	}
 
 }

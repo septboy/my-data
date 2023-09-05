@@ -20,6 +20,7 @@ import de.saxsys.mvvmfx.Scope;
 import de.saxsys.mvvmfx.ViewModel;
 import de.saxsys.mvvmfx.ViewTuple;
 import de.saxsys.mvvmfx.FxmlPath;
+import de.saxsys.mvvmfx.FxmlView;
 import de.saxsys.mvvmfx.internal.ContextImpl;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -82,7 +83,16 @@ public class FxmlViewLoader {
         return loadFxmlViewTuple(viewType, pathToFXML, resourceBundle, codeBehind, root, viewModel, context, providedScopes, builderFactories);
     }
 
-    /**
+    public <ViewType extends View<? extends ViewModelType>, ViewModelType extends ViewModel> ViewTuple<ViewType, ViewModelType> loadFxmlViewTuple(
+			String fxmlName, Class<? extends ViewType> viewType, ResourceBundle resourceBundle, ViewType codeBehind, Object root,
+			ViewModelType viewModel, Context context, Collection<Scope> providedScopes,
+			List<BuilderFactory> builderFactories) {
+    	
+    	final String pathToFXML = createFxmlPath(viewType, fxmlName);
+        return loadFxmlViewTuple(viewType, pathToFXML, resourceBundle, codeBehind, root, viewModel, context, providedScopes, builderFactories);
+	}
+
+	/**
      * This method is used to create a String with the path to the FXML file for
      * a given View class.
      *
@@ -103,34 +113,49 @@ public class FxmlViewLoader {
      *            the view class type.
      * @return the path to the fxml file as string.
      */
+    
     private String createFxmlPath(Class<?> viewType) {
-        final StringBuilder pathBuilder = new StringBuilder();
-
-        final FxmlPath pathAnnotation = viewType.getDeclaredAnnotation(FxmlPath.class); //Get annotation from view
-        final String fxmlPath = Optional.ofNullable(pathAnnotation)
-                .map(FxmlPath::value)
-                .map(String::trim)
-                .orElse("");
-
-        if (fxmlPath.isEmpty()) {
-            pathBuilder.append("/");
-
-            if (viewType.getPackage() != null) {
-                pathBuilder.append(viewType.getPackage().getName().replaceAll("\\.", "/"));
-                pathBuilder.append("/");
-            }
-
-            pathBuilder.append(viewType.getSimpleName());
-            pathBuilder.append(".fxml");
-        } else {
-            pathBuilder.append(fxmlPath);
-        }
-
-        return pathBuilder.toString();
+    	return createFxmlPath(viewType, null);
     }
 
+    private String createFxmlPath(Class<?> viewType, String fxmlName) {
+    	 final StringBuilder pathBuilder = new StringBuilder();
 
-    /**
+         final FxmlPath pathAnnotation = viewType.getDeclaredAnnotation(FxmlPath.class); //Get annotation from view
+         final String fxmlPath = Optional.ofNullable(pathAnnotation)
+                 .map(FxmlPath::value)
+                 .map(String::trim)
+                 .orElse("");
+
+         if (fxmlName != null) {
+        	 packageToPath(viewType, pathBuilder);
+             pathBuilder.append(fxmlName);
+             
+             if(!fxmlName.endsWith(".fxml"))
+            	 pathBuilder.append(".fxml");
+             
+         } else if (fxmlPath.isEmpty()) {
+        	 packageToPath(viewType, pathBuilder);
+             pathBuilder.append(viewType.getSimpleName());
+             pathBuilder.append(".fxml");
+             
+         } else {
+             pathBuilder.append(fxmlPath);
+         }
+
+         return pathBuilder.toString();
+	}
+
+	private void packageToPath(Class<?> viewType, final StringBuilder pathBuilder) {
+		pathBuilder.append("/");
+
+		if (viewType.getPackage() != null) {
+			pathBuilder.append(viewType.getPackage().getName().replaceAll("\\.", "/"));
+			pathBuilder.append("/");
+		}
+	}
+
+	/**
      * Load the viewTuple by the path of the fxml file.
      *
      * @param resource

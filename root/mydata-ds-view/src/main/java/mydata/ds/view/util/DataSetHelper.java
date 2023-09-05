@@ -68,4 +68,11 @@ public class DataSetHelper {
 	public static void openDataSet(AnchorPane parentStage, Parent view) {
 		parentStage.getChildren().add(view);
 	}
+
+	public static void openDataSet(AnchorPane parentStage, Parent view, double posX, double posY) {
+		view.setLayoutX(posX+103.0);
+		view.setLayoutY(posY);
+		parentStage.getChildren().add(view);
+		
+	}
 }

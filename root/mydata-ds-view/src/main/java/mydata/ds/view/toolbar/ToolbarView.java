@@ -36,8 +36,6 @@ public class ToolbarView implements FxmlView<ToolbarViewModel> {
 	@Inject
 	private Stage primaryStage;
 
-	private String buttonIdClicked;
-	
 	public void initialize() {
 		AwesomeDude.setIcon(appatEHRButton, AwesomeIcon.PLUS);
 		AwesomeDude.setIcon(emrdocFormButton, AwesomeIcon.PLUS);
@@ -52,7 +50,9 @@ public class ToolbarView implements FxmlView<ToolbarViewModel> {
 		Object source = event.getSource();
         if (source instanceof Button) {
         	Button button = (Button) source;
-        	buttonIdClicked = button.getId();
+        	String buttonIdClicked = button.getId();
+        	viewModel.getDataSetScope().setDataSetId(buttonIdClicked);
+        	
         }
 	}
 	
@@ -62,9 +62,10 @@ public class ToolbarView implements FxmlView<ToolbarViewModel> {
 		
 		ViewTuple<DataSetView, DataSetViewModel> load = FluentViewLoader
 				.fxmlView(DataSetView.class)
+				.providedScopes(viewModel.getDataSetScope())
 				.load();
+		
 		Parent dataSetView = load.getView();
-		load.getViewModel().setDataSetName(buttonIdClicked);
 		AnchorPane rootAnchorPane = (AnchorPane) primaryStage.getScene().getRoot();
 
 		DataSetHelper.openDataSet(rootAnchorPane, dataSetView );

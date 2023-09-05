@@ -10,14 +10,24 @@ import com.querydsl.core.types.Expression;
 import de.saxsys.mvvmfx.data.TableViewData;
 import de.saxsys.mvvmfx.data.TupleValueFactory;
 import ds.common.util.ArrayUtil;
+import ds.data.core.column.ColumnInfo;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.EventHandler;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.VBox;
 
 public class LinkUtils {
 
 	public static void link(TableView<Tuple> tableView, TableViewData tableViewData) {
+		if (tableViewData == null)
+			return ;
 		
 		Expression<?>[] colExpres = tableViewData.getColumnExpressions();
 		
@@ -35,6 +45,32 @@ public class LinkUtils {
 		tableView.setItems(observavleTupleList);
 		tableView.getColumns().setAll(columns);
 		tableView.getStyleClass().add("header-cell-font");
+	}
+
+	public static void link(Label dataSetTitleLabel, String datasetTitle) {
+		dataSetTitleLabel.setText(datasetTitle);
+	}
+
+	public static void link(VBox columInfoLabelVBox, ColumnInfo[] columnInfos, EventHandler<? super MouseEvent> event) {
+		Label[] labels = null;
+		if(columnInfos == null)
+			return ;
+		
+		for(ColumnInfo columnInfo: columnInfos) {
+			Label label = new Label();
+			label.setText(columnInfo.getColumnComment());
+			double width = ViewUtils.getRigionalWidth(columInfoLabelVBox);
+			if (width > 0) {
+				ViewUtils.setWidth(label, width);
+			}
+			label.setUserData(columnInfo);
+			label.setOnMouseClicked(event);
+			label.setPadding(new Insets(4,0,4,0));
+			label.setStyle("-fx-border-color: white; -fx-border-width: 1px 0px 1px 0px;");
+			label.setAlignment(Pos.CENTER);
+			labels = ArrayUtil.addArrayOne(labels, label, Label.class);
+		}
+		columInfoLabelVBox.getChildren().addAll(labels);
 	}
 
 	@SuppressWarnings("unchecked")
