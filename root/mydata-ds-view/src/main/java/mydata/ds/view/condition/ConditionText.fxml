@@ -9,13 +9,12 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="110.0" prefWidth="366.0" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1"
-			fx:controller="mydata.ds.view.condition.ConditionView" >
+<AnchorPane id="conditionRoot" fx:id="conditionRoot" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="110.0" prefWidth="366.0" style="-fx-border-color: black; -fx-border-width: 1;" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mydata.ds.view.condition.ConditionView">
    <children>
       <VBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
-            <Label alignment="CENTER" maxHeight="35.0" minHeight="35.0" minWidth="-Infinity" prefHeight="35.0" prefWidth="367.0" style="-fx-background-color: brown;" text="조건항목" textFill="WHITE">
+            <Label id="conditionItemName" fx:id="conditionItemName"
+            	   alignment="CENTER" maxHeight="35.0" minHeight="35.0" minWidth="-Infinity" prefHeight="35.0" prefWidth="367.0" style="-fx-background-color: brown;" text="조건항목" textFill="WHITE">
                <font>
                   <Font name="System Bold" size="14.0" />
                </font>
@@ -26,7 +25,7 @@
             <HBox prefHeight="31.0" prefWidth="342.0">
                <children>
                   <RadioButton mnemonicParsing="false" prefWidth="80.0" text="단어검색" />
-                  <TextField prefHeight="22.0" prefWidth="269.0" />
+                  <TextField id="inputText" fx:id="inputText" prefHeight="22.0" prefWidth="269.0" />
                </children>
                <padding>
                   <Insets left="10.0" />

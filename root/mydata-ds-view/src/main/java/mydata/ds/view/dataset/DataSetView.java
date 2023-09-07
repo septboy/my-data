@@ -15,7 +15,6 @@ import de.saxsys.mvvmfx.ViewTuple;
 import de.saxsys.mvvmfx.data.TableViewData;
 import de.saxsys.mvvmfx.utils.notifications.NotificationCenter;
 import ds.data.core.column.ColumnInfo;
-import ds.data.core.condition.ConditionInfo;
 import jakarta.inject.Inject;
 import javafx.application.Application;
 import javafx.application.HostServices;
@@ -24,6 +23,7 @@ import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Control;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.ScrollPane.ScrollBarPolicy;
@@ -34,7 +34,9 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import mydata.ds.view.condition.ConditionView;
+import mydata.ds.view.condition.ConditionViewInfo;
 import mydata.ds.view.condition.ConditionViewModel;
+import mydata.ds.view.scopes.ConditionScope;
 import mydata.ds.view.util.DataSetHelper;
 import mydata.ds.view.util.EventUtils;
 import mydata.ds.view.util.LinkUtils;
@@ -89,8 +91,11 @@ public class DataSetView implements FxmlView<DataSetViewModel> {
     private double initialY;
     private double initialWidth;
     private double initialHeight;
+    private Node tmpConditionView ;
+    private Control tmpConditionControlButton ;
+    private ConditionViewModel tmpConditionViewModel ;
     
-    private static final String css_column_label_border = "-fx-border-color: white; -fx-border-width: 1px 0px 1px 0px;";
+    public static final String css_column_label_border = "-fx-border-color: white; -fx-border-width: 1px 0px 1px 0px;";
     
 	public void initialize() {
 		// 데이터셋 타이틀
@@ -102,7 +107,7 @@ public class DataSetView implements FxmlView<DataSetViewModel> {
 		LinkUtils.link(columInfoLabelVBox, columnInfos, this::handleMouseClickedColumnLabel);
 		
 		// 데이터셋 검색 조건들
-		ConditionInfo[] conditionInfos = viewModel.getConditionInfos();
+		ConditionViewInfo[] conditionInfos = viewModel.getConditionViewInfos();
 		LinkUtils.link(conditionInfoLabelVBox, conditionInfos, this::handleMouseClickedConditionLabel);
 		
 		dataSetTitlePane.setOnMousePressed(this::handleMousePressedTitlePane);
@@ -122,6 +127,13 @@ public class DataSetView implements FxmlView<DataSetViewModel> {
 		dataSetColumnScrollPane.setHbarPolicy(ScrollBarPolicy.NEVER);
 		
 		viewModel.subscribe(DataSetViewModel.CLOSE_DATASET_NOTIFICATION, (key, payload) -> {
+			if(tmpConditionViewModel != null)
+		    	  tmpConditionViewModel.publish(
+		    			  ConditionViewModel.CLOSE_CONDITION_VIEW_NOTIFICATION
+		    			  , tmpConditionControlButton
+		    			  , tmpConditionView
+		    			  );
+			
 			((Group)mainRootStage.getScene().getRoot()).getChildren().remove(dataSetStage);
 		});
 		
@@ -180,46 +192,76 @@ public class DataSetView implements FxmlView<DataSetViewModel> {
 	private void handleMouseClickedConditionLabel(MouseEvent event) {
 		if(event.getButton() == MouseButton.PRIMARY ) {
 		    Node node = (Node)event.getTarget();
-		    Label label = null;
+		    Label conditionLabel = null;
 		    if (node instanceof Label) {
-				label = (Label)node;
+				conditionLabel = (Label)node;
 		    } else {
-		    	label = (Label)ViewUtils.searchParentNodeWithType(Label.class, node);
+		    	conditionLabel = (Label)ViewUtils.searchParentNodeWithType(Label.class, node);
 		    }
 		    
-		    if (label == null)
+		    if (conditionLabel == null)
 		    	return ;
 		    
-		    ConditionInfo conditionInfo = (ConditionInfo)label.getUserData();
-			if (conditionInfo.isSelected()) {
-				conditionInfo.setSelected(false);
-				label.setStyle(css_column_label_border);
-				closeInputComponent(conditionInfo);
-			} else {
-				conditionInfo.setSelected(true);
-				label.setStyle(
-			            "-fx-background-color: blue;" +
-			            "-fx-text-fill: white;" +
-			            css_column_label_border
-			        );
-
-				// root Scene를 기준으로 값을 가져온다.
-				double buttonX = label.localToScene(label.getBoundsInLocal()).getMinX(); // 
-		        double buttonY = label.localToScene(label.getBoundsInLocal()).getMinY(); // 
-				openIputComponent(conditionInfo, buttonX, buttonY);
-			}
+		    double buttonX = conditionLabel.localToScene(conditionLabel.getBoundsInLocal()).getMinX(); // 
+	        double buttonY = conditionLabel.localToScene(conditionLabel.getBoundsInLocal()).getMinY(); // 
+	        
+		    if(conditionLabel == tmpConditionControlButton) {
+		    	if (existConditionViewOpened()) {
+		    		tmpConditionViewModel.publish(ConditionViewModel.CLOSE_CONDITION_VIEW_NOTIFICATION);
+		    		tmpConditionView = null; // 같은 조건버튼을 여러번 클릭할 때 필요함.
+		    	} else 
+		    		openConditionView(conditionLabel, buttonX, buttonY);
+		    	
+			    return;
+		    }
+		    
+		    openConditionView(conditionLabel, buttonX, buttonY);
+			
 		}
+	}
+
+	private void openConditionView(Label conditionLabel, double buttonX, double buttonY) {
+		ConditionViewInfo conditionViewInfo = (ConditionViewInfo)conditionLabel.getUserData();
+		
+		conditionLabel.setStyle(
+		        "-fx-background-color: blue;" +
+		        "-fx-text-fill: white;" +
+		        css_column_label_border
+		    );
+
+		conditionViewInfo.setPrevControlButton(tmpConditionControlButton);
+		// root Scene를 기준으로 값을 가져온다.
+		
+		conditionViewInfo.setControlButton(conditionLabel);
+		openConditionView(conditionViewInfo, buttonX, buttonY);
+		
+		// open한 다음에는 이전버튼으로 저장한다.
+		tmpConditionControlButton = conditionLabel ;
 	}
 	
 	///////////////////////////////////////////////////////////////////////
 	// dataSetTitleLabel
 	private void handleDummyEvent(MouseEvent event) {
 		logger.debug(EventUtils.getNodeNameWhenMousePressed(event));
+		
+		if(tmpConditionViewModel != null)
+	    	  tmpConditionViewModel.publish(
+	    			  ConditionViewModel.CLOSE_CONDITION_VIEW_NOTIFICATION
+	    			  , tmpConditionControlButton
+	    			  , tmpConditionView
+	    			  );
 	}
 	
 	
 	private void handleParentEvent(MouseEvent event) {
 		EventUtils.fireNodeEvent(event, dataSetRootAnchorPane.getId());
+		
+		if(tmpConditionViewModel != null)
+	    	  tmpConditionViewModel.publish(
+	    			  ConditionViewModel.CLOSE_CONDITION_VIEW_NOTIFICATION
+	    			  , tmpConditionControlButton
+	    			  , tmpConditionView
+	    			  );
 	}
 	
 	///////////////////////////////////////////////////////////////////////
@@ -230,6 +272,13 @@ public class DataSetView implements FxmlView<DataSetViewModel> {
 	  dataSetRootAnchorPane.toFront();
       xOffset = event.getSceneX();
       yOffset = event.getSceneY();
+      
+      if(tmpConditionViewModel != null)
+    	  tmpConditionViewModel.publish(
+    			  ConditionViewModel.CLOSE_CONDITION_VIEW_NOTIFICATION
+    			  , tmpConditionControlButton
+    			  , tmpConditionView
+    			  );
 	}
 	
 	private void handleMouseDraggedTitlePane(MouseEvent event) {
@@ -259,6 +308,13 @@ public class DataSetView implements FxmlView<DataSetViewModel> {
          initialY = event.getY();
          initialWidth = ((AnchorPane) event.getSource()).getPrefWidth();
          initialHeight = ((AnchorPane) event.getSource()).getPrefHeight();
+         
+         if(tmpConditionViewModel != null)
+       	  tmpConditionViewModel.publish(
+    			  ConditionViewModel.CLOSE_CONDITION_VIEW_NOTIFICATION
+    			  , tmpConditionControlButton
+    			  , tmpConditionView
+    			  );
 	}
 	
 	private void handleMouseDraggedDataSetAnchorPane(MouseEvent event) {
@@ -283,22 +339,31 @@ public class DataSetView implements FxmlView<DataSetViewModel> {
 	}
 	
 	
-	private void openIputComponent(ConditionInfo conditionInfo, double posX, double posY) {
+	private void openConditionView(ConditionViewInfo conditionViewInfo, double posX, double posY) {
+		
+		ConditionScope conditionScope = new ConditionScope(); 
+		conditionScope.setConditionViewInfo(conditionViewInfo);
 		
 		ViewTuple<ConditionView, ConditionViewModel> load = FluentViewLoader
 				.fxmlView(ConditionView.class, "ConditionText.fxml")
+				.providedScopes(conditionScope)
 				.load();
 		
+		if (existConditionViewOpened())
+			tmpConditionViewModel.publish(ConditionViewModel.CLOSE_CONDITION_VIEW_NOTIFICATION);
+		
 		Parent conditionView = load.getView();
+
 		AnchorPane rootAnchorPane = (AnchorPane) mainRootStage.getScene().getRoot();
 
 		DataSetHelper.openDataSet(rootAnchorPane, conditionView, posX, posY );	
-		
+		// Open 한 다음은 ConditionView를 이전 뷰로 임시 저장
+		tmpConditionView = conditionView ;		
+		tmpConditionViewModel = load.getViewModel();
 	}
 
-	private void closeInputComponent(ConditionInfo conditionInfo) {
-		
-		
+	private boolean existConditionViewOpened() {
+		return tmpConditionView != null;
 	}
 
 	@FXML

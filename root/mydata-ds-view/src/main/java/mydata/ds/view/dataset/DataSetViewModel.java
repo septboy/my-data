@@ -9,17 +9,22 @@ import org.slf4j.LoggerFactory;
 import com.querydsl.core.types.SubQueryExpression;
 
 import de.saxsys.mvvmfx.InjectScope;
+import de.saxsys.mvvmfx.ScopeProvider;
 import de.saxsys.mvvmfx.ViewModel;
 import de.saxsys.mvvmfx.data.TableViewData;
+import ds.common.util.ArrayUtil;
 import ds.data.core.column.ColumnInfo;
 import ds.data.core.column.ColumnSet;
 import ds.data.core.condition.ConditionInfo;
 import ds.data.core.condition.ui.UIConditions;
 import ds.ui.condition.DataSetUI;
 import jakarta.inject.Inject;
+import mydata.ds.view.condition.ConditionViewInfo;
+import mydata.ds.view.scopes.ConditionScope;
 import mydata.ds.view.scopes.DataSetScope;
 import mydata.ds.view.util.ViewUtils;
 
+@ScopeProvider(scopes = {ConditionScope.class})
 public class DataSetViewModel implements ViewModel {
 
 	public static final Logger logger = LoggerFactory.getLogger(DataSetViewModel.class);
@@ -60,9 +65,14 @@ public class DataSetViewModel implements ViewModel {
 		return columnInfos;
 	}
 
-	public ConditionInfo[] getConditionInfos() {
+	public ConditionViewInfo[] getConditionViewInfos() {
 		ConditionInfo[] conditionInfos = dataSetUI.getConditionInfos();
-		return conditionInfos;
+		ConditionViewInfo[] conditionViewInfos = null ;
+		for(ConditionInfo conditionInfo: conditionInfos) {
+			ConditionViewInfo conditionViewInfo = new ConditionViewInfo(conditionInfo);
+			conditionViewInfos = ArrayUtil.addArrayOne(conditionViewInfos, conditionViewInfo, ConditionViewInfo.class);
+		}
+		return conditionViewInfos;
 	}
 	
 	public TableViewData getTableViewData(Map<String, ?> uiValue) {
