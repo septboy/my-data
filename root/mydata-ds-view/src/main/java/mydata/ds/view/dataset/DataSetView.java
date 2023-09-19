@@ -1,23 +1,28 @@
 package mydata.ds.view.dataset;
 
-import java.util.HashMap;
-import java.util.Map;
-
+import org.apache.commons.lang3.ArrayUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.querydsl.core.Tuple;
 
+import de.saxsys.mvvmfx.Context;
 import de.saxsys.mvvmfx.FluentViewLoader;
 import de.saxsys.mvvmfx.FxmlView;
+import de.saxsys.mvvmfx.InjectContext;
 import de.saxsys.mvvmfx.InjectViewModel;
 import de.saxsys.mvvmfx.ViewTuple;
 import de.saxsys.mvvmfx.data.TableViewData;
 import de.saxsys.mvvmfx.utils.notifications.NotificationCenter;
+import ds.data.core.column.Col;
 import ds.data.core.column.ColumnInfo;
+import ds.data.core.condition.ui.UIConditions;
 import jakarta.inject.Inject;
+import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.application.HostServices;
+import javafx.event.Event;
+import javafx.event.EventType;
 import javafx.fxml.FXML;
 import javafx.scene.Group;
 import javafx.scene.Node;
@@ -82,6 +87,8 @@ public class DataSetView implements FxmlView<DataSetViewModel> {
 	@InjectViewModel
 	private DataSetViewModel viewModel;
 
+	@InjectContext
+	private Context context ;
 	private Stage dataSetStage;
 
 	private double xOffset = 0;
@@ -97,7 +104,12 @@ public class DataSetView implements FxmlView<DataSetViewModel> {
     
     public static final String css_column_label_border = "-fx-border-color: white; -fx-border-width: 1px 0px 1px 0px;";
     
+    private MouseEventStatus mouseEventStatus ;
+    
 	public void initialize() {
+		
+		dataSetTableView.setPlaceholder(new Label("데이터를 검색하세요."));
+		
 		// 데이터셋 타이틀
 		String datasetTitle = viewModel.getDataSetTitle() ;
 		LinkUtils.link(dataSetTitleLabel, datasetTitle);
@@ -123,6 +135,8 @@ public class DataSetView implements FxmlView<DataSetViewModel> {
 		dataSetRootAnchorPane.setOnMousePressed(this::handleMousePressedDataSetAnchorPane);
 		dataSetRootAnchorPane.setOnMouseDragged(this::handleMouseDraggedDataSetAnchorPane);
 		dataSetRootAnchorPane.setOnMouseClicked(this::handleMouseClickedDataSetAnchorPane);
+		dataSetRootAnchorPane.setOnMouseReleased(this::handleMouseReleaseDataSetAnchorPane);
+		
 		
 		dataSetColumnScrollPane.setHbarPolicy(ScrollBarPolicy.NEVER);
 		
@@ -137,20 +151,28 @@ public class DataSetView implements FxmlView<DataSetViewModel> {
 			((Group)mainRootStage.getScene().getRoot()).getChildren().remove(dataSetStage);
 		});
 		
-		
+		// 관계 맺기 관련 Event 장착
+		mouseEventStatus = viewModel.getMouseEventStatus();
+		mouseEventStatus.setScene(mainRootStage.getScene());
+		mouseEventStatus.setEventTarget(dataSetRootAnchorPane);
 	}
 
 	@FXML
 	private void search() {
-		Map<String, ?> uiValue = getUIValue();		
-		TableViewData tableViewData = viewModel.getTableViewData(uiValue);
+		UIConditions conditions = getUIConditions();		
+		TableViewData tableViewData = viewModel.getTableViewData(conditions);
 		LinkUtils.link(dataSetTableView, tableViewData);
 		
 	}
 	
-	private Map<String, ?> getUIValue() {
-		Map<String, ?> map = new HashMap<>();
-		return map;
+	private UIConditions getUIConditions() {
+		UIConditions c = viewModel.getConditions(conditionInfoLabelVBox);
+		
+		Col<?>[] columns = viewModel.getColumnCols(columInfoLabelVBox);
+		if ( ArrayUtils.isNotEmpty(columns) )
+			c.select(columns);
+		
+		return c;
 	}
 
 	
@@ -239,10 +261,11 @@ public class DataSetView implements FxmlView<DataSetViewModel> {
 		tmpConditionControlButton = conditionLabel ;
 	}
 	
+	
 	///////////////////////////////////////////////////////////////////////
 	// dataSetTitleLabel
 	private void handleDummyEvent(MouseEvent event) {
-		logger.debug(EventUtils.getNodeNameWhenMousePressed(event));
+		logger.debug("handleDummyEvent >> {}", EventUtils.getNodeNameWhenMousePressed(event));
 		
 		if(tmpConditionViewModel != null)
 	    	  tmpConditionViewModel.publish(
@@ -279,6 +302,7 @@ public class DataSetView implements FxmlView<DataSetViewModel> {
     			  , tmpConditionControlButton
     			  , tmpConditionView
     			  );
+      
 	}
 	
 	private void handleMouseDraggedTitlePane(MouseEvent event) {
@@ -315,9 +339,13 @@ public class DataSetView implements FxmlView<DataSetViewModel> {
     			  , tmpConditionControlButton
     			  , tmpConditionView
     			  );
+
 	}
 	
 	private void handleMouseDraggedDataSetAnchorPane(MouseEvent event) {
+		if (viewModel.getMouseEventStatus().isRelationMode())
+			return;
+		
 		logger.debug("handleMouseDraggedDataSetAnchorPane execute.");
 		 double deltaX_ = event.getX() - initialX;
          double deltaY_ = event.getY() - initialY;
@@ -338,6 +366,15 @@ public class DataSetView implements FxmlView<DataSetViewModel> {
 		toolbar.toFront();
 	}
 	
+	private void handleMouseReleaseDataSetAnchorPane(MouseEvent event) {
+		logger.debug("handleMouseReleaseDataSetAnchorPane execute.");
+		
+		
+	}
+	
+	private void filterEventDataSetRootAnchorPane(EventType<MouseEvent> mouseEvent, MouseEvent event) {
+		
+	}
 	
 	private void openConditionView(ConditionViewInfo conditionViewInfo, double posX, double posY) {
 		

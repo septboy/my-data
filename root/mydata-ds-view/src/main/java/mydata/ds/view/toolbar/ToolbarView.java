@@ -5,8 +5,10 @@ import org.slf4j.LoggerFactory;
 
 import de.jensd.fx.fontawesome.AwesomeDude;
 import de.jensd.fx.fontawesome.AwesomeIcon;
+import de.saxsys.mvvmfx.Context;
 import de.saxsys.mvvmfx.FluentViewLoader;
 import de.saxsys.mvvmfx.FxmlView;
+import de.saxsys.mvvmfx.InjectContext;
 import de.saxsys.mvvmfx.InjectViewModel;
 import de.saxsys.mvvmfx.ViewTuple;
 import jakarta.inject.Inject;
@@ -33,6 +35,9 @@ public class ToolbarView implements FxmlView<ToolbarViewModel> {
 	@InjectViewModel
 	private ToolbarViewModel viewModel;
 
+	@InjectContext
+	private Context context ;
+	
 	@Inject
 	private Stage primaryStage;
 
@@ -42,6 +47,7 @@ public class ToolbarView implements FxmlView<ToolbarViewModel> {
 		
 		appatEHRButton.setOnMousePressed(this::handleMousePressedOnButton);
 		emrdocFormButton.setOnMousePressed(this::handleMousePressedOnButton);
+	
 	}
 
 	private void handleMousePressedOnButton(MouseEvent event) {
@@ -62,6 +68,7 @@ public class ToolbarView implements FxmlView<ToolbarViewModel> {
 		
 		ViewTuple<DataSetView, DataSetViewModel> load = FluentViewLoader
 				.fxmlView(DataSetView.class)
+				.context(context)
 				.providedScopes(viewModel.getDataSetScope())
 				.load();
 		

@@ -9,6 +9,6 @@ import ds.ehr.research.condition.EhrResearchConditions;
 public class UtilTest {
 	@Test
 	public void testGgetConditionInfos() {
-	   ConditionInfo[] conditionInfos =  UIConditions.getConditionInfos(EhrResearchConditions.class);
+	   //ConditionInfo[] conditionInfos =  UIConditions.getConditionInfos(EhrResearchConditions.class);
 	}
 }

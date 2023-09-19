@@ -9,8 +9,6 @@ public class ConditionViewInfo extends ConditionInfo{
 
 	private Control controlButton ;
 	
-	private Object value ;
-
 	private Control prevControlButton;
 	
 	public ConditionViewInfo(String columnName, ColumnType columnType, String comment) {
@@ -18,7 +16,10 @@ public class ConditionViewInfo extends ConditionInfo{
 	}
 
 	public ConditionViewInfo(ConditionInfo conditionInfo) {
-		super(conditionInfo.getColumnName(), conditionInfo.getColumnType(), conditionInfo.getColumnComment());
+		super(conditionInfo.getColumnName(), conditionInfo.getColumnType(), conditionInfo.getColumnComment()
+			, conditionInfo.getConditionTargetCol()
+			, conditionInfo.getConditionGroupField(), conditionInfo.getConditionField()
+				);
 	}
 
 	public void setControlButton(Control controlButton) {
@@ -27,25 +28,17 @@ public class ConditionViewInfo extends ConditionInfo{
 		Object controlButtonUserData = controlButton.getUserData();
 		if (controlButtonUserData != null) {
 			ConditionViewInfo info = (ConditionViewInfo)controlButtonUserData;
-			this.value = info.getValue();
+			setValue( info.getValue() );
 		}
 		
 	}
 
-	public void setValue(Object value) {
-		this.value = value ;
-	}
-	
 	public Control getControlButton() {
 		return this.controlButton;
 	}
 	
 	public boolean hasValue() {
-		return CommonUtil.isNotEmpty(value);
-	}
-
-	public Object getValue() {
-		return this.value;
+		return CommonUtil.isNotEmpty(getValue());
 	}
 
 	public void setPrevControlButton(Control prevControlButton) {

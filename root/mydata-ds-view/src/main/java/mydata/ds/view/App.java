@@ -13,9 +13,6 @@ import de.saxsys.mvvmfx.cdi.MvvmfxCdiApplication;
 import jakarta.enterprise.event.Observes;
 import jakarta.inject.Inject;
 import javafx.application.Platform;
-import javafx.event.Event;
-import javafx.event.EventTarget;
-import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
@@ -25,9 +22,9 @@ import mydata.ds.view.main.MainView;
 import mydata.ds.view.main.MainViewModel;
 import mydata.ds.view.util.EventUtils;
 
-public class MainApp extends MvvmfxCdiApplication {
+public class App extends MvvmfxCdiApplication {
 
-	private static final Logger logger = LoggerFactory.getLogger(MainApp.class);
+	private static final Logger logger = LoggerFactory.getLogger(App.class);
 
 	public static void main(String... args) {
 
@@ -92,6 +89,6 @@ public class MainApp extends MvvmfxCdiApplication {
 	}
 	
 	private void handleMousePressedOnRootScene(MouseEvent event) {
-		logger.debug(EventUtils.getNodeNameWhenMousePressed(event));
+		logger.debug("handleMousePressedOnRootScene >> {}", EventUtils.getNodeNameWhenMousePressed(event));
 	}
 }

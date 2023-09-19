@@ -5,7 +5,9 @@ import java.util.Map;
 import com.querydsl.core.types.SubQueryExpression;
 
 import ds.condition.medicare.emr.EmrTerm;
+import ds.data.core.base.DataSet;
 import ds.data.core.condition.ui.UIConditions;
+import ds.ehr.research.condition.EhrResearchConditions;
 import ds.ehr.research.condition.UIEhrResearchConditions;
 import ds.ehr.research.dataset.UIDataSetEHR;
 import ds.ehr.research.dataset.emr.EmrEhrDataSet;
@@ -38,8 +40,20 @@ public class DataSetFactory {
 		return mUIQueryDataSet;
 	}
 
-	public UIConditions getUIConditions(Map<String, ?> uiValue) {
-		return null;
+	public UIConditions getUIConditions(String dataSetName) {
+		UIConditions c = null ;
+		if (DataSetViewModel.MEDICAL_VISIT_HISTORY.equals(dataSetName))
+			c = new EhrResearchConditions();
+		
+		else if ( DataSetViewModel.TEXT_EMR_RECORD.equals(dataSetName) )
+			c = new EhrResearchConditions();
+		
+		else
+			c = new EhrResearchConditions();
+		
+		DataSet.add(c);
+		return c ;
 	}
+	
 	
 }
