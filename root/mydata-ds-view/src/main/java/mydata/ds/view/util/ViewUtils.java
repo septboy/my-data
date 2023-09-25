@@ -66,6 +66,30 @@ public class ViewUtils {
 		}
 	}
 
+	public static double getSceneUpperLeftX(Node node) {
+		return node.localToScene(node.getBoundsInLocal()).getMinX();
+	}
+	
+	public static double getSceneUpperLeftY(Node node) {
+		return node.localToScene(node.getBoundsInLocal()).getMinY();
+	}
+	
+	public static double getSceneLowerRightX(Node node) {
+		return node.localToScene(node.getBoundsInLocal()).getMaxX();
+	}
+	
+	public static double getSceneLowerRightY(Node node) {
+		return node.localToScene(node.getBoundsInLocal()).getMaxY();
+	}
+	
+	public static double getSceneCenterX(Node node) {
+		return node.localToScene(node.getBoundsInLocal()).getCenterX();
+	}
+	
+	public static double getSceneCenterY(Node node) {
+		return node.localToScene(node.getBoundsInLocal()).getCenterY();
+	}
+	
 	public static double getRigionalWidth(Region region) {
 		
 		if (getWidth(region) > 0) {

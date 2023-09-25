@@ -73,9 +73,9 @@ public class ToolbarView implements FxmlView<ToolbarViewModel> {
 				.load();
 		
 		Parent dataSetView = load.getView();
-		AnchorPane rootAnchorPane = (AnchorPane) primaryStage.getScene().getRoot();
+		AnchorPane appRootAnchorPane = (AnchorPane) primaryStage.getScene().getRoot();
 
-		DataSetHelper.openDataSet(rootAnchorPane, dataSetView );
+		DataSetHelper.openDataSet(appRootAnchorPane, dataSetView );
 	}
 
 }

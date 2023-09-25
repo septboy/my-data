@@ -21,6 +21,7 @@ import ds.data.core.condition.Condition;
 import ds.data.core.condition.ConditionInfo;
 import ds.data.core.condition.ui.UIConditions;
 import ds.ehr.research.dataset.UIDataSetEHR;
+import ds.sqlite.dataset.DataSetLocal;
 import ds.ui.condition.DataSetUI;
 import jakarta.inject.Inject;
 import javafx.collections.ObservableList;
@@ -30,48 +31,55 @@ import javafx.scene.control.Control;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.layout.VBox;
+import javafx.scene.shape.Circle;
 import mydata.ds.view.condition.ConditionViewInfo;
 import mydata.ds.view.scopes.AppContext;
 import mydata.ds.view.scopes.ConditionScope;
 import mydata.ds.view.scopes.DataSetScope;
 import mydata.ds.view.util.ViewUtils;
 
-@ScopeProvider(scopes = {ConditionScope.class})
+@ScopeProvider(scopes = { ConditionScope.class })
 public class DataSetViewModel implements ViewModel {
 
 	public static final Logger logger = LoggerFactory.getLogger(DataSetViewModel.class);
-	
+
 	public static final String CLOSE_DATASET_NOTIFICATION = "closeDialog";
 
 	static final String TITLE_LABEL_KEY = "dialog.addcontact.title";
-	
+
 	public static final String MEDICAL_VISIT_HISTORY = "appatEHRButton";
 
 	public static final String TEXT_EMR_RECORD = "emrdocFormButton";
 
 	@Inject
-	private AppContext appContext ;
-	
+	private AppContext appContext;
+
 	@Inject
 	private DataSetFactory dataSetFactory;
 
 	@Inject
 	private ResourceBundle defaultResourceBundle;
-	
-	@InjectScope
-	private DataSetScope dataSetScope ;
 
-	private DataSetUI dataSetUI ;
-	
+	@InjectScope
+	private DataSetScope dataSetScope;
+
+	private DataSetUI dataSetUI;
+
 	private UIConditions c;
+
+	/*
+	 * dataSet들의 관계를 다른다.
+	 */
+	private DataSetRelation dataSetRelation;
+
+	private int dataSetIdNumber;
 
 	public void initialize() {
 		String dataSetId = dataSetScope.getDataSetId();
 		logger.info("dataSetId is selected '{}'", dataSetId);
-		
+
 		dataSetUI = dataSetFactory.getDataSetUI(dataSetId);
 		c = dataSetFactory.getUIConditions(dataSetId);
-		
 	}
 
 	public String getDataSetTitle() {
@@ -86,15 +94,15 @@ public class DataSetViewModel implements ViewModel {
 
 	public ConditionViewInfo[] getConditionViewInfos() {
 		ConditionInfo[] conditionInfos = dataSetUI.getConditionInfos();
-		ConditionViewInfo[] conditionViewInfos = null ;
-		
-		for(ConditionInfo conditionInfo: conditionInfos) {
+		ConditionViewInfo[] conditionViewInfos = null;
+
+		for (ConditionInfo conditionInfo : conditionInfos) {
 			ConditionViewInfo conditionViewInfo = new ConditionViewInfo(conditionInfo);
 			conditionViewInfos = ArrayUtil.addArrayOne(conditionViewInfos, conditionViewInfo, ConditionViewInfo.class);
 		}
 		return conditionViewInfos;
 	}
-	
+
 	public TableViewData getTableViewData(UIConditions conditions) {
 		SubQueryExpression<?> query = dataSetUI.getQuerySearch(conditions);
 		TableViewData tableViewData = ViewUtils.getTableViewData(query);
@@ -103,36 +111,68 @@ public class DataSetViewModel implements ViewModel {
 
 	public Col<?>[] getColumnCols(VBox columInfoLabelVBox) {
 		ObservableList<Node> columnLabels = columInfoLabelVBox.getChildren();
-		Col<?>[] colsSelected = null ;
-		for (Node node: columnLabels) {
-			Object object = ((Control)node).getUserData();
-			ColumnInfo columnInfo = (ColumnInfo)object ;
+		Col<?>[] colsSelected = null;
+		for (Node node : columnLabels) {
+			Object object = ((Control) node).getUserData();
+			ColumnInfo columnInfo = (ColumnInfo) object;
 			if (columnInfo == null)
-				continue ;
+				continue;
 			Col<?> col = columnInfo.getCol();
 			Col<?> colSelected = columnInfo.getColIfSelected();
 			colsSelected = ArrayUtil.addArrayOne(colsSelected, colSelected, Col.class);
 		}
-		
+
 		return colsSelected;
 	}
 
 	public UIConditions getConditions(VBox conditionInfoLabelVBox) {
 		ObservableList<Node> conditionLabels = conditionInfoLabelVBox.getChildren();
-		
-		for (Node node: conditionLabels) {
-			Object object = ((Control)node).getUserData();
-			ConditionInfo conditionInfo = (ConditionInfo)object ;
-			if(conditionInfo != null && conditionInfo.isSelected())
+
+		for (Node node : conditionLabels) {
+			Object object = ((Control) node).getUserData();
+			ConditionInfo conditionInfo = (ConditionInfo) object;
+			if (conditionInfo != null && conditionInfo.isSelected())
 				conditionInfo.fillConditionValue(this.c);
 		}
-		
+
 		return this.c;
 	}
 
-
 	public MouseEventStatus getMouseEventStatus() {
-		
+
 		return appContext.getMouseEventStatus();
+	}
+
+	public void setDataSetIdNumber(int dataSetIdNumber) {
+		this.dataSetIdNumber = dataSetIdNumber;
+		this.dataSetRelation = new DataSetRelation();
+		appContext.putDataSetRelation(dataSetIdNumber, this.dataSetRelation);
+	}
+
+	public void moveRelationLine(double deltaX, double deltaY) {
+		logger.debug("moveRelationLine( {}, {} )", deltaX, deltaY);
+		dataSetRelation.moveRelationLine(deltaX, deltaY);
+
+	}
+
+	/**
+	 * 
+	 * @param relationPointCentersScene
+	 * @param topCenterX
+	 * @param topCenterY
+	 * @param rightCenterX
+	 * @param rightCenterY
+	 * @param bottomCenterX
+	 * @param bottomCenterY
+	 * @param leftCenterX
+	 * @param leftCenterY
+	 */
+	public void moveRelationLine(RelationPointCenters relationPointCentersScene, double topCenterX, double topCenterY,
+			double rightCenterX, double rightCenterY, double bottomCenterX, double bottomCenterY, double leftCenterX,
+			double leftCenterY) {
+
+		dataSetRelation.moveRelationLine(relationPointCentersScene, topCenterX, topCenterY, rightCenterX, rightCenterY,
+				bottomCenterX, bottomCenterY, leftCenterX, leftCenterY);
+
 	}
 }

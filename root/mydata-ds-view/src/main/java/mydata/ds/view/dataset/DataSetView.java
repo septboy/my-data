@@ -14,6 +14,7 @@ import de.saxsys.mvvmfx.InjectViewModel;
 import de.saxsys.mvvmfx.ViewTuple;
 import de.saxsys.mvvmfx.data.TableViewData;
 import de.saxsys.mvvmfx.utils.notifications.NotificationCenter;
+import ds.common.util.NumberUtil;
 import ds.data.core.column.Col;
 import ds.data.core.column.ColumnInfo;
 import ds.data.core.condition.ui.UIConditions;
@@ -37,6 +38,7 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
 import mydata.ds.view.condition.ConditionView;
 import mydata.ds.view.condition.ConditionViewInfo;
@@ -72,6 +74,18 @@ public class DataSetView implements FxmlView<DataSetViewModel> {
 	@FXML
 	public ScrollPane dataSetColumnScrollPane;
 	
+	@FXML
+	public Circle topRelationCircle; 
+	
+	@FXML
+	public Circle bottomRelationCircle; 
+	
+	@FXML
+	public Circle leftRelationCircle; 
+	
+	@FXML
+	public Circle rightRelationCircle; 
+	
 	@Inject
 	Stage mainRootStage;
 	
@@ -91,13 +105,13 @@ public class DataSetView implements FxmlView<DataSetViewModel> {
 	private Context context ;
 	private Stage dataSetStage;
 
-	private double xOffset = 0;
-	private double yOffset = 0;
+	private double xOffsetOfMousePressedTitlePane = 0;
+	private double yOffsetOfMousePressedTitlePane = 0;
 	 
-	private double initialX;
-    private double initialY;
-    private double initialWidth;
-    private double initialHeight;
+	private double initialPressedX;
+    private double initialPressedY;
+    private double initialPressedWidth;
+    private double initialPressedHeight;
     private Node tmpConditionView ;
     private Control tmpConditionControlButton ;
     private ConditionViewModel tmpConditionViewModel ;
@@ -105,6 +119,17 @@ public class DataSetView implements FxmlView<DataSetViewModel> {
     public static final String css_column_label_border = "-fx-border-color: white; -fx-border-width: 1px 0px 1px 0px;";
     
     private MouseEventStatus mouseEventStatus ;
+
+	private RelationPointCenters relationPointCentersPressed;
+
+	private RelationPointCenters relationPointCentersScene;
+	
+	//테스트
+	private double xOffsetOfMousePressedDataSetAnchorPane;
+
+	private double yOffsetOfMousePressedDataSetAnchorPane;
+
+	
     
 	public void initialize() {
 		
@@ -132,10 +157,13 @@ public class DataSetView implements FxmlView<DataSetViewModel> {
 		
 		dataSetTableView.setOnMousePressed(this::handleParentEvent);
 		
+		viewModel.setDataSetIdNumber(dataSetRootAnchorPane.hashCode());
+		dataSetRootAnchorPane.setUserData(datasetTitle);
 		dataSetRootAnchorPane.setOnMousePressed(this::handleMousePressedDataSetAnchorPane);
 		dataSetRootAnchorPane.setOnMouseDragged(this::handleMouseDraggedDataSetAnchorPane);
 		dataSetRootAnchorPane.setOnMouseClicked(this::handleMouseClickedDataSetAnchorPane);
 		dataSetRootAnchorPane.setOnMouseReleased(this::handleMouseReleaseDataSetAnchorPane);
+		dataSetRootAnchorPane.setOnMouseDragReleased(this::handleMouseDragReleasedDataSetAnchorPane);
 		
 		
 		dataSetColumnScrollPane.setHbarPolicy(ScrollBarPolicy.NEVER);
@@ -148,7 +176,7 @@ public class DataSetView implements FxmlView<DataSetViewModel> {
 		    			  , tmpConditionView
 		    			  );
 			
-			((Group)mainRootStage.getScene().getRoot()).getChildren().remove(dataSetStage);
+			((Group)mainRootStage.getScene().getRoot()).getChildren().  remove(dataSetStage);
 		});
 		
 		// 관계 맺기 관련 Event 장착
@@ -293,8 +321,8 @@ public class DataSetView implements FxmlView<DataSetViewModel> {
 	  logger.debug("handleMousePressedTitlePane execute.");
 	  
 	  dataSetRootAnchorPane.toFront();
-      xOffset = event.getSceneX();
-      yOffset = event.getSceneY();
+      xOffsetOfMousePressedTitlePane = event.getSceneX();
+      yOffsetOfMousePressedTitlePane = event.getSceneY();
       
       if(tmpConditionViewModel != null)
     	  tmpConditionViewModel.publish(
@@ -303,23 +331,29 @@ public class DataSetView implements FxmlView<DataSetViewModel> {
     			  , tmpConditionView
     			  );
       
+      event.consume();
 	}
 	
 	private void handleMouseDraggedTitlePane(MouseEvent event) {
 	  logger.debug("handleMouseDraggedTitlePane execute.");
 		
-      double deltaX = event.getSceneX() - xOffset;
-      double deltaY = event.getSceneY() - yOffset;
+      double deltaX = event.getSceneX() - xOffsetOfMousePressedTitlePane; // X축으로 이전 위치와 현재 위치에서의 이동한 만큼의 차이
+      double deltaY = event.getSceneY() - yOffsetOfMousePressedTitlePane; // Y축으로 이전 위치와 현재 위치에서의 이동한 만큼의 차이
       dataSetRootAnchorPane.setLayoutX(dataSetRootAnchorPane.getLayoutX() + deltaX);
       dataSetRootAnchorPane.setLayoutY(dataSetRootAnchorPane.getLayoutY() + deltaY);
-      xOffset = event.getSceneX();
-      yOffset = event.getSceneY();		
+      viewModel.moveRelationLine(deltaX, deltaY);
+      
+      // important
+      xOffsetOfMousePressedTitlePane = event.getSceneX();
+      yOffsetOfMousePressedTitlePane = event.getSceneY();		
+      
+      event.consume();
 	}
 	
 	private void handleMouseClickedTitlePane(MouseEvent event) {
 		logger.debug("handleMouseClickedTitlePane execute.");
 		dataSetRootAnchorPane.toFront();
-
+		event.consume();
 	}
 	
 	//////////////////////////////////////////////////////////////////////////
@@ -328,11 +362,36 @@ public class DataSetView implements FxmlView<DataSetViewModel> {
 		logger.debug("handleMousePressedDataSetAnchorPane execute.");
 		 dataSetRootAnchorPane.toFront();
 		 
-		 initialX = event.getX();
-         initialY = event.getY();
-         initialWidth = ((AnchorPane) event.getSource()).getPrefWidth();
-         initialHeight = ((AnchorPane) event.getSource()).getPrefHeight();
+		 this.initialPressedX = event.getX();
+		 this.initialPressedY = event.getY();
          
+		 this.initialPressedWidth = ((AnchorPane) event.getSource()).getPrefWidth();
+		 this.initialPressedHeight = ((AnchorPane) event.getSource()).getPrefHeight();
+		 
+		 // 관계포인터의 중앙 정렬을 위해 초기값 설정
+		 this.relationPointCentersPressed = new RelationPointCenters(
+				  topRelationCircle.getCenterX()
+				 ,topRelationCircle.getCenterY()
+				 ,rightRelationCircle.getCenterX()
+				 ,rightRelationCircle.getCenterY()
+				 ,bottomRelationCircle.getCenterX()
+				 ,bottomRelationCircle.getCenterY()
+				 ,leftRelationCircle.getCenterX()
+				 ,leftRelationCircle.getCenterY()
+				 );
+         
+		 // 관계선의 초기 설정값을 저장한다.
+		 this.relationPointCentersScene = new RelationPointCenters(
+				  ViewUtils.getSceneCenterX(topRelationCircle)
+				 ,ViewUtils.getSceneCenterY(topRelationCircle)
+				 ,ViewUtils.getSceneCenterX(rightRelationCircle)
+				 ,ViewUtils.getSceneCenterY(rightRelationCircle)
+				 ,ViewUtils.getSceneCenterX(bottomRelationCircle)
+				 ,ViewUtils.getSceneCenterY(bottomRelationCircle)
+				 ,ViewUtils.getSceneCenterX(leftRelationCircle)
+				 ,ViewUtils.getSceneCenterY(leftRelationCircle)
+				 );
+		 
          if(tmpConditionViewModel != null)
        	  tmpConditionViewModel.publish(
     			  ConditionViewModel.CLOSE_CONDITION_VIEW_NOTIFICATION
@@ -340,6 +399,7 @@ public class DataSetView implements FxmlView<DataSetViewModel> {
     			  , tmpConditionView
     			  );
 
+         event.consume();
 	}
 	
 	private void handleMouseDraggedDataSetAnchorPane(MouseEvent event) {
@@ -347,16 +407,60 @@ public class DataSetView implements FxmlView<DataSetViewModel> {
 			return;
 		
 		logger.debug("handleMouseDraggedDataSetAnchorPane execute.");
-		 double deltaX_ = event.getX() - initialX;
-         double deltaY_ = event.getY() - initialY;
+		
+		AnchorPane dataSetPane = (AnchorPane) event.getSource();
+		
+		 double deltaX_ = event.getX() - this.initialPressedX;
+         double deltaY_ = event.getY() - this.initialPressedY;
 
-         double newWidth = initialWidth + deltaX_;
-         double newHeight = initialHeight + deltaY_;
+         // 관계 선을 움직이고
+         viewModel.moveRelationLine(
+        		 this.relationPointCentersScene
+        		 ,ViewUtils.getSceneCenterX(topRelationCircle)
+				 ,ViewUtils.getSceneCenterY(topRelationCircle)
+				 ,ViewUtils.getSceneCenterX(rightRelationCircle)
+				 ,ViewUtils.getSceneCenterY(rightRelationCircle)
+				 ,ViewUtils.getSceneCenterX(bottomRelationCircle)
+				 ,ViewUtils.getSceneCenterY(bottomRelationCircle)
+				 ,ViewUtils.getSceneCenterX(leftRelationCircle)
+				 ,ViewUtils.getSceneCenterY(leftRelationCircle)
+        		 );
+         
+         // 움직인 후에 관계선의 위치를 저장하고.
+         // important position, test rightRelationCircle, 나머지 3개도 처리해야 함.
+         this.relationPointCentersScene = new RelationPointCenters(
+				  ViewUtils.getSceneCenterX(topRelationCircle)
+				 ,ViewUtils.getSceneCenterY(topRelationCircle)
+				 ,ViewUtils.getSceneCenterX(rightRelationCircle)
+				 ,ViewUtils.getSceneCenterY(rightRelationCircle)
+				 ,ViewUtils.getSceneCenterX(bottomRelationCircle)
+				 ,ViewUtils.getSceneCenterY(bottomRelationCircle)
+				 ,ViewUtils.getSceneCenterX(leftRelationCircle)
+				 ,ViewUtils.getSceneCenterY(leftRelationCircle)
+				);
+		 
+         
+        // saveRelationCircleCoordinateXY();
+         
+         double newWidth = this.initialPressedWidth + deltaX_;
+         double newHeight = this.initialPressedHeight + deltaY_;
 
-         ((AnchorPane) event.getSource()).setPrefWidth(newWidth);
-         ((AnchorPane) event.getSource()).setMaxWidth(newWidth);
-         ((AnchorPane) event.getSource()).setPrefHeight(newHeight);
-         ((AnchorPane) event.getSource()).setMaxHeight(newHeight);
+         dataSetPane.setPrefWidth(newWidth);
+         dataSetPane.setPrefHeight(newHeight);
+         dataSetPane.setMaxWidth(newWidth);
+         dataSetPane.setMaxHeight(newHeight);
+         dataSetPane.setMinWidth(newWidth);
+         dataSetPane.setMinHeight(newHeight);
+         
+         topRelationCircle.setCenterX(relationPointCentersPressed.topCenterX()+deltaX_/2);
+         
+         bottomRelationCircle.setCenterX(relationPointCentersPressed.bottomCenterX()+deltaX_/2);
+         
+         leftRelationCircle.setCenterY(relationPointCentersPressed.leftCenterY()+deltaY_/2);
+         
+         rightRelationCircle.setCenterY(relationPointCentersPressed.rightCenterY()+deltaY_/2);
+         
+         event.consume();
 	}
 	
 	private void handleMouseClickedDataSetAnchorPane(MouseEvent event) {
@@ -372,7 +476,9 @@ public class DataSetView implements FxmlView<DataSetViewModel> {
 		
 	}
 	
-	private void filterEventDataSetRootAnchorPane(EventType<MouseEvent> mouseEvent, MouseEvent event) {
+	private void handleMouseDragReleasedDataSetAnchorPane(MouseEvent event) {
+		logger.debug("handleMouseDragReleasedDataSetAnchorPane execute.");
+		
 		
 	}
 	
