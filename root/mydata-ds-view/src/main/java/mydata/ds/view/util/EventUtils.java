@@ -14,7 +14,7 @@ public class EventUtils {
         	if (nodeId.equals(targetNode.getId()))
         		Event.fireEvent(targetNode, event);
         	else {
-        		Node parentNode = ViewUtils.searchPartentNodeWithId(nodeId, targetNode);
+        		Node parentNode = ViewUtils.searchParentNodeWithId(nodeId, targetNode);
         		if (parentNode != null)
         			Event.fireEvent(parentNode, event);
         	}

@@ -13,14 +13,21 @@ import de.saxsys.mvvmfx.cdi.MvvmfxCdiApplication;
 import jakarta.enterprise.event.Observes;
 import jakarta.inject.Inject;
 import javafx.application.Platform;
+import javafx.scene.Group;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
+import javafx.scene.shape.Polygon;
 import javafx.stage.Stage;
 import mydata.ds.view.events.TriggerShutdownEvent;
 import mydata.ds.view.main.MainView;
 import mydata.ds.view.main.MainViewModel;
 import mydata.ds.view.util.EventUtils;
+import mydata.ds.view.util.ViewUtils;
 
 public class App extends MvvmfxCdiApplication {
 
@@ -59,7 +66,7 @@ public class App extends MvvmfxCdiApplication {
 				.load();
 		
 		Scene rootScene = new Scene(mainRoot.getView());
-		
+		ViewUtils.setSceneToAppContext(rootScene);
 		AnchorPane toolbar = (AnchorPane) mainRoot.getView().lookup("#main_toolbar");
 		
 		
@@ -74,6 +81,9 @@ public class App extends MvvmfxCdiApplication {
 				
 		rootScene.getStylesheets().add("/ds-view.css");
 		rootScene.setOnMousePressed(this::handleMousePressedOnRootScene );
+		
+		ViewUtils.addNodeOnAppScene(test(), 100, 100);
+		ViewUtils.addNodeOnAppScene(test(), 200, 200);
 		stage.setScene(rootScene);
 	    stage.setMaximized(true);
 		stage.show();
@@ -91,4 +101,34 @@ public class App extends MvvmfxCdiApplication {
 	private void handleMousePressedOnRootScene(MouseEvent event) {
 		logger.debug("handleMousePressedOnRootScene >> {}", EventUtils.getNodeNameWhenMousePressed(event));
 	}
+	
+    public Node test() {
+    	 // Create a Circle
+        double circleRadius = 100.0;
+        double centerX = 150.0;
+        double centerY = 150.0;
+        Circle circle = new Circle(centerX, centerY, circleRadius);
+        circle.setFill(Color.TRANSPARENT);
+        circle.setStroke(Color.WHITE);
+        circle.setFill(Color.WHITE);
+
+        // Create a Polygon representing a triangle inside the circle
+        double triangleSideLength = 80.0;
+        Polygon triangle = new Polygon(
+            centerX, centerY - circleRadius, // Top vertex
+            centerX - triangleSideLength , centerY + circleRadius / 2, // Bottom-left vertex
+            centerX + triangleSideLength , centerY + circleRadius / 2  // Bottom-right vertex
+        );
+        triangle.setFill(Color.GREEN);
+
+        // Create a Group to hold the circle and triangle
+        Group group = new Group(circle, triangle);
+        group.setScaleX(0.2D);
+        group.setScaleY(0.2D);
+        group.setRotate(180);
+
+        return group;
+    }
+
+
 }

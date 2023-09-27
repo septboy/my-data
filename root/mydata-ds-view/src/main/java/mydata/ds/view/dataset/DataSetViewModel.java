@@ -175,4 +175,8 @@ public class DataSetViewModel implements ViewModel {
 				bottomCenterX, bottomCenterY, leftCenterX, leftCenterY);
 
 	}
+	
+	public AppContext getAppContext() {
+		return this.appContext ;
+	}
 }

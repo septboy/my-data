@@ -7,20 +7,22 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ds.common.util.CommonUtil;
-import javafx.scene.shape.Circle;
+import javafx.scene.layout.Pane;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Polygon;
-import mydata.ds.view.util.ViewUtils;
 
 public class DataSetRelation {
 
 	private static final Logger logger = LoggerFactory.getLogger(DataSetRelation.class);
 	
-	List<ArrowLine> arrowLineList = new ArrayList<>();
+	List<RelatedLine> relatedLineList = new ArrayList<>();
+	
+	private List<RelatedPane> relatedPainList = new ArrayList<>();
+	
 
 	public void moveRelationLine(double deltaX, double deltaY) {
-		for (ArrowLine arrowLine : arrowLineList) {
-			adjustRelationArrowLine(arrowLine, deltaX, deltaY);
+		for (RelatedLine relatedLine : relatedLineList) {
+			adjustRelationArrowLine(relatedLine, deltaX, deltaY);
 		}
 	}
 	
@@ -31,7 +33,7 @@ public class DataSetRelation {
 		double deltaX = 0L;
 		double deltaY = 0L;
 		
-		for (ArrowLine arrowLine : arrowLineList) {
+		for (RelatedLine arrowLine : relatedLineList) {
 			if (arrowLine.circlePos() == CirclePos.Top) {
 				deltaX = topCenterX - relationPointCentersScene.topCenterX();
 				deltaY = topCenterY - relationPointCentersScene.topCenterY();
@@ -64,11 +66,12 @@ public class DataSetRelation {
 		}
 	}
 
-	public void setRelationLine(CirclePos circlePos, int gubun, Line line, Polygon arrowhead) {
-		arrowLineList.add(new ArrowLine(circlePos, gubun, line, arrowhead));
+	public DataSetRelation addRelatedLine(CirclePos circlePos, int gubun, Line line, Polygon arrowhead) {
+		this.relatedLineList.add(new RelatedLine(circlePos, gubun, line, arrowhead));
+		return this ;
 	}
 
-	private void adjustRelationArrowLine(ArrowLine arrowLine, double deltaX, double deltaY) {
+	private void adjustRelationArrowLine(RelatedLine arrowLine, double deltaX, double deltaY) {
 
 		Line line = arrowLine.line();
 		Polygon arrowhead = arrowLine.arrowhead();
@@ -96,5 +99,21 @@ public class DataSetRelation {
 		// Rotate the arrowhead
 		arrowhead.setRotate(angle);
 
+	}
+
+	public void addRelatedPane(RelatedPane relatedPane) {
+		this.relatedPainList .add(relatedPane);
+	}
+
+	public List<RelatedPane> getRelatedPaneList() {
+		return this.relatedPainList;
+	}
+
+	public List<RelatedLine> getRelatedLineList() {
+		return this.relatedLineList;
+	}
+
+	public void removeRelatedLineList() {
+		this.relatedLineList.removeAll(relatedLineList);
 	}
 }

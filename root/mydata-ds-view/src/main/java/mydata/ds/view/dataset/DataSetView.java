@@ -43,6 +43,7 @@ import javafx.stage.Stage;
 import mydata.ds.view.condition.ConditionView;
 import mydata.ds.view.condition.ConditionViewInfo;
 import mydata.ds.view.condition.ConditionViewModel;
+import mydata.ds.view.scopes.AppContext;
 import mydata.ds.view.scopes.ConditionScope;
 import mydata.ds.view.util.DataSetHelper;
 import mydata.ds.view.util.EventUtils;
@@ -353,6 +354,9 @@ public class DataSetView implements FxmlView<DataSetViewModel> {
 	private void handleMouseClickedTitlePane(MouseEvent event) {
 		logger.debug("handleMouseClickedTitlePane execute.");
 		dataSetRootAnchorPane.toFront();
+		
+		DataSetRelation dataSetRelation = viewModel.getAppContext().getDataSetRelation(dataSetRootAnchorPane.hashCode());
+		viewModel.getMouseEventStatus().remakeRelationLine(dataSetRelation);
 		event.consume();
 	}
 	

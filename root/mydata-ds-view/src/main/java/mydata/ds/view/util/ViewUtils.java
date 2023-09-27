@@ -1,6 +1,6 @@
 package mydata.ds.view.util;
 
-import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.querydsl.core.Tuple;
@@ -9,12 +9,19 @@ import com.querydsl.core.types.Operation;
 import com.querydsl.core.types.SubQueryExpression;
 
 import de.saxsys.mvvmfx.data.TableViewData;
+import ds.data.core.util.CdiUtils;
 import ds.data.core.util.ColUtils;
 import ds.data.core.util.SqlUtil;
+import jakarta.enterprise.inject.spi.BeanManager;
+import jakarta.enterprise.inject.spi.CDI;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
-import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
+import mydata.ds.view.scopes.AppContext;
 
 public class ViewUtils {
 
@@ -41,7 +48,7 @@ public class ViewUtils {
 		return tableViewData;
 	}
 	
-	public static Node searchPartentNodeWithId(String id, Node targetNode) {
+	public static Node searchParentNodeWithId(String id, Node targetNode) {
 		Node parentNode = targetNode.getParent();
 		if (parentNode == null)
 			return null;
@@ -49,7 +56,7 @@ public class ViewUtils {
 			if (id.equals(parentNode.getId()))
 				return parentNode;
 			else
-				return searchPartentNodeWithId(id, parentNode);
+				return searchParentNodeWithId(id, parentNode);
 		}
 	}
 
@@ -128,4 +135,39 @@ public class ViewUtils {
         FXMLLoader fxmlLoader = new FXMLLoader(baseClazz.getResource(fxml));
         return fxmlLoader;
     }
+	
+    @SuppressWarnings("unchecked")
+	public static <T> List<T> getNodeList(Pane pane, Class<T> nodeClazz) {
+        List<T> nodeList = new ArrayList<>();
+        for (T node : (ObservableList<T>)pane.getChildren()) {
+            if (nodeClazz.isAssignableFrom(node.getClass())) {
+                nodeList.add((T) node);
+            }
+        }
+        return nodeList;
+    }
+    
+    public static void removeFromScene(Node node) {
+	    BeanManager bm = CDI.current().getBeanManager();
+		AppContext appContext = CdiUtils.getOneReference(bm, AppContext.class);
+		((Pane)appContext.getScene().getRoot()).getChildren().remove(node);
+    }
+    
+    public static void setSceneToAppContext(Scene scene) {
+    	BeanManager bm = CDI.current().getBeanManager();
+ 		AppContext appContext = CdiUtils.getOneReference(bm, AppContext.class);
+ 		appContext.setScene(scene);
+    }
+
+	public static void addNodeOnAppScene(Node node, double x, double y) {
+		BeanManager bm = CDI.current().getBeanManager();
+ 		AppContext appContext = CdiUtils.getOneReference(bm, AppContext.class);
+ 		
+		AnchorPane parentPane = (AnchorPane) appContext.getScene().getRoot();
+		node.setLayoutX(x);
+		node.setLayoutY(y);
+		parentPane.getChildren().add(node);
+		node.toFront();
+		
+	}
 }

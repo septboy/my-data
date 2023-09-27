@@ -7,8 +7,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import jakarta.enterprise.context.ApplicationScoped;
+import javafx.scene.Scene;
 import mydata.ds.view.dataset.DataSetRelation;
-import mydata.ds.view.dataset.DataSetView;
 import mydata.ds.view.dataset.MouseEventStatus;
 
 @ApplicationScoped
@@ -17,6 +17,8 @@ public class AppContext {
 	
 	private MouseEventStatus mouseEventStatus ;
 	private Map<Integer, DataSetRelation> dataSetRelationMap ;
+
+	private Scene scene;
 	
 	public AppContext() {
 		dataSetRelationMap = new HashMap<>();
@@ -37,6 +39,14 @@ public class AppContext {
 		
 		if(!dataSetRelationMap.containsKey(dataSetIdNumber) )
 			this.dataSetRelationMap.put(dataSetIdNumber, dataSetRelation);
+	}
+
+	public Scene getScene() {
+		return this.scene;
+	}
+
+	public void setScene(Scene scene) {
+		this.scene = scene ;
 	}
 	
 	

@@ -1,5 +1,7 @@
 package mydata.ds.view.dataset;
 
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,12 +24,13 @@ import javafx.scene.shape.StrokeLineCap;
 import javafx.scene.shape.StrokeType;
 import javafx.util.Duration;
 import mydata.ds.view.scopes.AppContext;
+import mydata.ds.view.util.ViewUtils;
 
 public class MouseEventStatus {
 
 	private static final Logger logger = LoggerFactory.getLogger(MouseEventStatus.class);
 
-	private static final long duringTimeForRelation = 2000L;
+	private static final long duringTimeForRelation = 1300L;
 	private Timeline timeline;
 	private boolean isMousePressed = false;
 	private boolean isMouseDragged = false;
@@ -116,60 +119,7 @@ public class MouseEventStatus {
 						logger.debug("MOUSE_ENTERED_TARGET eventTarget {} is saved !!",
 								dataSetRootAnchorPaneTarget.getUserData());
 
-						javafx.scene.shape.Line line = new javafx.scene.shape.Line();
-
-						Circle fromCircle = findCircleById(dataSetRootAnchorPaneSource, "rightRelationCircle");
-						Circle toCircle = findCircleById(dataSetRootAnchorPaneTarget, "leftRelationCircle");
-
-						double fromCircleX = fromCircle.localToScene(fromCircle.getBoundsInLocal()).getCenterX(); //
-						double fromCircleY = fromCircle.localToScene(fromCircle.getBoundsInLocal()).getCenterY(); //
-
-						double toCircleX = toCircle.localToScene(toCircle.getBoundsInLocal()).getCenterX(); //
-						double toCircleY = toCircle.localToScene(toCircle.getBoundsInLocal()).getCenterY(); //
-
-						if (fromCircle != null && toCircle != null) {
-							line.setStartX(fromCircleX);// rightCircle.getLayoutX()
-							line.setStartY(fromCircleY);// rightCircle.getLayoutY()
-							line.setEndX(toCircleX);// leftCircle.getLayoutX()
-							line.setEndY(toCircleY);// leftCircle.getLayoutX()
-							line.setStroke(Color.GREEN);
-							// Set the stroke type to DOTTED
-							line.setStrokeType(StrokeType.CENTERED);
-							// Set the line cap to ROUND for better dot appearance
-							line.setStrokeLineCap(StrokeLineCap.ROUND);
-							// Set the dot pattern (5 pixels on, 5 pixels off)
-							line.getStrokeDashArray().addAll(5.0, 5.0);
-
-							// Create an arrowhead polygon
-							Polygon arrowhead = new Polygon( //
-									0.0, 0.0, // // Vertex 1 (x, y)
-									15.0, 7.5, // Vertex 2 (x, y)
-									0.0, 15.0 // Vertex 3 (x, y)
-							);
-							arrowhead.setFill(Color.GREEN);
-
-							// Calculate the rotation angle for the arrowhead
-							double angle = Math.atan2(//
-									(toCircleY - fromCircleY), //
-									(toCircleX - fromCircleX)//
-							);//
-							angle = Math.toDegrees(angle);
-
-							// Position the arrowhead at the end of the line
-							arrowhead.setLayoutX(toCircleX - 7.5);
-							arrowhead.setLayoutY(toCircleY - 7.5);
-
-							// Rotate the arrowhead
-							arrowhead.setRotate(angle);
-
-							AnchorPane parentPane = (AnchorPane) scene.getRoot();
-							parentPane.getChildren().addAll(line, arrowhead);
-							line.toFront();
-							this.appContext.getDataSetRelation(dataSetRootAnchorPaneSource.hashCode())
-									.setRelationLine(CirclePos.Right, 0, line, arrowhead); // start
-							this.appContext.getDataSetRelation(dataSetRootAnchorPaneTarget.hashCode())
-									.setRelationLine(CirclePos.Left, 1, line, arrowhead); // end
-						}
+						makeRelationLine(dataSetRootAnchorPaneSource, dataSetRootAnchorPaneTarget);
 
 						statusClear();
 					}
@@ -178,6 +128,141 @@ public class MouseEventStatus {
 				}
 			}
 		});
+	}
+
+	public void makeRelationLine(Pane startPane, Pane endPane) {
+		makeRelationLine(false , startPane, endPane);
+	}
+	
+	private void makeRelationLine(boolean isRedraw, Pane startPane, Pane endPane) {
+		if (startPane == null || endPane == null)
+			return;
+
+		List<Circle> sourceCircles = ViewUtils.getNodeList(startPane, Circle.class);
+		List<Circle> targetCircles = ViewUtils.getNodeList(endPane, Circle.class);
+
+		javafx.scene.shape.Line line = new javafx.scene.shape.Line();
+
+		CirclePair circlePair = getClosestCirclePair(sourceCircles, targetCircles);
+		Circle fromCircle = circlePair.start();
+		Circle toCircle = circlePair.end();
+
+		double fromCircleX = fromCircle.localToScene(fromCircle.getBoundsInLocal()).getCenterX(); //
+		double fromCircleY = fromCircle.localToScene(fromCircle.getBoundsInLocal()).getCenterY(); //
+
+		double toCircleX = toCircle.localToScene(toCircle.getBoundsInLocal()).getCenterX(); //
+		double toCircleY = toCircle.localToScene(toCircle.getBoundsInLocal()).getCenterY(); //
+
+		if (fromCircle != null && toCircle != null) {
+			line.setStartX(fromCircleX);// rightCircle.getLayoutX()
+			line.setStartY(fromCircleY);// rightCircle.getLayoutY()
+			line.setEndX(toCircleX);// leftCircle.getLayoutX()
+			line.setEndY(toCircleY);// leftCircle.getLayoutX()
+			line.setStroke(Color.GREEN);
+			// Set the stroke type to DOTTED
+			line.setStrokeType(StrokeType.CENTERED);
+			// Set the line cap to ROUND for better dot appearance
+			line.setStrokeLineCap(StrokeLineCap.ROUND);
+			// Set the dot pattern (5 pixels on, 5 pixels off)
+			line.getStrokeDashArray().addAll(5.0, 5.0);
+
+			// Create an arrowhead polygon
+			Polygon arrowhead = new Polygon( //
+					0.0, 0.0, // // Vertex 1 (x, y)
+					15.0, 7.5, // Vertex 2 (x, y)
+					0.0, 15.0 // Vertex 3 (x, y)
+			);
+			arrowhead.setFill(Color.GREEN);
+
+			// Calculate the rotation angle for the arrowhead
+			double angle = Math.atan2(//
+					(toCircleY - fromCircleY), //
+					(toCircleX - fromCircleX)//
+			);//
+			angle = Math.toDegrees(angle);
+
+			// Position the arrowhead at the end of the line
+			arrowhead.setLayoutX(toCircleX - 7.5);
+			arrowhead.setLayoutY(toCircleY - 7.5);
+
+			// Rotate the arrowhead
+			arrowhead.setRotate(angle);
+
+			AnchorPane parentPane = (AnchorPane) scene.getRoot();
+			parentPane.getChildren().addAll(line, arrowhead);
+			line.toFront();
+
+			// 같은 관계 line을 두개의 데이터셋에서 공유하고 잇음
+			DataSetRelation dataSetRelationStart = this.appContext.getDataSetRelation(startPane.hashCode())
+					.addRelatedLine(circlePair.getStartCirclePos(), 0, line, arrowhead) ;
+			
+			DataSetRelation dataSetRelationEnd = this.appContext.getDataSetRelation(endPane.hashCode())
+					.addRelatedLine(circlePair.getEndCirclePos(), 1, line, arrowhead);
+			
+			if ( !isRedraw ) { // 처음으로 관계를 맺는 경우
+				dataSetRelationStart.addRelatedPane(new RelatedPane(startPane, endPane)); 	// start
+				dataSetRelationEnd.addRelatedPane(new RelatedPane(startPane, endPane)); 	// end
+			}
+		}
+	}
+
+	public void remakeRelationLine(DataSetRelation dataSetRelation) {
+		List<RelatedPane> relatedPaneList = dataSetRelation.getRelatedPaneList();
+		List<RelatedLine> relatedLineList = dataSetRelation.getRelatedLineList();
+
+		for (RelatedLine relatedLine : relatedLineList) {
+			ViewUtils.removeFromScene(relatedLine.line());
+			ViewUtils.removeFromScene(relatedLine.arrowhead());
+		}
+		dataSetRelation.removeRelatedLineList();
+		
+		for (RelatedPane relatedPane : relatedPaneList) {
+			Pane startPane = relatedPane.startPane();
+			Pane endPane = relatedPane.endPane();
+			makeRelationLine(true, startPane, endPane);
+		}
+		
+	}
+
+	private CirclePair getClosestCirclePair(List<Circle> sourceCircles, List<Circle> targetCircles) {
+
+		Circle startCircle = null;
+		Circle endCircle = null;
+
+		double distanceTmp = -1D;
+		for (Circle sourceCircle : sourceCircles) {
+			for (Circle targetCircle : targetCircles) {
+				double distance = distance(sourceCircle, targetCircle);
+				if (distanceTmp == -1D) {
+					distanceTmp = distance;
+					startCircle = sourceCircle;
+					endCircle = targetCircle;
+				} else {
+					if (distance < distanceTmp) {
+						distanceTmp = distance;
+						startCircle = sourceCircle;
+						endCircle = targetCircle;
+					}
+				}
+			}
+		}
+
+		return new CirclePair(startCircle, endCircle);
+	}
+
+	private double distance(Circle sourceCircle, Circle targetCircle) {
+		double sourceX = ViewUtils.getSceneCenterX(sourceCircle);
+		double sourceY = ViewUtils.getSceneCenterY(sourceCircle);
+		double targetX = ViewUtils.getSceneCenterX(targetCircle);
+		double targetY = ViewUtils.getSceneCenterY(targetCircle);
+
+		double deltaX = targetX - sourceX;
+		double deltaY = targetY - sourceY;
+
+		// Calculate the distance using the Pythagorean theorem
+		double distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+
+		return distance;
 	}
 
 	private void checkMousePressDuration() {
