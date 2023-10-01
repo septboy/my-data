@@ -2,9 +2,10 @@ package mydata.ds.view.main;
 
 import de.saxsys.mvvmfx.ScopeProvider;
 import de.saxsys.mvvmfx.ViewModel;
-import mydata.ds.view.scopes.MasterDetailScope;
+import mydata.ds.view.scopes.ApplicationScope;
 
-@ScopeProvider(MasterDetailScope.class)
+@ScopeProvider(ApplicationScope.class)
 public class MainViewModel implements ViewModel {
 
+	
 }

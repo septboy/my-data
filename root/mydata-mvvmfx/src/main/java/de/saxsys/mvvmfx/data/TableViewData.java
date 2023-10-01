@@ -6,9 +6,13 @@ import java.util.Map;
 
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Expression;
+import com.querydsl.core.types.Operation;
+import com.querydsl.core.types.SubQueryExpression;
 
 import ds.data.core.context.IntegratedContext;
 import ds.data.core.excel.xssf.TupleItemDesc;
+import ds.data.core.util.ColUtils;
+import ds.data.core.util.SqlUtil;
 
 public class TableViewData {
 
@@ -17,7 +21,10 @@ public class TableViewData {
 	public static Map<String, String > MAP_FOR_TAG = new HashMap<>(); 
 	
 	private Expression<?>[] mColumnExpressions;
-	private List<Tuple> mTupleList;
+
+	private SubQueryExpression<?> query;
+	
+	private List<Tuple> dataList  ;
 
 	public Expression<?>[] getColumnExpressions() {
 		return mColumnExpressions;
@@ -36,18 +43,24 @@ public class TableViewData {
 		return headerDetail;
 	}
 
-	public List<Tuple> getTupleList() {
-		return mTupleList;
-	}
-
 	public void setColumnExpressions(Expression<?>[] colExpres) {
 		this.mColumnExpressions = colExpres;
 		
 	}
 
-	public void setTupleList(List<Tuple> tupleList) {
-		this.mTupleList = tupleList;
-		
+	public void setQuery(SubQueryExpression<?> query) {
+		this.query= query ;
+	}
+	
+	public SubQueryExpression<?> getQuery() {
+		return this.query;
 	}
 
+	public void fetch()  {
+		this.dataList = SqlUtil.fetch(query);
+	}
+	
+	public List<Tuple> getTupleList(){
+		return this.dataList;
+	}
 }

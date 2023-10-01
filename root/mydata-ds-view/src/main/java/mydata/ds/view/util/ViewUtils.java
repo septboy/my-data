@@ -9,6 +9,7 @@ import com.querydsl.core.types.Operation;
 import com.querydsl.core.types.SubQueryExpression;
 
 import de.saxsys.mvvmfx.data.TableViewData;
+import ds.data.core.context.IntegratedContext;
 import ds.data.core.util.CdiUtils;
 import ds.data.core.util.ColUtils;
 import ds.data.core.util.SqlUtil;
@@ -30,7 +31,6 @@ public class ViewUtils {
 			return null ;
 		
 		Expression<?>[] colExpres = ColUtils.getColumnExpressionsFromQuery(query);
-		List<Tuple> tupleList = SqlUtil.fetch(query);
 		
 		for (Expression<?> expre: colExpres) {
 			if (expre instanceof Operation ) {
@@ -43,7 +43,7 @@ public class ViewUtils {
 		
 		TableViewData tableViewData = new TableViewData();
 		tableViewData.setColumnExpressions(colExpres);
-		tableViewData.setTupleList(tupleList);
+		tableViewData.setQuery(query);
 		
 		return tableViewData;
 	}
@@ -114,12 +114,38 @@ public class ViewUtils {
 		
 	}
 
+	public static double getRigionalHeight(Region region) {
+		if (getHeight(region) > 0) {
+			return getHeight(region);
+		}
+		
+		Node parentNode = region.getParent();
+		if (parentNode == null)
+			return 0.0;
+		
+		if (parentNode instanceof Region)
+			return ((Region)parentNode).heightProperty().doubleValue();
+		else
+			return getRigionalHeight((Region)parentNode);
+		
+	}
+	
 	private static double getWidth(Region region) {
 		if (region.widthProperty().doubleValue() > 0D)
 			return region.widthProperty().doubleValue();
 		
 		if ( region.getPrefWidth() > 0 )
 			return region.getPrefWidth();
+		
+		return 0.0;
+	}
+	
+	private static double getHeight(Region region) {
+		if (region.heightProperty().doubleValue() > 0D)
+			return region.heightProperty().doubleValue();
+		
+		if ( region.getPrefHeight() > 0 )
+			return region.getPrefHeight();
 		
 		return 0.0;
 	}
@@ -151,6 +177,12 @@ public class ViewUtils {
 	    BeanManager bm = CDI.current().getBeanManager();
 		AppContext appContext = CdiUtils.getOneReference(bm, AppContext.class);
 		((Pane)appContext.getScene().getRoot()).getChildren().remove(node);
+		node = null ;
+    }
+    
+    public static void removeFromPane(Pane parent, Node node) {
+    	parent.getChildren().remove(node);
+    	node = null ;
     }
     
     public static void setSceneToAppContext(Scene scene) {
@@ -170,4 +202,11 @@ public class ViewUtils {
 		node.toFront();
 		
 	}
+	
+	public static void addNodeIntoPane(Pane parent, Node node) {
+		parent.getChildren().add(node);
+		node.toFront();
+		
+	}
+	
 }

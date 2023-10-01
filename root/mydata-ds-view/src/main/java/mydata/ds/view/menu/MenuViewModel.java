@@ -9,7 +9,7 @@ import javafx.beans.property.ReadOnlyBooleanWrapper;
 import mydata.ds.view.events.TriggerShutdownEvent;
 import mydata.ds.view.model.Contact;
 import mydata.ds.view.model.Repository;
-import mydata.ds.view.scopes.MasterDetailScope;
+import mydata.ds.view.scopes.ApplicationScope;
 
 public class MenuViewModel implements ViewModel {
 
@@ -17,7 +17,7 @@ public class MenuViewModel implements ViewModel {
 	private Event<TriggerShutdownEvent> shouldCloseEvent;
 
 	@InjectScope
-	private MasterDetailScope mdScope;
+	private ApplicationScope mdScope;
 
 	@Inject
 	private Repository repository;

@@ -1,0 +1,39 @@
+
+.cell-font {
+	-fx-font-size: 12px;
+	-fx-text-fill: black;
+	-fx-font-family: "Cambria";
+}
+
+.table-row-cell {
+    -fx-background-color: white;
+}
+
+.table-row-cell:filled:selected {
+    -fx-background-color: #A9F5BC;
+}
+
+
+.table-row-cell:filled {
+    -fx-background-color: white;
+}
+
+.table-row-cell:filled:selected {
+    -fx-background-color: #A9F5BC;
+}
+
+.table-row-cell:filled:hover {
+    -fx-background-color: lightgray;
+}
+
+
+.table-row-cell:odd{
+    -fx-background-color: #93f9b911;
+    -fx-background-insets: 0, 0 0 1 0;
+    -fx-padding: 0.0em;
+}
+.table-row-cell:even{
+    -fx-background-color: #1dbbdd11;
+    -fx-background-insets: 0, 0 0 1 0;
+    -fx-padding: 0.0em;
+}

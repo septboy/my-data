@@ -1,40 +1,37 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane id="conditionRoot" fx:id="conditionRoot" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="110.0" prefWidth="366.0" style="-fx-border-color: black; -fx-border-width: 1;" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mydata.ds.view.condition.ConditionView">
+<AnchorPane id="conditionRoot" fx:id="conditionRoot" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="80.0" prefWidth="250.0" style="-fx-border-color: black; -fx-border-width: 1; -fx-background-color: lightgray;" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mydata.ds.view.condition.ConditionView">
    <children>
-      <VBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <VBox layoutX="5.0" layoutY="5.0" prefHeight="77.0" prefWidth="292.0" AnchorPane.bottomAnchor="29.0" AnchorPane.leftAnchor="4.0" AnchorPane.rightAnchor="4.0" AnchorPane.topAnchor="4.0">
          <children>
-            <Label id="conditionItemName" fx:id="conditionItemName"
-            	   alignment="CENTER" maxHeight="35.0" minHeight="35.0" minWidth="-Infinity" prefHeight="35.0" prefWidth="367.0" style="-fx-background-color: brown;" text="조건항목" textFill="WHITE">
-               <font>
-                  <Font name="System Bold" size="14.0" />
-               </font>
+            <AnchorPane prefHeight="35.0">
                <VBox.margin>
                   <Insets bottom="10.0" />
                </VBox.margin>
-            </Label>
-            <HBox prefHeight="31.0" prefWidth="342.0">
                <children>
-                  <RadioButton mnemonicParsing="false" prefWidth="80.0" text="단어검색" />
-                  <TextField id="inputText" fx:id="inputText" prefHeight="22.0" prefWidth="269.0" />
+                  <Label id="conditionItemName" fx:id="conditionItemName" alignment="CENTER" maxHeight="35.0" minHeight="35.0" prefHeight="35.0" style="-fx-background-color: brown;" text="조건항목" textFill="WHITE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                     <font>
+                        <Font name="System Bold" size="14.0" />
+                     </font>
+                  </Label>
+                  <CheckBox layoutX="186.0" layoutY="10.0" mnemonicParsing="false" text="정규식" textFill="#f5c800" AnchorPane.rightAnchor="5.0" />
                </children>
-               <padding>
-                  <Insets left="10.0" />
-               </padding>
-            </HBox>
-            <HBox prefHeight="2.0" prefWidth="332.0">
+            </AnchorPane>
+            <HBox prefHeight="31.0">
                <children>
-                  <RadioButton mnemonicParsing="false" prefWidth="80.0" text="정규식" />
-                  <TextField prefHeight="22.0" prefWidth="269.0" />
+                  <TextField id="inputText" fx:id="inputText" prefHeight="21.0" prefWidth="222.0">
+                     <font>
+                        <Font name="Batang" size="12.0" />
+                     </font></TextField>
                </children>
                <padding>
                   <Insets left="10.0" />

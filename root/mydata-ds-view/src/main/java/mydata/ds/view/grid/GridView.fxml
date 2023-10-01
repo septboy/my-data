@@ -1,29 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.TableView?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
 
-<AnchorPane fx:id="main_gird" minHeight="-Infinity" prefHeight="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mydata.ds.view.grid.GridView">
+<AnchorPane id="gridView" fx:id="gridView" minHeight="-Infinity" prefHeight="200.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mydata.ds.view.grid.GridView">
    <children>
       <VBox prefHeight="200.0" prefWidth="100.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
             <Pane maxHeight="1.0" minHeight="1.0" prefHeight="1.0" style="-fx-background-color: black;" />
-            <AnchorPane maxHeight="40.0" minHeight="40.0" prefHeight="40.0">
+            <AnchorPane id="gridBarPane" fx:id="gridBarPane" maxHeight="35.0" minHeight="35.0" prefHeight="35.0">
                <children>
-                  <HBox prefHeight="70.0" prefWidth="800.0" style="-fx-background-color: #2E8B57;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="40.0" AnchorPane.topAnchor="0.0" />
-                  <ImageView fitHeight="70.0" fitWidth="41.0" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                     <image>
-                        <Image url="@../../../../../resources/image/grid_down.png" />
-                     </image>
-                  </ImageView>
+                  <HBox id="gridBarHBox" fx:id="gridBarHBox" prefHeight="35.0" prefWidth="800.0" style="-fx-background-color: #2E8B57;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                </children>
             </AnchorPane>
-            <TableView prefHeight="200.0" prefWidth="200.0" />
+            <TableView id="mainTableView" fx:id="mainTableView" prefHeight="200.0" prefWidth="200.0" />
          </children>
       </VBox>
    </children>

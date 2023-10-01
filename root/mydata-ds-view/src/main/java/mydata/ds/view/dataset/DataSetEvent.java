@@ -26,9 +26,9 @@ import javafx.util.Duration;
 import mydata.ds.view.scopes.AppContext;
 import mydata.ds.view.util.ViewUtils;
 
-public class MouseEventStatus {
+public class DataSetEvent {
 
-	private static final Logger logger = LoggerFactory.getLogger(MouseEventStatus.class);
+	private static final Logger logger = LoggerFactory.getLogger(DataSetEvent.class);
 
 	private static final long duringTimeForRelation = 1300L;
 	private Timeline timeline;
@@ -44,7 +44,7 @@ public class MouseEventStatus {
 
 	private AppContext appContext;
 
-	public MouseEventStatus(AppContext appContext) {
+	public DataSetEvent(AppContext appContext) {
 		this.appContext = appContext;
 		this.timeline = new Timeline(new KeyFrame(Duration.millis(100), event -> checkMousePressDuration()));
 		this.timeline.setCycleCount(Timeline.INDEFINITE);
@@ -98,38 +98,46 @@ public class MouseEventStatus {
 			}
 		});
 
-		dataSetRootAnchorPane.addEventFilter(MouseEvent.MOUSE_ENTERED_TARGET, event -> {
-			if (!this.isRelationMode) {
-				statusClear();
-				return;
-			}
-
-			if (!this.isMouseDraggedThenReleased) {
-				statusClear();
-				return;
-			}
-
-			EventTarget eventTarget = event.getTarget();
-			if (eventTarget instanceof AnchorPane) {
-				String id = ((AnchorPane) eventTarget).getId();
-				if (id != null && id.equals("dataSetRootAnchorPane")) {
-
-					if (dataSetRootAnchorPaneSource != event.getTarget()) {
-						dataSetRootAnchorPaneTarget = (AnchorPane) eventTarget;
-						logger.debug("MOUSE_ENTERED_TARGET eventTarget {} is saved !!",
-								dataSetRootAnchorPaneTarget.getUserData());
-
-						makeRelationLine(dataSetRootAnchorPaneSource, dataSetRootAnchorPaneTarget);
-
-						statusClear();
-					}
-					event.consume();
-
-				}
-			}
-		});
+		dataSetRootAnchorPane.addEventFilter(MouseEvent.MOUSE_ENTERED_TARGET,this::handleDataSetMouseEnterdTarget);
 	}
 
+	private void handleDataSetMouseEnterdTarget(MouseEvent event) {
+		
+		if (!this.isRelationMode) {
+			statusClear();
+			return;
+		}
+
+		if (!this.isMouseDraggedThenReleased) {
+			statusClear();
+			return;
+		}
+
+		EventTarget eventTarget = event.getTarget();
+		if (eventTarget instanceof AnchorPane) {
+			String id = ((AnchorPane) eventTarget).getId();
+			if (id != null && id.equals("dataSetRootAnchorPane")) {
+
+				if (dataSetRootAnchorPaneSource != event.getTarget()) {
+					dataSetRootAnchorPaneTarget = (AnchorPane) eventTarget;
+					logger.debug("MOUSE_ENTERED_TARGET eventTarget {} is saved !!",
+							dataSetRootAnchorPaneTarget.getUserData());
+
+					makeRelationLine(dataSetRootAnchorPaneSource, dataSetRootAnchorPaneTarget);
+					
+					appContext.getDataSetViewModel(dataSetRootAnchorPaneTarget.hashCode())//
+						.setRelationBaseHashcode(//
+								dataSetRootAnchorPaneSource.hashCode()//
+							);//
+
+					statusClear();
+				}
+				event.consume();
+
+			}
+		}
+	}
+	
 	public void makeRelationLine(Pane startPane, Pane endPane) {
 		makeRelationLine(false , startPane, endPane);
 	}
@@ -312,7 +320,7 @@ public class MouseEventStatus {
 		return null;
 	}
 
-	private void statusClear() {
+	public void statusClear() {
 		this.isMousePressed = false;
 		this.isMouseDragged = false;
 		this.mousePressedTime = 0L;
@@ -320,5 +328,13 @@ public class MouseEventStatus {
 		this.dataSetRootAnchorPaneTarget = null;
 		this.isRelationMode = false;
 		this.isMouseDraggedThenReleased = false;
+	}
+
+	public boolean isMouseDraggedThenReleased() {
+		return this.isMouseDraggedThenReleased;
+	}
+
+	public Pane getStartPane() {
+		return this.dataSetRootAnchorPaneSource;
 	}
 }

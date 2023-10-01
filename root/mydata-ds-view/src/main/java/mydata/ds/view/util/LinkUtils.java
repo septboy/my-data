@@ -11,6 +11,7 @@ import de.saxsys.mvvmfx.data.TableViewData;
 import de.saxsys.mvvmfx.data.TupleValueFactory;
 import ds.common.util.ArrayUtil;
 import ds.data.core.column.ColumnInfo;
+import ds.data.core.context.IntegratedContext;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
@@ -20,7 +21,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 
 public class LinkUtils {
@@ -45,6 +45,8 @@ public class LinkUtils {
 		tableView.setItems(observavleTupleList);
 		tableView.getColumns().setAll(columns);
 		tableView.getStyleClass().add("header-cell-font");
+		
+		IntegratedContext.getInstance().clear();
 	}
 
 	public static void link(Label dataSetTitleLabel, String datasetTitle) {

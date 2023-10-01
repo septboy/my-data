@@ -40,6 +40,12 @@ public class DataSetFactory {
 		return mUIQueryDataSet;
 	}
 
+	public UIConditions getUIConditionsAndAddDataSetContext(String dataSetName) {
+		UIConditions c = getUIConditions(dataSetName);
+		DataSet.add(c);
+		return c ;
+	}
+	
 	public UIConditions getUIConditions(String dataSetName) {
 		UIConditions c = null ;
 		if (DataSetViewModel.MEDICAL_VISIT_HISTORY.equals(dataSetName))
@@ -50,10 +56,7 @@ public class DataSetFactory {
 		
 		else
 			c = new EhrResearchConditions();
-		
-		DataSet.add(c);
-		return c ;
+		return c;
 	}
-	
 	
 }

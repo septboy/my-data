@@ -1,9 +1,7 @@
 package mydata.ds.view.dataset;
 
-import java.util.Map;
 import java.util.ResourceBundle;
 
-import org.apache.commons.lang3.ArrayUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,23 +15,18 @@ import ds.common.util.ArrayUtil;
 import ds.data.core.column.Col;
 import ds.data.core.column.ColumnInfo;
 import ds.data.core.column.ColumnSet;
-import ds.data.core.condition.Condition;
 import ds.data.core.condition.ConditionInfo;
 import ds.data.core.condition.ui.UIConditions;
-import ds.ehr.research.dataset.UIDataSetEHR;
-import ds.sqlite.dataset.DataSetLocal;
+import ds.data.core.join.JoinOn;
 import ds.ui.condition.DataSetUI;
 import jakarta.inject.Inject;
 import javafx.collections.ObservableList;
-import javafx.scene.ImageCursor;
 import javafx.scene.Node;
 import javafx.scene.control.Control;
-import javafx.scene.control.Label;
-import javafx.scene.image.Image;
 import javafx.scene.layout.VBox;
-import javafx.scene.shape.Circle;
 import mydata.ds.view.condition.ConditionViewInfo;
 import mydata.ds.view.scopes.AppContext;
+import mydata.ds.view.scopes.ApplicationScope;
 import mydata.ds.view.scopes.ConditionScope;
 import mydata.ds.view.scopes.DataSetScope;
 import mydata.ds.view.util.ViewUtils;
@@ -62,10 +55,13 @@ public class DataSetViewModel implements ViewModel {
 
 	@InjectScope
 	private DataSetScope dataSetScope;
+	
+	@InjectScope
+	private ApplicationScope applicationScope ;
 
 	private DataSetUI dataSetUI;
 
-	private UIConditions c;
+	private UIConditions uiConditions;
 
 	/*
 	 * dataSet들의 관계를 다른다.
@@ -74,14 +70,26 @@ public class DataSetViewModel implements ViewModel {
 
 	private int dataSetIdNumber;
 
+	private int relationBaseHashcode = 0;
+
+	private ConditionInfo[] joinConditionInfos;
+
 	public void initialize() {
 		String dataSetId = dataSetScope.getDataSetId();
 		logger.info("dataSetId is selected '{}'", dataSetId);
 
-		dataSetUI = dataSetFactory.getDataSetUI(dataSetId);
-		c = dataSetFactory.getUIConditions(dataSetId);
+		this.dataSetUI = dataSetFactory.getDataSetUI(dataSetId);
+		
+	}
+	
+	public void addDataSetContext() {
+		this.uiConditions = dataSetFactory.getUIConditionsAndAddDataSetContext(dataSetScope.getDataSetId());
 	}
 
+	public UIConditions getUIConditions() {
+		return dataSetFactory.getUIConditions(dataSetScope.getDataSetId());
+	}
+	
 	public String getDataSetTitle() {
 		return this.dataSetUI.getDataSetTitle();
 	}
@@ -102,13 +110,19 @@ public class DataSetViewModel implements ViewModel {
 		}
 		return conditionViewInfos;
 	}
-
+	
 	public TableViewData getTableViewData(UIConditions conditions) {
 		SubQueryExpression<?> query = dataSetUI.getQuerySearch(conditions);
 		TableViewData tableViewData = ViewUtils.getTableViewData(query);
 		return tableViewData;
 	}
 
+	public TableViewData getTableViewData(SubQueryExpression<?> baseQuery,  UIConditions conditions) {
+		SubQueryExpression<?> query = dataSetUI.getQuerySearch(baseQuery, JoinOn.PATNO , conditions);
+		TableViewData tableViewData = ViewUtils.getTableViewData(query);
+		return tableViewData;
+	}
+	
 	public Col<?>[] getColumnCols(VBox columInfoLabelVBox) {
 		ObservableList<Node> columnLabels = columInfoLabelVBox.getChildren();
 		Col<?>[] colsSelected = null;
@@ -125,20 +139,29 @@ public class DataSetViewModel implements ViewModel {
 		return colsSelected;
 	}
 
-	public UIConditions getConditions(VBox conditionInfoLabelVBox) {
+	public UIConditions getValueBindedConditions(VBox conditionInfoLabelVBox) {
 		ObservableList<Node> conditionLabels = conditionInfoLabelVBox.getChildren();
 
 		for (Node node : conditionLabels) {
 			Object object = ((Control) node).getUserData();
 			ConditionInfo conditionInfo = (ConditionInfo) object;
-			if (conditionInfo != null && conditionInfo.isSelected())
-				conditionInfo.fillConditionValue(this.c);
+			if (conditionInfo != null && conditionInfo.isSelected()) {
+				conditionInfo.fillConditionValue(this.uiConditions);
+			}
 		}
 
-		return this.c;
+		return this.uiConditions;
 	}
 
-	public MouseEventStatus getMouseEventStatus() {
+	public UIConditions getValueBindedConditions(ConditionInfo...conditionInfos) {
+		
+		for ( ConditionInfo conditionInfo: joinConditionInfos ) {
+			conditionInfo.fillConditionValue(this.uiConditions);
+		}
+		return this.uiConditions;
+	}
+
+	public DataSetEvent getMouseEventStatus() {
 
 		return appContext.getMouseEventStatus();
 	}
@@ -178,5 +201,39 @@ public class DataSetViewModel implements ViewModel {
 	
 	public AppContext getAppContext() {
 		return this.appContext ;
+	}
+
+	public void ifLinkedIntegratedGridModifyTableColumn(ColumnInfo columnInfo) {
+		this.applicationScope.publish(ApplicationScope.ADD_OR_REMOVE_GRID_COLUMN, columnInfo);
+	}
+
+	public void setRelationBaseHashcode(int relationBaseHashcode) {
+		this.relationBaseHashcode = relationBaseHashcode;
+		
+	}
+
+	public boolean hasBaseDataSet() {
+		return this.relationBaseHashcode > 0;
+	}
+
+	public DataSetView getBaseDataSetView() {
+		return appContext.getDataSetView(relationBaseHashcode);
+	}
+	
+	public DataSetViewModel getBaseDataSetViewModel() {
+		return appContext.getDataSetViewModel(relationBaseHashcode);
+	}
+
+	public boolean needJoinValue() {
+		return this.joinConditionInfos != null;
+	}
+
+	public void setJoinConditionInfos(ConditionInfo... conditionInfos) {
+		this.joinConditionInfos = conditionInfos;
+		
+	}
+
+	public ConditionInfo[] getJoinConditionInfos() {
+		return this.joinConditionInfos ;
 	}
 }

@@ -5,8 +5,10 @@ import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import mydata.ds.view.model.Contact;
 
-public class MasterDetailScope implements Scope {
+public class ApplicationScope implements Scope {
 
+	public static final String ADD_OR_REMOVE_GRID_COLUMN = "ADD_OR_REMOVE_GRID_COLUMN";
+	
 	private final ObjectProperty<Contact> selectedContact = new SimpleObjectProperty<>(this, "selectedContact");
 
 	public ObjectProperty<Contact> selectedContactProperty() {

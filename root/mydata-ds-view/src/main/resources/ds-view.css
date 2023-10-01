@@ -58,6 +58,9 @@
     -fx-padding: 0.0em;
 }
 
+.table-row-cell: selected{
+	-fx-background-color: red;
+}
 
 /* Scrollbars */
 .table-view .virtual-flow .scroll-bar:vertical,

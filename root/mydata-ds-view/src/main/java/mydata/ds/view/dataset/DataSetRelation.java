@@ -116,4 +116,19 @@ public class DataSetRelation {
 	public void removeRelatedLineList() {
 		this.relatedLineList.removeAll(relatedLineList);
 	}
+
+	public void reflashRelatedLine(List<RelatedLine> relatedLineList) {
+		if (this.relatedLineList == relatedLineList)
+			this.relatedLineList.removeAll(relatedLineList);
+		
+		else 
+			for(RelatedLine relatedLine: relatedLineList) {
+				this.relatedLineList.removeIf(item -> item.line() == relatedLine.line());
+			}
+	}
+
+	public void reflashRelatedPane(int hashcode) {
+		this.relatedPainList.removeIf(item -> item.endPane().hashCode() == hashcode);
+		this.relatedPainList.removeIf(item -> item.startPane().hashCode() == hashcode);
+	}
 }
