@@ -15,10 +15,10 @@ public class AAEhrProducer {
 	@Produces
 	@Singleton
 	@Ehr
-	@Named(EHR.DataSource.AAEHRPROD)
+	@Named(EHR.DataSource.AAEHRTEST)
 	private EntityManager getEntityManager_EHR() {
         return Persistence
-                .createEntityManagerFactory(EHR.DataSource.AAEHRPROD)
+                .createEntityManagerFactory(EHR.DataSource.AAEHRTEST)
                 .createEntityManager();
     }
 	

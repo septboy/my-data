@@ -4,9 +4,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Expression;
-import com.querydsl.core.types.Operation;
 import com.querydsl.core.types.SubQueryExpression;
 
 import ds.data.core.context.IntegratedContext;
@@ -16,6 +18,8 @@ import ds.data.core.util.SqlUtil;
 
 public class TableViewData {
 
+	private static final Logger logger = LoggerFactory.getLogger(TableViewData.class);
+	
 	Map<String, String> headerColumnNameMap = IntegratedContext.getInstance().getHeaderColumnNameMap();
 	
 	public static Map<String, String > MAP_FOR_TAG = new HashMap<>(); 
@@ -58,9 +62,21 @@ public class TableViewData {
 
 	public void fetch()  {
 		this.dataList = SqlUtil.fetch(query);
+		logger.info("{}건이 검색되었습니다.", this.dataList.size());
 	}
 	
 	public List<Tuple> getTupleList(){
 		return this.dataList;
+	}
+
+	@SuppressWarnings("unchecked")
+	public <T> Expression<T> getColumnExpreesion(String name, Class<T> clazz) {
+		
+		for(Expression<?> columnExpre: mColumnExpressions) {
+			String columnName = ColUtils.getColumnName(columnExpre);
+			if(name.equalsIgnoreCase(columnName))
+				return (Expression<T>)columnExpre;
+		}
+		return null;
 	}
 }

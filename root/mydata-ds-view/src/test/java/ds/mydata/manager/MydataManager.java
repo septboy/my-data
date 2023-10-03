@@ -29,7 +29,7 @@ public class MydataManager implements DatabaseManager {
 
 	@Inject
 	@Ehr
-	@Named(EHR.DataSource.AAEHRPROD)
+	@Named(EHR.DataSource.AAEHRTEST)
 	private EntityManager mEntityManager;
 	
 //	@Inject

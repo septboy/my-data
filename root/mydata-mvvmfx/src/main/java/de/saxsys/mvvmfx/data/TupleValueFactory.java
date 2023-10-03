@@ -78,7 +78,7 @@ import javafx.util.Callback;
  */
 public class TupleValueFactory<T> implements Callback<CellDataFeatures<Tuple, T>, ObservableValue<T>> {
 
-	private final Expression<T> key;
+	private final Expression<T> expressionKey;
 
 	/**
 	 * Creates a default MapValueFactory, which will use the provided key to lookup
@@ -86,16 +86,16 @@ public class TupleValueFactory<T> implements Callback<CellDataFeatures<Tuple, T>
 	 * is installed (via the {@link TableColumn#cellValueFactoryProperty() cell
 	 * value factory} property.
 	 *
-	 * @param key The key to use to lookup the value in the {@code Map}.
+	 * @param expressionKey The key to use to lookup the value in the {@code Map}.
 	 */
-	public TupleValueFactory(final @NamedArg("key") Expression<T> key) {
-		this.key = key;
+	public TupleValueFactory(final @NamedArg("key") Expression<T> expressionKey) {
+		this.expressionKey = expressionKey;
 	}
 
 	@Override
 	public ObservableValue<T> call(CellDataFeatures<Tuple, T> cdf) {
 		Tuple tuple = cdf.getValue();
-		T value = tuple.get(key);
+		T value = tuple.get(expressionKey);
 
 		// ideally the map will contain observable values directly, and in which
 		// case we can just return this observable value.
@@ -117,19 +117,26 @@ public class TupleValueFactory<T> implements Callback<CellDataFeatures<Tuple, T>
 		// value types, so we try to wrap in the most specific type.
 		if (value instanceof Boolean) {
 			return (ObservableValue<T>) new ReadOnlyBooleanWrapper((Boolean) value);
+			
 		} else if (value instanceof Integer) {
 			return (ObservableValue<T>) new ReadOnlyIntegerWrapper((Integer) value);
+			
 		} else if (value instanceof Float) {
 			return (ObservableValue<T>) new ReadOnlyFloatWrapper((Float) value);
+			
 		} else if (value instanceof BigDecimal) {
 			return (ObservableValue<T>) new ReadOnlyFloatWrapper(((BigDecimal) value).floatValue());
+			
 		} else if (value instanceof Long) {
 			return (ObservableValue<T>) new ReadOnlyLongWrapper((Long) value);
+			
 		} else if (value instanceof Double) {
 			return (ObservableValue<T>) new ReadOnlyDoubleWrapper((Double) value);
+			
 		} else if (value instanceof String) {
 			return (ObservableValue<T>) new ReadOnlyStringWrapper((String) value);
-		}
+			
+		} 
 
 		// fall back to an object wrapper
 		return new ReadOnlyObjectWrapper<>((T) value);

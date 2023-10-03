@@ -123,6 +123,12 @@ public class DataSetViewModel implements ViewModel {
 		return tableViewData;
 	}
 	
+	public TableViewData getTableViewDataIntegrated(SubQueryExpression<?>...queries) {
+		SubQueryExpression<?> query = dataSetUI.getQueryIntegrateLeftJoin(queries);
+		TableViewData tableViewData = ViewUtils.getTableViewData(query);
+		return tableViewData;
+	}
+	
 	public Col<?>[] getColumnCols(VBox columInfoLabelVBox) {
 		ObservableList<Node> columnLabels = columInfoLabelVBox.getChildren();
 		Col<?>[] colsSelected = null;
@@ -166,10 +172,11 @@ public class DataSetViewModel implements ViewModel {
 		return appContext.getMouseEventStatus();
 	}
 
-	public void setDataSetIdNumber(int dataSetIdNumber) {
+	public void setDataSetHashcode(int dataSetIdNumber) {
 		this.dataSetIdNumber = dataSetIdNumber;
 		this.dataSetRelation = new DataSetRelation();
 		appContext.putDataSetRelation(dataSetIdNumber, this.dataSetRelation);
+		appContext.addDataSetHashcode(dataSetIdNumber);
 	}
 
 	public void moveRelationLine(double deltaX, double deltaY) {
@@ -224,7 +231,7 @@ public class DataSetViewModel implements ViewModel {
 		return appContext.getDataSetViewModel(relationBaseHashcode);
 	}
 
-	public boolean needJoinValue() {
+	public boolean haveTargetDataSet() {
 		return this.joinConditionInfos != null;
 	}
 

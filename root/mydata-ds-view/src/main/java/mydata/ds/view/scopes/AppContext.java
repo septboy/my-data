@@ -1,6 +1,8 @@
 package mydata.ds.view.scopes;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -8,11 +10,12 @@ import org.slf4j.LoggerFactory;
 
 import de.saxsys.mvvmfx.ViewModel;
 import jakarta.enterprise.context.ApplicationScoped;
+import javafx.scene.Node;
 import javafx.scene.Scene;
+import mydata.ds.view.dataset.DataSetEvent;
 import mydata.ds.view.dataset.DataSetRelation;
 import mydata.ds.view.dataset.DataSetView;
 import mydata.ds.view.dataset.DataSetViewModel;
-import mydata.ds.view.dataset.DataSetEvent;
 import mydata.ds.view.grid.RelatedIcon;
 
 @ApplicationScoped
@@ -29,12 +32,19 @@ public class AppContext {
 	private Map<Integer, DataSetViewModel> viewModelMap;
 	
 	private Map<Integer, DataSetView> viewMap;
+
+	private List<Integer> dataSetHashcodeList ;
+
+	private Map<Integer, Node> applicationHashcodeNodeMap;
 	
 	public AppContext() {
 		dataSetRelationMap = new HashMap<>();
 		relationIconMap = new HashMap<>();
 		viewModelMap = new HashMap<>();
 		viewMap = new HashMap<>();
+		applicationHashcodeNodeMap = new HashMap<>();
+		
+		dataSetHashcodeList = new ArrayList<>();
 		mouseEventStatus = new DataSetEvent(this);
 	}
 
@@ -91,5 +101,28 @@ public class AppContext {
 	public void putDataSetView(int hashcode, DataSetView view) {
 		this.viewMap.put(hashcode, view) ;
 		
+	}
+
+	public void addDataSetHashcode(int dataSetHashcode) {
+		this.dataSetHashcodeList.add(dataSetHashcode);
+		
+	}
+	
+	public List<Integer> getDataSetHashcodeList() {
+		return this.dataSetHashcodeList;
+	}
+
+	public void removeDataSetHashcode(Integer dataSetHashcode) {
+		this.dataSetHashcodeList.remove(dataSetHashcode);
+	}
+
+	public void putNodeToAppContext(int hashcode, Node node) {
+		this.applicationHashcodeNodeMap.put(hashcode, node);
+		
+	}
+
+	@SuppressWarnings("unchecked")
+	public <T extends Node> T getNodeOnAppContext(int hashcode, T node) {
+		return (T)this.applicationHashcodeNodeMap.get(hashcode);
 	}
 }

@@ -46,7 +46,6 @@ public class LinkUtils {
 		tableView.getColumns().setAll(columns);
 		tableView.getStyleClass().add("header-cell-font");
 		
-		IntegratedContext.getInstance().clear();
 	}
 
 	public static void link(Label dataSetTitleLabel, String datasetTitle) {
@@ -82,22 +81,27 @@ public class LinkUtils {
 			TableColumn<Tuple, Timestamp> column = new TableColumn<>(tableViewData.getHeaderName(expre));
 			column.setCellValueFactory (new TupleValueFactory<>((Expression<Timestamp>) expre));
 			return column;
+			
 		} else if (Date.class.isAssignableFrom(clazz)) {
 			TableColumn<Tuple, Date> column = new TableColumn<>(tableViewData.getHeaderName(expre));
 			column.setCellValueFactory (new TupleValueFactory<>((Expression<Date>) expre));
 			return column;
+			
 		} else if (String.class.isAssignableFrom(clazz)) {
 			TableColumn<Tuple, String> column = new TableColumn<>(tableViewData.getHeaderName(expre));
 			column.setCellValueFactory (new TupleValueFactory<>((Expression<String>) expre));
 			return column;
+			
 		} else if (BigDecimal.class.isAssignableFrom(clazz)) {
 			TableColumn<Tuple, BigDecimal> column = new TableColumn<>(tableViewData.getHeaderName(expre));
 			column.setCellValueFactory (new TupleValueFactory<>((Expression<BigDecimal>) expre));
 			return column;
+			
 		} else if (Long.class.isAssignableFrom(clazz)) {
 			TableColumn<Tuple, Long> column = new TableColumn<>(tableViewData.getHeaderName(expre));
 			column.setCellValueFactory (new TupleValueFactory<>((Expression<Long>) expre));
 			return column;
+			
 		} else if (Integer.class.isAssignableFrom(clazz)) {
 			TableColumn<Tuple, Integer> column = new TableColumn<>(tableViewData.getHeaderName(expre));
 			column.setCellValueFactory (new TupleValueFactory<>((Expression<Integer>) expre));

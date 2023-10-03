@@ -25,6 +25,7 @@ import ds.data.core.column.ColumnInfo;
 import ds.data.core.column.ColumnType;
 import ds.data.core.condition.ConditionInfo;
 import ds.data.core.condition.ui.UIConditions;
+import ds.data.core.context.IntegratedContext;
 import ds.data.core.util.ColUtils;
 import jakarta.inject.Inject;
 import javafx.application.Application;
@@ -133,6 +134,7 @@ public class DataSetView implements FxmlView<DataSetViewModel> {
 	private Node tmpConditionView;
 	
 	private Control tmpConditionControlButton;
+	
 	private ConditionViewModel tmpConditionViewModel;
 
 	public static final String css_column_label_border = "-fx-border-color: white; -fx-border-width: 1px 0px 1px 0px;";
@@ -142,12 +144,14 @@ public class DataSetView implements FxmlView<DataSetViewModel> {
 	private RelationPointCenters relationPointCentersPressed;
 
 	private RelationPointCenters relationPointCentersScene;
+	
+	private TableViewData tableViewData ;
 
 	public void initialize() {
 
 		progressIndicator.setVisible(false);
-		int hashcode = dataSetRootAnchorPane.hashCode();
-			
+		int dataSetHashcode = dataSetRootAnchorPane.hashCode();
+		
 		// 데이터셋 타이틀
 		String datasetTitle = viewModel.getDataSetTitle();
 		LinkUtils.link(dataSetTitleLabel, datasetTitle);
@@ -160,8 +164,8 @@ public class DataSetView implements FxmlView<DataSetViewModel> {
 		ConditionViewInfo[] conditionInfos = viewModel.getConditionViewInfos();
 		LinkUtils.link(conditionInfoLabelVBox, conditionInfos, this::handleMouseClickedConditionLabel);
 
-		viewModel.getAppContext().putDataSetViewModel(hashcode, viewModel);
-		viewModel.getAppContext().putDataSetView(hashcode, this);
+		viewModel.getAppContext().putDataSetViewModel(dataSetHashcode, viewModel);
+		viewModel.getAppContext().putDataSetView(dataSetHashcode, this);
 
 		dataSetTitlePane.setOnMousePressed(this::handleMousePressedTitlePane);
 		dataSetTitlePane.setOnMouseDragged(this::handleMouseDraggedTitlePane);
@@ -171,7 +175,7 @@ public class DataSetView implements FxmlView<DataSetViewModel> {
 		dataSetTitleLabel.setOnMouseDragged(this::handleDummyEvent);
 		dataSetTitleLabel.setOnMouseClicked(this::handleDummyEvent);
 
-		viewModel.setDataSetIdNumber(dataSetRootAnchorPane.hashCode());
+		viewModel.setDataSetHashcode(dataSetHashcode);
 		dataSetRootAnchorPane.setUserData(datasetTitle);
 		dataSetRootAnchorPane.setOnMousePressed(this::handleMousePressedDataSetAnchorPane);
 		dataSetRootAnchorPane.setOnMouseDragged(this::handleMouseDraggedDataSetAnchorPane);
@@ -186,22 +190,22 @@ public class DataSetView implements FxmlView<DataSetViewModel> {
 				tmpConditionViewModel.publish(ConditionViewModel.CLOSE_CONDITION_VIEW_NOTIFICATION,
 						tmpConditionControlButton, tmpConditionView);
 
-			DataSetRelation datasetRelation = viewModel.getAppContext().getDataSetRelation(hashcode);
+			DataSetRelation datasetRelation = viewModel.getAppContext().getDataSetRelation(dataSetHashcode);
 			List<RelatedLine> relatedLineList = datasetRelation.getRelatedLineList();
 
 			for (RelatedPane relatedPane : datasetRelation.getRelatedPaneList()) {
 				int endPaneKey = relatedPane.endPane().hashCode();
 				int startPaneKey = relatedPane.startPane().hashCode();
 
-				if (hashcode == endPaneKey) {
+				if (dataSetHashcode == endPaneKey) {
 					DataSetRelation datasetRelationStart = viewModel.getAppContext().getDataSetRelation(startPaneKey);
 					datasetRelationStart.reflashRelatedLine(relatedLineList);
-					datasetRelationStart.reflashRelatedPane(hashcode);
+					datasetRelationStart.reflashRelatedPane(dataSetHashcode);
 
-				} else if (hashcode == startPaneKey) {
+				} else if (dataSetHashcode == startPaneKey) {
 					DataSetRelation datasetRelationEnd = viewModel.getAppContext().getDataSetRelation(endPaneKey);
 					datasetRelationEnd.reflashRelatedLine(relatedLineList);
-					datasetRelationEnd.reflashRelatedPane(hashcode);
+					datasetRelationEnd.reflashRelatedPane(dataSetHashcode);
 
 				}
 			}
@@ -212,7 +216,7 @@ public class DataSetView implements FxmlView<DataSetViewModel> {
 			}
 			datasetRelation.reflashRelatedLine(relatedLineList);
 
-			RelatedIcon relatedIcon = viewModel.getAppContext().getRelatedIcon(hashcode);
+			RelatedIcon relatedIcon = viewModel.getAppContext().getRelatedIcon(dataSetHashcode);
 			if (relatedIcon != null) {
 				ViewUtils.removeFromPane(relatedIcon.dataSetIconParent(), relatedIcon.dataSetIcon());
 				ViewUtils.removeFromPane(relatedIcon.gridBarIconParent(), relatedIcon.gridBarIcon());
@@ -220,6 +224,7 @@ public class DataSetView implements FxmlView<DataSetViewModel> {
 
 			ViewUtils.removeFromScene(dataSetRootAnchorPane);
 			datasetRelation.getRelatedPaneList().clear();
+			viewModel.getAppContext().removeDataSetHashcode(dataSetHashcode);
 
 		});
 
@@ -235,51 +240,45 @@ public class DataSetView implements FxmlView<DataSetViewModel> {
 		dataSetTableView.setPlaceholder(new Label("데이터를 검색하세요."));
 		dataSetTableView.setOnMousePressed(this::handleParentEvent);
 		
-//		// Set row factory to customize row appearance
-//		dataSetTableView.setRowFactory(tv -> {
-//            TableRow<Tuple> row = new TableRow<>();
-//            row.setOnMouseClicked(event -> {
-//                if (!row.isEmpty()) {
-//                     row.setStyle("-fx-background-color: yellow;");
-//                }
-//            });
-//            
-//            return row;
-//        });
-		
 		dataSetTableView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
 		// Handle row selection
 		dataSetTableView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
+			
             if (newSelection != null) {
                 // You can access the values of the selected row here
-                String patno = newSelection.get((Expression<String>)ColUtils.getColumnExpression("patno", ColumnType.String));
-                long medregno = newSelection.get((Expression<Long>)ColUtils.getColumnExpression("medregno", ColumnType.Long));
+                String patno = newSelection.get( this.tableViewData.getColumnExpreesion("patno", String.class) );
+//                long medregno = newSelection.get((Expression<Long>)ColUtils.getColumnExpression("medregno", ColumnType.Long));
                 //viewModel.setRelationColumnValue(patno);
-                logger.debug("selected record patno -> {}, medregno = {}", patno, medregno);
+                logger.debug("selected record patno -> {}", patno);
                 
                 ///////////////////////////////
                 ConditionInfo[] conditionInfos = UIConditions.getConditionInfosFromCondtions(
                 		  this.viewModel.getUIConditions() 
                 		, "patno"
-                		, "medregno"
+                	//	, "medregno"
                 		);
                 
                 for (ConditionInfo conditionInfo: conditionInfos) {
                 	if(conditionInfo.getColumnName().equals("patno"))
                 		conditionInfo.setValue(patno);
-                	else
-                		conditionInfo.setValue(medregno);
+//                	else
+//                		conditionInfo.setValue(medregno);
                 }
                 
                 viewModel.setJoinConditionInfos(conditionInfos);
-                ///////////////////////////////
+                //////////////////////////////////////////////////////////////////////////////
                 int baseHashcode = this.dataSetRootAnchorPane.hashCode();
                 DataSetRelation dataSetRelation = viewModel.getAppContext().getDataSetRelation(baseHashcode);
                 List<RelatedPane> RelatedPaneList = dataSetRelation.getRelatedPaneList();
                 for(RelatedPane relatedPane: RelatedPaneList) {
                 	int targetHashcode = relatedPane.endPane().hashCode();
+                	
+                	if (targetHashcode == baseHashcode)
+                		continue ;
+                	
                 	DataSetView targetDataSetView = viewModel.getAppContext().getDataSetView(targetHashcode);
-                	targetDataSetView.search();
+                	if (targetDataSetView != null)
+                		targetDataSetView.search();
                 }
                 
                 viewModel.setJoinConditionInfos(null);
@@ -315,8 +314,25 @@ public class DataSetView implements FxmlView<DataSetViewModel> {
 
 	}
 
+	public UIConditions getUIConditions() {
+		
+		viewModel.addDataSetContext();
+		
+		UIConditions c = null;
+		
+		if(viewModel.haveTargetDataSet())
+			c = viewModel.getValueBindedConditions(viewModel.getJoinConditionInfos());
+		else	
+			c = viewModel.getValueBindedConditions(conditionInfoLabelVBox);
+	
+		Col<?>[] columns = viewModel.getColumnCols(columInfoLabelVBox);
+		if (ArrayUtils.isNotEmpty(columns))
+			c.select(columns);
+	
+		return c;
+	}
+
 	private TableViewData getTableViewData() {
-		UIConditions conditions = getUIConditions();
 
 		TableViewData tableViewData = null;
 
@@ -324,26 +340,32 @@ public class DataSetView implements FxmlView<DataSetViewModel> {
 			DataSetView baseDataSetView = viewModel.getBaseDataSetView();
 			TableViewData baseTableViewData = baseDataSetView.getTableViewData();
 			SubQueryExpression<?> baseQuery = baseTableViewData.getQuery();
+			UIConditions conditions = getUIConditions();
 			tableViewData = viewModel.getTableViewData(baseQuery, conditions);
 
-		} else
+		} else {
+			UIConditions conditions = getUIConditions();
 			tableViewData = viewModel.getTableViewData(conditions);
+		}
 
 		return tableViewData;
 	}
 
 	
-	TableViewData tableViewData ;
+	
 	@FXML
 	private void search() {
 		progressIndicator.visibleProperty().bind((new SimpleBooleanProperty(true)));
+		
 		dataSetTableView.getItems().clear();
 		dataSetTableView.refresh();
 		
-		tableViewData = getTableViewData();
-		// Create a Service for background tasks
+		this.tableViewData = getTableViewData();
+		// query 생성후 query 생성관련 context clear
+		IntegratedContext.getInstance().clear();
+		
         BackgroundTaskService backgroundTaskService = new BackgroundTaskService();
-        backgroundTaskService.  start();
+        backgroundTaskService.start();                         
         backgroundTaskService.setOnSucceeded(this::handelSearch);
 		
 		
@@ -362,7 +384,6 @@ public class DataSetView implements FxmlView<DataSetViewModel> {
             return new Task<>() {
                 @Override
                 protected List<Tuple> call() throws InterruptedException {
-                	
                 	tableViewData.fetch();
                     return tableViewData.getTupleList();
                 }
@@ -419,23 +440,6 @@ public class DataSetView implements FxmlView<DataSetViewModel> {
 		// Open 한 다음은 ConditionView를 이전 뷰로 임시 저장
 		tmpConditionView = conditionView;
 		tmpConditionViewModel = load.getViewModel();
-	}
-
-	private UIConditions getUIConditions() {
-		viewModel.addDataSetContext();
-		
-		UIConditions c = null;
-		
-		if(viewModel.needJoinValue())
-			c = viewModel.getValueBindedConditions(viewModel.getJoinConditionInfos());
-		else	
-			c = viewModel.getValueBindedConditions(conditionInfoLabelVBox);
-
-		Col<?>[] columns = viewModel.getColumnCols(columInfoLabelVBox);
-		if (ArrayUtils.isNotEmpty(columns))
-			c.select(columns);
-
-		return c;
 	}
 
 	///////////////////////////////////////////////////////////////////////
