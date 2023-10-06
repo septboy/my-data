@@ -1,5 +1,6 @@
 package mydata.ds.view.dataset;
 
+import javafx.scene.layout.Pane;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Polygon;
 

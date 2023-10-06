@@ -8,6 +8,10 @@ import com.querydsl.core.types.Expression;
 import com.querydsl.core.types.Operation;
 import com.querydsl.core.types.SubQueryExpression;
 
+import de.saxsys.mvvmfx.FluentViewLoader;
+import de.saxsys.mvvmfx.FxmlView;
+import de.saxsys.mvvmfx.ViewModel;
+import de.saxsys.mvvmfx.ViewTuple;
 import de.saxsys.mvvmfx.data.TableViewData;
 import ds.data.core.context.IntegratedContext;
 import ds.data.core.util.CdiUtils;
@@ -18,6 +22,7 @@ import jakarta.enterprise.inject.spi.CDI;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
@@ -174,26 +179,57 @@ public class ViewUtils {
     }
     
     public static void removeFromScene(Node node) {
-	    BeanManager bm = CDI.current().getBeanManager();
-		AppContext appContext = CdiUtils.getOneReference(bm, AppContext.class);
-		((Pane)appContext.getScene().getRoot()).getChildren().remove(node);
-		node = null ;
+	    AppContext appContext = getAppContext();
+		if ( ((Pane)appContext.getScene().getRoot()).getChildren().remove(node) )
+			node = null ;
     }
+
+	private static AppContext getAppContext() {
+		BeanManager bm = CDI.current().getBeanManager();
+		AppContext appContext = CdiUtils.getOneReference(bm, AppContext.class);
+		return appContext;
+	}
     
     public static void removeFromPane(Pane parent, Node node) {
-    	parent.getChildren().remove(node);
-    	node = null ;
+    	ObservableList<Node> nodeList = parent.getChildren();
+    	if( nodeList.remove(node) )
+    		node = null ;
     }
     
+    @SuppressWarnings("unchecked")
+	public static <V extends FxmlView<? extends M>, M extends ViewModel> void openView(Class<? extends V> mClazz, double posX, double posY) {
+    	AppContext appContext = getAppContext();
+		
+		ViewTuple<V, M> load = (ViewTuple<V, M>) FluentViewLoader//
+				.fxmlView(mClazz)        //
+				.load();                                                    //
+	
+		Parent view = load.getView();
+	
+		Pane appPane = (Pane)appContext.getScene().getRoot();
+	
+		view.setLayoutX(posX);
+		view.setLayoutY(posY);
+		appPane.getChildren().add(view);
+		
+	}
+    
+    @SuppressWarnings("unchecked")
+   	public static <V extends FxmlView<? extends M>, M extends ViewModel> Parent openView(Class<? extends V> viewClass) {
+   		ViewTuple<V, M> load = (ViewTuple<V, M>) FluentViewLoader//
+   				.fxmlView(viewClass)        //
+   				.load();                                                    //
+   		Parent view = load.getView();
+   		return view ;
+   	}
+    
     public static void setSceneToAppContext(Scene scene) {
-    	BeanManager bm = CDI.current().getBeanManager();
- 		AppContext appContext = CdiUtils.getOneReference(bm, AppContext.class);
+    	AppContext appContext = getAppContext();
  		appContext.setScene(scene);
     }
 
 	public static void addNodeOnAppScene(Node node, double x, double y) {
-		BeanManager bm = CDI.current().getBeanManager();
- 		AppContext appContext = CdiUtils.getOneReference(bm, AppContext.class);
+		AppContext appContext = getAppContext();
  		
 		AnchorPane parentPane = (AnchorPane) appContext.getScene().getRoot();
 		node.setLayoutX(x);
@@ -208,5 +244,6 @@ public class ViewUtils {
 		node.toFront();
 		
 	}
+	
 	
 }

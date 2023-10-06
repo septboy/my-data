@@ -162,7 +162,7 @@ public class GridView implements FxmlView<GridViewModel> {
 			Pane integratedGridBarIcon = getNumberCircle(number);
 			gridBarHBox.getChildren().add(integratedGridBarIcon);
 	
-			setDraggableEvents(integratedGridBarIcon);
+			
 			
 			// DataSetView 안에 IntegratedNumber 삽입
 			Pane sourcePane = viewModel.getConnectableDataSetPane();
@@ -173,8 +173,16 @@ public class GridView implements FxmlView<GridViewModel> {
 			AnchorPane.setBottomAnchor(integratedDataSetIcon, 8.0);
 			AnchorPane.setLeftAnchor(integratedDataSetIcon, 8.0);
 	
-			viewModel.putRelatedIcon(sourcePaneHashcode,
-					new RelatedIcon(sourcePane, integratedDataSetIcon, gridBarHBox, integratedGridBarIcon));
+			integratedGridBarIcon.setUserData(sourcePaneHashcode);
+			bindDraggableEvents(integratedGridBarIcon);
+			
+			integratedDataSetIcon.setUserData(sourcePaneHashcode);
+			bindDraggableEvents(integratedDataSetIcon);
+			/////////////////////////////////////////////////////////////////
+			viewModel.putRelatedIcon(//
+					sourcePaneHashcode//
+					,new RelatedIcon(sourcePane, integratedDataSetIcon, gridBarHBox, integratedGridBarIcon)//
+				);//
 	
 			/// 통합그리드에 컬럼 생성
 			DataSetView dataSetView = viewModel.getDataSetView(sourcePaneHashcode);
@@ -258,8 +266,6 @@ public class GridView implements FxmlView<GridViewModel> {
 		// Create a Circle
 		Circle circle = new Circle(15, Color.rgb(255, 102, 051));
 
-		setDraggableEvents(circle);
-		
 		// Create a Text node with the number
 		Text text = new Text(String.valueOf(number));
 		text.setFont(Font.font(20)); // Set the font size
@@ -334,64 +340,9 @@ public class GridView implements FxmlView<GridViewModel> {
 		logger.info("handelSearch fail!");
 	}
 	
-	private void setDraggableEvents(Node node) {
+	private void bindDraggableEvents(Node node) {
 		
-		Node backgroundNode = mainRootStage.getScene().lookup("#appBackground");
-				
-        node.setOnDragDetected(event -> {
-        	logger.debug("setOnDragDetected execute.");
-            Dragboard dragboard = node.startDragAndDrop(TransferMode.ANY);
-
-            ClipboardContent content = new ClipboardContent();
-            content.putString("Circle source text");
-            dragboard.setContent(content);
-
-            event.consume();
-        });
-
-        node.setOnMouseDragged((MouseEvent event) -> {
-            event.setDragDetect(true);
-        });
-        
-        backgroundNode.setOnDragOver(event -> {
-        	logger.debug("setOnDragOver execute.");
-        	if (event.getGestureSource() != backgroundNode && event.getDragboard().hasString()) {
-                event.acceptTransferModes(TransferMode.COPY_OR_MOVE);
-            }
-
-            event.consume();
-        });
-
-        backgroundNode.setOnDragEntered(event -> {
-        	logger.debug("setOnDragEntered execute.");
-            if (event.getGestureSource() != node && event.getDragboard().hasString()) {
-                node.setStyle("-fx-background-color: lightgreen; -fx-padding: 10px;");
-           }
-
-            event.consume();
-        });
-
-        backgroundNode.setOnDragExited(event -> {
-        	logger.debug("setOnDragExited execute.");
-            node.setStyle("-fx-background-color: lightblue; -fx-padding: 10px;");
-            event.consume();
-        });
-
-        backgroundNode.setOnDragDropped(event -> {
-        	logger.debug("setOnDragDropped execute.");
-            Dragboard db = event.getDragboard();
-            boolean success = false;
-
-            if (db.hasString()) {
-                logger.debug("Dropped: " + db.getString());
-                success = true;
-            }
-
-            event.setDropCompleted(success);
-            event.consume();
-        });
-
-        node.setOnDragDone(DragEvent::consume);
+		viewModel.bindDraggableEvents(node);
         
     }
 	

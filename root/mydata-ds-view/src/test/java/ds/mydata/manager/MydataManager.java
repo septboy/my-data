@@ -2,8 +2,6 @@ package ds.mydata.manager;
 
 import java.sql.Connection;
 
-import jakarta.persistence.EntityManager;
-
 import org.hibernate.Session;
 
 import ds.data.core.context.ContextUtils;
@@ -11,18 +9,17 @@ import ds.data.core.dao.DatabaseManager;
 import ds.data.core.dao.JdbcWork;
 import ds.ehr.dao.constant.EHR;
 import ds.ehr.dao.producer.Ehr;
-import ds.ehr.dao.producer.EhrDev;
-import ds.ehr.dao.producer.EhrTest;
 import ds.ehr.meta.constant.META;
-import ds.ehr.meta.producer.Meta;
 import ds.sqlite.constant.LOCAL;
-import ds.sqlite.producer.Local;
+import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.context.Initialized;
 import jakarta.enterprise.event.Observes;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import jakarta.inject.Singleton;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
 
 @Singleton
 public class MydataManager implements DatabaseManager {
@@ -30,8 +27,9 @@ public class MydataManager implements DatabaseManager {
 	@Inject
 	@Ehr
 	@Named(EHR.DataSource.AAEHRTEST)
-	private EntityManager mEntityManager;
+	private EntityManagerFactory mEntityManagerFactoryEHR;
 	
+	private EntityManager mEntityManagerEHR ;
 //	@Inject
 //	@EhrTest
 //	@Named(EHR.DataSource.AAEHRTEST)
@@ -54,9 +52,14 @@ public class MydataManager implements DatabaseManager {
 	
 	private String mLocate = null;
 	
+	@PostConstruct
+	public void initialize() {
+		mEntityManagerEHR = mEntityManagerFactoryEHR.createEntityManager();
+	}
+	
 	public Connection getConnection() {
 		
-		if (mEntityManager == null)
+		if (mEntityManagerEHR == null)
 			return null ;
 		
 		Session session = null ;
@@ -70,7 +73,7 @@ public class MydataManager implements DatabaseManager {
 			session = mEntityManagerMeta.unwrap(Session.class);
 		
 		else
-			session = mEntityManager.unwrap(Session.class);
+			session = mEntityManagerEHR.unwrap(Session.class);
 		
 		JdbcWork work = new JdbcWork();
 		session.doWork(work);
@@ -81,7 +84,7 @@ public class MydataManager implements DatabaseManager {
 
 	@Override
 	public EntityManager getEntityManager() {
-		return mEntityManager;
+		return mEntityManagerEHR;
 	}
 
 	@Override
@@ -95,11 +98,11 @@ public class MydataManager implements DatabaseManager {
 		else if (LOCAL.DataSource.LOCAL == DBLocate)
 			return mEntityManagerLocal;
 		
-		return mEntityManager ;
+		return mEntityManagerEHR ;
 	}
 	
 	public void init(@Observes @Initialized(ApplicationScoped.class) Object init) {
-		if (mEntityManager == null)
+		if (mEntityManagerFactoryEHR == null)
 			ContextUtils.getInteratedContext().setDatabaseConntected(false);
 		else {
 			ContextUtils.getInteratedContext().setDatabaseConntected(true);

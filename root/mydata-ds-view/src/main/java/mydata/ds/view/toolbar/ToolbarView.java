@@ -31,6 +31,9 @@ public class ToolbarView implements FxmlView<ToolbarViewModel> {
 
 	@FXML
 	public Button emrdocFormButton;
+	
+	@FXML
+	public Button prescriptionButton;
 
 	@InjectViewModel
 	private ToolbarViewModel viewModel;
@@ -43,10 +46,13 @@ public class ToolbarView implements FxmlView<ToolbarViewModel> {
 
 	public void initialize() {
 		AwesomeDude.setIcon(appatEHRButton, AwesomeIcon.PLUS);
-		AwesomeDude.setIcon(emrdocFormButton, AwesomeIcon.PLUS);
-		
 		appatEHRButton.setOnMousePressed(this::handleMousePressedOnButton);
+		
+		AwesomeDude.setIcon(emrdocFormButton, AwesomeIcon.PLUS);
 		emrdocFormButton.setOnMousePressed(this::handleMousePressedOnButton);
+		
+		AwesomeDude.setIcon(prescriptionButton, AwesomeIcon.PLUS);
+		prescriptionButton.setOnMousePressed(this::handleMousePressedOnButton);
 	
 	}
 

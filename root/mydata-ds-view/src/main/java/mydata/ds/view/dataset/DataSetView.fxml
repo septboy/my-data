@@ -18,7 +18,7 @@
 	<children>
       <AnchorPane id="dataSetTitlePane" fx:id="dataSetTitlePane" layoutX="29.0" layoutY="26.0" maxHeight="30.0" minHeight="30.0" prefHeight="30.0" style="-fx-border-color: green; -fx-border-width: 1; -fx-background-color: green;" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="5.0">
          <children>
-             <Button id="searchButton" layoutX="7.0" layoutY="2.0" maxHeight="22.0" minHeight="22.0" mnemonicParsing="false" onAction="#search" prefHeight="22.0" style="-fx-background-color: #20b2aa;" text="검색" textFill="#fbfffc" AnchorPane.leftAnchor="3.0" AnchorPane.topAnchor="2.0">
+             <Button id="searchOrCancelButton" fx:id="searchOrCancelButton" layoutX="7.0" layoutY="2.0" maxHeight="22.0" minHeight="22.0" mnemonicParsing="false" onAction="#searchOrCancel" prefHeight="22.0" style="-fx-background-color: #20b2aa;" text="검색" textFill="#fbfffc" AnchorPane.leftAnchor="3.0" AnchorPane.topAnchor="2.0">
                <font>
                   <Font name="Arial Bold" size="12.0" />
                </font>

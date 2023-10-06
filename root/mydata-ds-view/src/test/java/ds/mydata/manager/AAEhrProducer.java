@@ -7,6 +7,7 @@ import jakarta.enterprise.inject.Produces;
 import jakarta.inject.Named;
 import jakarta.inject.Singleton;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
 
 
@@ -16,10 +17,10 @@ public class AAEhrProducer {
 	@Singleton
 	@Ehr
 	@Named(EHR.DataSource.AAEHRTEST)
-	private EntityManager getEntityManager_EHR() {
+	private EntityManagerFactory getEntityManagerFactoryEHR() {
         return Persistence
-                .createEntityManagerFactory(EHR.DataSource.AAEHRTEST)
-                .createEntityManager();
+                .createEntityManagerFactory(EHR.DataSource.AAEHRTEST);
+                
     }
 	
 //	@Produces

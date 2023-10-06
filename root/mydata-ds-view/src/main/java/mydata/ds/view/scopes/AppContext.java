@@ -12,14 +12,21 @@ import de.saxsys.mvvmfx.ViewModel;
 import jakarta.enterprise.context.ApplicationScoped;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.input.ClipboardContent;
+import javafx.scene.input.DragEvent;
+import javafx.scene.input.Dragboard;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.input.TransferMode;
 import mydata.ds.view.dataset.DataSetEvent;
 import mydata.ds.view.dataset.DataSetRelation;
 import mydata.ds.view.dataset.DataSetView;
 import mydata.ds.view.dataset.DataSetViewModel;
 import mydata.ds.view.grid.RelatedIcon;
+import mydata.ds.view.util.ViewUtils;
 
 @ApplicationScoped
 public class AppContext {
+	
 	private static final Logger logger = LoggerFactory.getLogger(AppContext.class);
 	
 	private DataSetEvent mouseEventStatus ;
@@ -35,14 +42,11 @@ public class AppContext {
 
 	private List<Integer> dataSetHashcodeList ;
 
-	private Map<Integer, Node> applicationHashcodeNodeMap;
-	
 	public AppContext() {
 		dataSetRelationMap = new HashMap<>();
 		relationIconMap = new HashMap<>();
 		viewModelMap = new HashMap<>();
 		viewMap = new HashMap<>();
-		applicationHashcodeNodeMap = new HashMap<>();
 		
 		dataSetHashcodeList = new ArrayList<>();
 		mouseEventStatus = new DataSetEvent(this);
@@ -81,10 +85,14 @@ public class AppContext {
 		this.scene = scene ;
 	}
 
-	public RelatedIcon getRelatedIcon(int hashcode) {
-		return this.relationIconMap.get(hashcode);
+	/**
+	 * @param dataSetHashcode  dataset hashcode
+	 * @return
+	 */
+	public RelatedIcon getRelatedIcon(int dataSetHashcode) {
+		return this.relationIconMap.remove(dataSetHashcode);
 	}
-
+	
 	public void putDataSetViewModel(int hashcode, DataSetViewModel viewModel) {
 		this.viewModelMap.put(hashcode, viewModel) ;
 		
@@ -116,13 +124,63 @@ public class AppContext {
 		this.dataSetHashcodeList.remove(dataSetHashcode);
 	}
 
-	public void putNodeToAppContext(int hashcode, Node node) {
-		this.applicationHashcodeNodeMap.put(hashcode, node);
+	public void bindDraggableEvents(Node node) {
 		
-	}
+		Node backgroundNode = this.scene.lookup("#appBackground");
+				
+        node.setOnDragDetected(event -> {
+        	logger.debug("setOnDragDetected execute.");
+            Dragboard dragboard = node.startDragAndDrop(TransferMode.ANY);
 
-	@SuppressWarnings("unchecked")
-	public <T extends Node> T getNodeOnAppContext(int hashcode, T node) {
-		return (T)this.applicationHashcodeNodeMap.get(hashcode);
-	}
+            ClipboardContent content = new ClipboardContent();
+            content.putString("Circle source text");
+            dragboard.setContent(content);
+
+            event.consume();
+        });
+
+        node.setOnMouseDragged((MouseEvent event) -> {
+            event.setDragDetect(true);
+            
+            event.consume();
+        });
+        
+        backgroundNode.setOnDragOver(event -> {
+        	logger.debug("setOnDragOver execute.");
+        	
+        	if (event.getGestureSource() != backgroundNode && event.getDragboard().hasString()) {
+                event.acceptTransferModes(TransferMode.MOVE);
+            }
+
+            event.consume();
+        });
+
+
+        backgroundNode.setOnDragDropped(event -> {
+        	logger.debug("setOnDragDropped execute.");
+            Dragboard db = event.getDragboard();
+            boolean success = false;
+
+            if (db.hasString()) {
+                logger.debug("Dropped: " + db.getString());
+
+                int dataSetHashcode = (Integer)node.getUserData();
+        		RelatedIcon relatedIcon = getRelatedIcon(dataSetHashcode);
+        		
+        		if ( relatedIcon != null ) {
+	                ViewUtils.removeFromPane( relatedIcon.dataSetIconParent(), relatedIcon.dataSetIcon());
+	                ViewUtils.removeFromPane( relatedIcon.gridBarIconParent(), relatedIcon.gridBarIcon());
+        		}
+        		
+                success = true;
+            }
+            
+            event.setDropCompleted(success);
+            event.consume();
+        });
+
+        node.setOnDragDone(DragEvent::consume);
+        
+    }
+	
 }

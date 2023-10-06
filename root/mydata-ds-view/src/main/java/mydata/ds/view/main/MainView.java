@@ -26,6 +26,5 @@ public class MainView implements FxmlView<MainViewModel> {
 	public void initialize() {
 		logger.info("initialize start");
 		
-		viewModel.putBackGroundToAppContext(appBackground);
 	}
 }

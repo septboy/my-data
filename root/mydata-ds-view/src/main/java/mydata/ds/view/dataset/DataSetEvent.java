@@ -5,12 +5,19 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.saxsys.mvvmfx.FluentViewLoader;
+import de.saxsys.mvvmfx.FxmlView;
+import de.saxsys.mvvmfx.ViewModel;
+import de.saxsys.mvvmfx.ViewTuple;
+import de.saxsys.mvvmfx.internal.viewloader.View;
 import jakarta.inject.Inject;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.event.EventTarget;
 import javafx.scene.Cursor;
 import javafx.scene.ImageCursor;
+import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseButton;
@@ -24,7 +31,14 @@ import javafx.scene.shape.Polygon;
 import javafx.scene.shape.StrokeLineCap;
 import javafx.scene.shape.StrokeType;
 import javafx.util.Duration;
+import mydata.ds.view.condition.ConditionView;
+import mydata.ds.view.condition.ConditionViewInfo;
+import mydata.ds.view.condition.ConditionViewModel;
+import mydata.ds.view.relation.RelationView;
+import mydata.ds.view.relation.RelationViewModel;
 import mydata.ds.view.scopes.AppContext;
+import mydata.ds.view.scopes.ConditionScope;
+import mydata.ds.view.util.DataSetHelper;
 import mydata.ds.view.util.ViewUtils;
 
 public class DataSetEvent {
@@ -39,7 +53,7 @@ public class DataSetEvent {
 	private AnchorPane dataSetRootAnchorPaneSource;
 	private AnchorPane dataSetRootAnchorPaneTarget;
 	private Scene scene;
-	private boolean isRelationMode;
+	private boolean isRelatingMode;
 
 	private boolean isMouseDraggedThenReleased = false;
 
@@ -53,17 +67,18 @@ public class DataSetEvent {
 
 	public void setEventTarget(AnchorPane dataSetRootAnchorPane) {
 
-		dataSetRootAnchorPane.addEventFilter(MouseEvent.MOUSE_PRESSED, event -> {
-			logger.debug("MOUSE_PRESSED DataSet is {}", dataSetRootAnchorPane.getUserData());
+		dataSetRootAnchorPane.addEventHandler(MouseEvent.MOUSE_PRESSED, event -> {
+			logger.debug("dataSetRootAnchorPane MOUSE_PRESSED DataSet is {}", dataSetRootAnchorPane.getUserData());
 			if (event.getButton() == MouseButton.PRIMARY) {
 				this.isMousePressed = true;
 				this.mousePressedTime = System.currentTimeMillis();
 				timeline.play();
 			}
+			event.consume();
 		});
 
 		dataSetRootAnchorPane.addEventFilter(MouseEvent.DRAG_DETECTED, event -> {
-			if (!this.isRelationMode) {
+			if (!this.isRelatingMode) {
 				statusClear();
 				return;
 			}
@@ -73,7 +88,7 @@ public class DataSetEvent {
 		});
 
 		dataSetRootAnchorPane.addEventFilter(MouseDragEvent.MOUSE_DRAGGED, event -> {
-			if (!this.isRelationMode) {
+			if (!this.isRelatingMode) {
 				statusClear();
 				return;
 			}
@@ -83,7 +98,7 @@ public class DataSetEvent {
 		});
 
 		dataSetRootAnchorPane.addEventFilter(MouseDragEvent.MOUSE_RELEASED, event -> {
-			if (!this.isRelationMode) {
+			if (!this.isRelatingMode) {
 				statusClear();
 				return;
 			}
@@ -99,51 +114,60 @@ public class DataSetEvent {
 			}
 		});
 
+		Node backgroundNode = this.scene.lookup("#appBackground");
+		
+		backgroundNode.addEventFilter(MouseEvent.MOUSE_ENTERED_TARGET,this::handleDataSetMouseEnterdTarget);
+		
 		dataSetRootAnchorPane.addEventFilter(MouseEvent.MOUSE_ENTERED_TARGET,this::handleDataSetMouseEnterdTarget);
 	}
 
 	private void handleDataSetMouseEnterdTarget(MouseEvent event) {
+		Node eventTarget = (Node)event.getTarget();
 		
-		if (!this.isRelationMode) {
+		if (!this.isRelatingMode) {
 			statusClear();
+			event.consume();
 			return;
 		}
 
 		if (!this.isMouseDraggedThenReleased) {
 			statusClear();
+			event.consume();
 			return;
 		}
 
-		EventTarget eventTarget = event.getTarget();
-		if (eventTarget instanceof AnchorPane) {
-			String id = ((AnchorPane) eventTarget).getId();
-			if (id != null && id.equals("dataSetRootAnchorPane")) {
+		if (eventTarget instanceof AnchorPane && eventTarget.getId().equals("dataSetRootAnchorPane")) {
 
-				if (dataSetRootAnchorPaneSource != event.getTarget()) {
-					dataSetRootAnchorPaneTarget = (AnchorPane) eventTarget;
-					logger.debug("MOUSE_ENTERED_TARGET eventTarget {} is saved !!",
-							dataSetRootAnchorPaneTarget.getUserData());
+			if (dataSetRootAnchorPaneSource != event.getTarget()) {
+				dataSetRootAnchorPaneTarget = (AnchorPane) eventTarget;
+				logger.debug("MOUSE_ENTERED_TARGET eventTarget {} is saved !!",
+						dataSetRootAnchorPaneTarget.getUserData());
 
-					makeRelationLine(dataSetRootAnchorPaneSource, dataSetRootAnchorPaneTarget);
-					
-					appContext.getDataSetViewModel(dataSetRootAnchorPaneTarget.hashCode())//
-						.setRelationBaseHashcode(//
-								dataSetRootAnchorPaneSource.hashCode()//
-							);//
-
-					statusClear();
-				}
-				event.consume();
-
+				Pane relationView = (Pane)ViewUtils.openView(RelationView.class);
+				makeRelationLine(dataSetRootAnchorPaneSource, dataSetRootAnchorPaneTarget, relationView);
+				
+				appContext.getDataSetViewModel(dataSetRootAnchorPaneTarget.hashCode())//
+					.setRelationBaseHashcode(//
+							dataSetRootAnchorPaneSource.hashCode()//
+						);//
+				
+				statusClear();
 			}
+
+		} else {
+			statusClear();
 		}
+		
+		logger.debug("handleDataSetMouseEnterdTarget start. entered target is {}", eventTarget.getClass().getName());
+		
+		
 	}
 	
-	public void makeRelationLine(Pane startPane, Pane endPane) {
-		makeRelationLine(false , startPane, endPane);
+	public void makeRelationLine(Pane startPane, Pane endPane, Pane relationPane) {
+		makeRelationLine(false , startPane, endPane, relationPane);
 	}
 	
-	private void makeRelationLine(boolean isRedraw, Pane startPane, Pane endPane) {
+	private void makeRelationLine(boolean isRedraw, Pane startPane, Pane endPane, Pane relationPane) {
 		if (startPane == null || endPane == null)
 			return;
 
@@ -197,9 +221,13 @@ public class DataSetEvent {
 			// Rotate the arrowhead
 			arrowhead.setRotate(angle);
 
+			relationPane.setLayoutX(fromCircleX);
+			relationPane.setLayoutY(fromCircleY);
+			
 			AnchorPane parentPane = (AnchorPane) scene.getRoot();
-			parentPane.getChildren().addAll(line, arrowhead);
+			parentPane.getChildren().addAll(line, arrowhead, relationPane);
 			line.toFront();
+			relationPane.toFront();
 
 			// 같은 관계 line을 두개의 데이터셋에서 공유하고 잇음
 			DataSetRelation dataSetRelationStart = this.appContext.getDataSetRelation(startPane.hashCode())
@@ -209,8 +237,8 @@ public class DataSetEvent {
 					.addRelatedLine(circlePair.getEndCirclePos(), 1, line, arrowhead);
 			
 			if ( !isRedraw ) { // 처음으로 관계를 맺는 경우
-				dataSetRelationStart.addRelatedPane(new RelatedPane(startPane, endPane)); 	// start
-				dataSetRelationEnd.addRelatedPane(new RelatedPane(startPane, endPane)); 	// end
+				dataSetRelationStart.addRelatedPane(new RelatedPane(startPane, endPane, relationPane)); 	// start
+				dataSetRelationEnd.addRelatedPane(new RelatedPane(startPane, endPane, relationPane)); 	// end
 			}
 		}
 	}
@@ -228,7 +256,8 @@ public class DataSetEvent {
 		for (RelatedPane relatedPane : relatedPaneList) {
 			Pane startPane = relatedPane.startPane();
 			Pane endPane = relatedPane.endPane();
-			makeRelationLine(true, startPane, endPane);
+			Pane relationPane = relatedPane.relationPane();
+			makeRelationLine(true, startPane, endPane, relationPane);
 		}
 		
 	}
@@ -282,7 +311,7 @@ public class DataSetEvent {
 
 			if (currentTime - mousePressedTime >= duringTimeForRelation) {
 				scene.setCursor(getCustomCursor());
-				this.isRelationMode = true;
+				this.isRelatingMode = true;
 			}
 		} else {
 			scene.setCursor(Cursor.DEFAULT);
@@ -309,7 +338,7 @@ public class DataSetEvent {
 	}
 
 	public boolean isRelationMode() {
-		return this.isRelationMode;
+		return this.isRelatingMode;
 	}
 
 	private Circle findCircleById(Pane anchorPane, String id) {
@@ -327,7 +356,7 @@ public class DataSetEvent {
 		this.mousePressedTime = 0L;
 		this.dataSetRootAnchorPaneSource = null;
 		this.dataSetRootAnchorPaneTarget = null;
-		this.isRelationMode = false;
+		this.isRelatingMode = false;
 		this.isMouseDraggedThenReleased = false;
 	}
 

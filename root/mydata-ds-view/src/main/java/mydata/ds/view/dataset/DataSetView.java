@@ -1,7 +1,7 @@
 package mydata.ds.view.dataset;
 
+import java.sql.SQLException;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.slf4j.Logger;
@@ -22,24 +22,23 @@ import de.saxsys.mvvmfx.utils.notifications.NotificationCenter;
 import ds.common.util.ArrayUtil;
 import ds.data.core.column.Col;
 import ds.data.core.column.ColumnInfo;
-import ds.data.core.column.ColumnType;
 import ds.data.core.condition.ConditionInfo;
 import ds.data.core.condition.ui.UIConditions;
+import ds.data.core.context.ContextUtils;
 import ds.data.core.context.IntegratedContext;
-import ds.data.core.util.ColUtils;
 import jakarta.inject.Inject;
 import javafx.application.Application;
 import javafx.application.HostServices;
 import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.value.ObservableBooleanValue;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
+import javafx.concurrent.Worker.State;
 import javafx.concurrent.WorkerStateEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.Parent;
+import javafx.scene.control.Button;
 import javafx.scene.control.Control;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressIndicator;
@@ -47,18 +46,21 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.control.ScrollPane.ScrollBarPolicy;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableRow;
+import javafx.scene.control.TablePosition;
 import javafx.scene.control.TableView;
+import javafx.scene.input.Clipboard;
+import javafx.scene.input.ClipboardContent;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
 import mydata.ds.view.condition.ConditionView;
 import mydata.ds.view.condition.ConditionViewInfo;
 import mydata.ds.view.condition.ConditionViewModel;
+import mydata.ds.view.executor.Executor;
 import mydata.ds.view.grid.RelatedIcon;
 import mydata.ds.view.scopes.ConditionScope;
 import mydata.ds.view.util.DataSetHelper;
@@ -106,6 +108,9 @@ public class DataSetView implements FxmlView<DataSetViewModel> {
 	@FXML
 	public ProgressIndicator progressIndicator;
 	
+	@FXML
+	private Button searchOrCancelButton;
+	
 	@Inject
 	Stage mainRootStage;
 
@@ -146,45 +151,43 @@ public class DataSetView implements FxmlView<DataSetViewModel> {
 	private RelationPointCenters relationPointCentersScene;
 	
 	private TableViewData tableViewData ;
+	
+	BackgroundTaskService backgroundTaskService ;
 
 	public void initialize() {
 
 		progressIndicator.setVisible(false);
 		int dataSetHashcode = dataSetRootAnchorPane.hashCode();
 		
-		// 데이터셋 타이틀
-		String datasetTitle = viewModel.getDataSetTitle();
-		LinkUtils.link(dataSetTitleLabel, datasetTitle);
+		initializeTitle();
 
-		// 데이터셋 항목들
-		ColumnInfo[] columnInfos = viewModel.getColumnInfos();
-		LinkUtils.link(columInfoLabelVBox, columnInfos, this::handleMouseClickedColumnLabel);
+		initializeColumns();
+		
+		initializeConditions();
 
-		// 데이터셋 검색 조건들
-		ConditionViewInfo[] conditionInfos = viewModel.getConditionViewInfos();
-		LinkUtils.link(conditionInfoLabelVBox, conditionInfos, this::handleMouseClickedConditionLabel);
+		initializeDataSetRootPane();
 
+		initializeCloseButton(dataSetHashcode);
+
+		initializeDataSetRelation();
+		
+		initializeTableView();
+		
 		viewModel.getAppContext().putDataSetViewModel(dataSetHashcode, viewModel);
 		viewModel.getAppContext().putDataSetView(dataSetHashcode, this);
-
-		dataSetTitlePane.setOnMousePressed(this::handleMousePressedTitlePane);
-		dataSetTitlePane.setOnMouseDragged(this::handleMouseDraggedTitlePane);
-		dataSetTitlePane.setOnMouseClicked(this::handleMouseClickedTitlePane);
-
-		dataSetTitleLabel.setOnMousePressed(this::handleDummyEvent);
-		dataSetTitleLabel.setOnMouseDragged(this::handleDummyEvent);
-		dataSetTitleLabel.setOnMouseClicked(this::handleDummyEvent);
-
 		viewModel.setDataSetHashcode(dataSetHashcode);
-		dataSetRootAnchorPane.setUserData(datasetTitle);
-		dataSetRootAnchorPane.setOnMousePressed(this::handleMousePressedDataSetAnchorPane);
-		dataSetRootAnchorPane.setOnMouseDragged(this::handleMouseDraggedDataSetAnchorPane);
-		dataSetRootAnchorPane.setOnMouseClicked(this::handleMouseClickedDataSetAnchorPane);
-		dataSetRootAnchorPane.setOnMouseReleased(this::handleMouseReleaseDataSetAnchorPane);
-		dataSetRootAnchorPane.setOnMouseDragReleased(this::handleMouseDragReleasedDataSetAnchorPane);
+		
+	}
 
-		dataSetColumnScrollPane.setHbarPolicy(ScrollBarPolicy.NEVER);
+	private void initializeDataSetRelation() {
+		// 관계 맺기 관련 Event 장착
+		mouseEventStatus = viewModel.getMouseEventStatus();
+		mouseEventStatus.setScene(mainRootStage.getScene());
+		mouseEventStatus.setEventTarget(dataSetRootAnchorPane);
+	}
 
+	private void initializeCloseButton(int dataSetHashcode) {
+		
 		viewModel.subscribe(DataSetViewModel.CLOSE_DATASET_NOTIFICATION, (key, payload) -> {
 			if (tmpConditionViewModel != null)
 				tmpConditionViewModel.publish(ConditionViewModel.CLOSE_CONDITION_VIEW_NOTIFICATION,
@@ -226,21 +229,94 @@ public class DataSetView implements FxmlView<DataSetViewModel> {
 			datasetRelation.getRelatedPaneList().clear();
 			viewModel.getAppContext().removeDataSetHashcode(dataSetHashcode);
 
+			if ( backgroundTaskService.isRunning() ) {
+				logger.info("검색중인 서비스가 취소되었습니다.");
+				backgroundTaskService.cancel();
+			}
+			
 		});
+	}
 
-		// 관계 맺기 관련 Event 장착
-		mouseEventStatus = viewModel.getMouseEventStatus();
-		mouseEventStatus.setScene(mainRootStage.getScene());
-		mouseEventStatus.setEventTarget(dataSetRootAnchorPane);
+	private void initializeDataSetRootPane() {
+		dataSetRootAnchorPane.setUserData(viewModel.getDataSetTitle());
+		dataSetRootAnchorPane.setOnMousePressed(this::handleMousePressedDataSetAnchorPane);
+		dataSetRootAnchorPane.setOnMouseDragged(this::handleMouseDraggedDataSetAnchorPane);
+		dataSetRootAnchorPane.setOnMouseClicked(this::handleMouseClickedDataSetAnchorPane);
+	}
+
+	private void initializeConditions() {
+		// 데이터셋 검색 조건들
+		ConditionViewInfo[] conditionInfos = viewModel.getConditionViewInfos();
+		LinkUtils.link(conditionInfoLabelVBox, conditionInfos, this::handleMouseClickedConditionLabel);
+	}
+
+	private void initializeColumns() {
+		// 데이터셋 항목들
+		ColumnInfo[] columnInfos = viewModel.getColumnInfos();
+		LinkUtils.link(columInfoLabelVBox, columnInfos, 
+					new Executor<Integer>() {
+						
+						@Override
+						public void execute(Integer index) {
+							scrollToColumn(dataSetTableView, index);
+						}
+
+						@Override
+						public TableViewData getTableViewData() {
+							return tableViewData;
+						}
+					}
+				);
 		
-		initializeTableView();
+		dataSetColumnScrollPane.setHbarPolicy(ScrollBarPolicy.NEVER);
+	}
+
+	private void initializeTitle() {
+		// 데이터셋 타이틀
+		String datasetTitle = viewModel.getDataSetTitle();
+		LinkUtils.link(dataSetTitleLabel, datasetTitle);
+		
+		dataSetTitlePane.setOnMousePressed(this::handleMousePressedTitlePane);
+		dataSetTitlePane.setOnMouseDragged(this::handleMouseDraggedTitlePane);
+		dataSetTitlePane.setOnMouseClicked(this::handleMouseClickedTitlePane);
+
+		dataSetTitleLabel.setOnMousePressed(this::handleDummyEvent);
+		dataSetTitleLabel.setOnMouseDragged(this::handleDummyEvent);
+		dataSetTitleLabel.setOnMouseClicked(this::handleDummyEvent);
+		
 	}
 
 	private void initializeTableView() {
 		dataSetTableView.setPlaceholder(new Label("데이터를 검색하세요."));
+		
+		dataSetTableView.addEventFilter(MouseEvent.MOUSE_PRESSED, event -> {
+            if (event.isShiftDown()) {
+            	dataSetTableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+            } else {
+            	dataSetTableView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
+            }
+        });
+		
 		dataSetTableView.setOnMousePressed(this::handleParentEvent);
 		
-		dataSetTableView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
+		dataSetTableView.setOnMouseClicked(event -> {
+            if (event.isControlDown() && event.getClickCount() == 1 ) { // Single click
+                TablePosition<Tuple, ?> pos = dataSetTableView.getSelectionModel().getSelectedCells().get(0);
+                int row = pos.getRow();
+                TableColumn<Tuple, ?> col = pos.getTableColumn();
+                String cellText = col.getCellData(row).toString();
+                viewModel.copyToClipboard(cellText);
+                
+                event.consume();
+            }
+        });
+		 
+		this.viewModel.getAppContext().getScene().addEventFilter(javafx.scene.input.KeyEvent.KEY_PRESSED, event -> {
+            if (event.isControlDown() && event.getCode() == KeyCode.C) {
+                copySelectedRows(dataSetTableView);
+            }
+        });
+		
 		// Handle row selection
 		dataSetTableView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
 			
@@ -278,7 +354,7 @@ public class DataSetView implements FxmlView<DataSetViewModel> {
                 	
                 	DataSetView targetDataSetView = viewModel.getAppContext().getDataSetView(targetHashcode);
                 	if (targetDataSetView != null)
-                		targetDataSetView.search();
+                		targetDataSetView.searchOrCancel();
                 }
                 
                 viewModel.setJoinConditionInfos(null);
@@ -354,29 +430,66 @@ public class DataSetView implements FxmlView<DataSetViewModel> {
 	
 	
 	@FXML
-	private void search() {
-		progressIndicator.visibleProperty().bind((new SimpleBooleanProperty(true)));
+	private void searchOrCancel() {
 		
-		dataSetTableView.getItems().clear();
-		dataSetTableView.refresh();
+		if (this.searchOrCancelButton.getText().equals("검색취소")) {
+			if ( this.backgroundTaskService != null && this.backgroundTaskService.isRunning()) {
+				logger.debug("검색 취소가 실행되었습니다.");
+				this.backgroundTaskService.cancel();
+			}
+			return ;
+		} else {
+			this.searchOrCancelButton.setText("검색취소");
+		}
+		
+		this.progressIndicator.visibleProperty().bind((new SimpleBooleanProperty(true)));
+		
+		this.dataSetTableView.getItems().clear();
+		this.dataSetTableView.refresh();
 		
 		this.tableViewData = getTableViewData();
 		// query 생성후 query 생성관련 context clear
 		IntegratedContext.getInstance().clear();
 		
-        BackgroundTaskService backgroundTaskService = new BackgroundTaskService();
-        backgroundTaskService.start();                         
-        backgroundTaskService.setOnSucceeded(this::handelSearch);
+		this.backgroundTaskService = new BackgroundTaskService();
+		this.backgroundTaskService.start();                         
+		this.backgroundTaskService.setOnSucceeded(this::handleSearch);
+        this.backgroundTaskService.setOnCancelled(this::handleCancel);
+        this.backgroundTaskService.setOnFailed(this::handelFail);
 		
 		
 	}
 
-	private void handelSearch(WorkerStateEvent event) {
+	private void handleSearch(WorkerStateEvent event) {
+		if ( this.backgroundTaskService.getState() == State.CANCELLED)
+			return;
 		
+		logger.debug("검색이 정상적으로 완료되었습니다.");
 		LinkUtils.link(dataSetTableView, tableViewData);
 		
 		progressIndicator.visibleProperty().bind((new SimpleBooleanProperty(false)));
+		searchOrCancelButton.setText("검색");
 	}
+	
+	private void handleCancel(WorkerStateEvent event) {
+		logger.debug("검색이 강제로 종료되었습니다.");
+		
+		progressIndicator.visibleProperty().bind((new SimpleBooleanProperty(false)));
+		searchOrCancelButton.setText("검색");
+	}
+	
+	private void handelFail(WorkerStateEvent event) {
+		logger.debug("검색시 오류가 발생했습니다.");
+		searchOrCancelButton.setText("검색");
+		progressIndicator.visibleProperty().bind((new SimpleBooleanProperty(false)));
+		
+		Throwable exception = backgroundTaskService.getException();
+        if (exception != null) {
+            System.out.println("Exception occurred: " + exception.getMessage());
+            exception.printStackTrace();
+        }
+	}
+	
 	// Service for the background task
     private class BackgroundTaskService extends Service<List<Tuple>> {
         @Override
@@ -388,6 +501,21 @@ public class DataSetView implements FxmlView<DataSetViewModel> {
                     return tableViewData.getTupleList();
                 }
             };
+        }
+        
+        @Override
+        protected void cancelled() {
+        	logger.debug("Database connection closed due to cancellation.");
+        	viewModel.closeEntityManager();
+        	viewModel.rebuildEntityManager();
+        }
+}
+    
+    private void scrollToColumn(TableView<Tuple> tableView, int columnIndex) {
+        // Ensure the column index is valid
+        if (columnIndex >= 0 && columnIndex < tableView.getColumns().size()) {
+            // Scroll to the specified column
+            tableView. scrollToColumn(tableView.getColumns().get(columnIndex));
         }
     }
     
@@ -564,6 +692,7 @@ public class DataSetView implements FxmlView<DataSetViewModel> {
 	//////////////////////////////////////////////////////////////////////////
 	// dataSetAnchorPane
 	private void handleMousePressedDataSetAnchorPane(MouseEvent event) {
+		
 		logger.debug("handleMousePressedDataSetAnchorPane execute.");
 		dataSetRootAnchorPane.toFront();
 
@@ -624,6 +753,7 @@ public class DataSetView implements FxmlView<DataSetViewModel> {
 		double newWidth = this.initialPressedWidth + deltaX_;
 		double newHeight = this.initialPressedHeight + deltaY_;
 
+		// dataSet pane의 크기를 조절한다.
 		dataSetPane.setPrefWidth(newWidth);
 		dataSetPane.setPrefHeight(newHeight);
 		dataSetPane.setMaxWidth(newWidth);
@@ -649,13 +779,24 @@ public class DataSetView implements FxmlView<DataSetViewModel> {
 		toolbar.toFront();
 	}
 
-	private void handleMouseReleaseDataSetAnchorPane(MouseEvent event) {
-		logger.debug("handleMouseReleaseDataSetAnchorPane execute.");
+	
+	private void copySelectedRows(TableView<Tuple> tableView) {
+        Clipboard clipboard = Clipboard.getSystemClipboard();
+        ClipboardContent content = new ClipboardContent();
 
-	}
+        StringBuilder copiedText = new StringBuilder();
 
-	private void handleMouseDragReleasedDataSetAnchorPane(MouseEvent event) {
-		logger.debug("handleMouseDragReleasedDataSetAnchorPane execute.");
+        for (Tuple rowData : tableView.getSelectionModel().getSelectedItems()) {
+        	Expression<?>[] colExpres = this.tableViewData.getColumnExpressions();
+        	
+        	for ( Expression<?> colExpre : colExpres ) {
+        		copiedText.append(rowData.get(colExpre)).append("	");
+        	}
+        	copiedText.append("\n");
+        }
 
-	}
+        content.putString(copiedText.toString());
+        
+        clipboard.setContent(content);
+    }
 }

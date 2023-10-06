@@ -1,7 +1,5 @@
 package mydata.ds.view.dataset;
 
-import java.util.ResourceBundle;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -9,7 +7,6 @@ import com.querydsl.core.types.SubQueryExpression;
 
 import de.saxsys.mvvmfx.InjectScope;
 import de.saxsys.mvvmfx.ScopeProvider;
-import de.saxsys.mvvmfx.ViewModel;
 import de.saxsys.mvvmfx.data.TableViewData;
 import ds.common.util.ArrayUtil;
 import ds.data.core.column.Col;
@@ -23,16 +20,18 @@ import jakarta.inject.Inject;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.control.Control;
+import javafx.scene.input.Clipboard;
+import javafx.scene.input.ClipboardContent;
 import javafx.scene.layout.VBox;
 import mydata.ds.view.condition.ConditionViewInfo;
-import mydata.ds.view.scopes.AppContext;
+import mydata.ds.view.model.DSViewModel;
 import mydata.ds.view.scopes.ApplicationScope;
 import mydata.ds.view.scopes.ConditionScope;
 import mydata.ds.view.scopes.DataSetScope;
 import mydata.ds.view.util.ViewUtils;
 
 @ScopeProvider(scopes = { ConditionScope.class })
-public class DataSetViewModel implements ViewModel {
+public class DataSetViewModel extends DSViewModel {
 
 	public static final Logger logger = LoggerFactory.getLogger(DataSetViewModel.class);
 
@@ -43,22 +42,17 @@ public class DataSetViewModel implements ViewModel {
 	public static final String MEDICAL_VISIT_HISTORY = "appatEHRButton";
 
 	public static final String TEXT_EMR_RECORD = "emrdocFormButton";
+	
+	public static final String PRESCRIPTION = "prescriptionButton";
 
-	@Inject
-	private AppContext appContext;
+
 
 	@Inject
 	private DataSetFactory dataSetFactory;
-
-	@Inject
-	private ResourceBundle defaultResourceBundle;
-
+	
 	@InjectScope
 	private DataSetScope dataSetScope;
 	
-	@InjectScope
-	private ApplicationScope applicationScope ;
-
 	private DataSetUI dataSetUI;
 
 	private UIConditions uiConditions;
@@ -169,14 +163,14 @@ public class DataSetViewModel implements ViewModel {
 
 	public DataSetEvent getMouseEventStatus() {
 
-		return appContext.getMouseEventStatus();
+		return getAppContext().getMouseEventStatus();
 	}
 
 	public void setDataSetHashcode(int dataSetIdNumber) {
 		this.dataSetIdNumber = dataSetIdNumber;
 		this.dataSetRelation = new DataSetRelation();
-		appContext.putDataSetRelation(dataSetIdNumber, this.dataSetRelation);
-		appContext.addDataSetHashcode(dataSetIdNumber);
+		getAppContext().putDataSetRelation(dataSetIdNumber, this.dataSetRelation);
+		getAppContext().addDataSetHashcode(dataSetIdNumber);
 	}
 
 	public void moveRelationLine(double deltaX, double deltaY) {
@@ -206,12 +200,9 @@ public class DataSetViewModel implements ViewModel {
 
 	}
 	
-	public AppContext getAppContext() {
-		return this.appContext ;
-	}
 
 	public void ifLinkedIntegratedGridModifyTableColumn(ColumnInfo columnInfo) {
-		this.applicationScope.publish(ApplicationScope.ADD_OR_REMOVE_GRID_COLUMN, columnInfo);
+		getApplicationScope().publish(ApplicationScope.ADD_OR_REMOVE_GRID_COLUMN, columnInfo);
 	}
 
 	public void setRelationBaseHashcode(int relationBaseHashcode) {
@@ -224,11 +215,11 @@ public class DataSetViewModel implements ViewModel {
 	}
 
 	public DataSetView getBaseDataSetView() {
-		return appContext.getDataSetView(relationBaseHashcode);
+		return getAppContext().getDataSetView(relationBaseHashcode);
 	}
 	
 	public DataSetViewModel getBaseDataSetViewModel() {
-		return appContext.getDataSetViewModel(relationBaseHashcode);
+		return getAppContext().getDataSetViewModel(relationBaseHashcode);
 	}
 
 	public boolean haveTargetDataSet() {
@@ -243,4 +234,12 @@ public class DataSetViewModel implements ViewModel {
 	public ConditionInfo[] getJoinConditionInfos() {
 		return this.joinConditionInfos ;
 	}
+
+	public void copyToClipboard(String text) {
+		Clipboard clipboard = Clipboard.getSystemClipboard();
+        ClipboardContent content = new ClipboardContent();
+        content.putString(text);
+        clipboard.setContent(content);
+	}
+
 }

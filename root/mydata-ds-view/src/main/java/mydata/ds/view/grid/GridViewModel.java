@@ -1,15 +1,19 @@
 package mydata.ds.view.grid;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.saxsys.mvvmfx.InjectScope;
 import de.saxsys.mvvmfx.ViewModel;
+import ds.data.core.column.ColumnInfo;
 import jakarta.inject.Inject;
+import javafx.scene.Node;
 import javafx.scene.layout.Pane;
 import mydata.ds.view.dataset.DataSetRelation;
 import mydata.ds.view.dataset.DataSetView;
@@ -17,7 +21,6 @@ import mydata.ds.view.dataset.DataSetViewModel;
 import mydata.ds.view.dataset.RelatedPane;
 import mydata.ds.view.scopes.AppContext;
 import mydata.ds.view.scopes.ApplicationScope;
-import ds.data.core.column.ColumnInfo;
 
 public class GridViewModel implements ViewModel {
 
@@ -30,6 +33,8 @@ public class GridViewModel implements ViewModel {
 	private ApplicationScope applicationScope ;
 
 	private LinkedList<Integer> datasetHashcodeList = new LinkedList<>();
+
+	private Map<Integer, Integer> gridBarIconHashcodeMap = new HashMap<>();
 	
 	public void initialize() {
 		applicationScope.subscribe(applicationScope.ADD_OR_REMOVE_GRID_COLUMN, (key, payload) -> {
@@ -56,7 +61,7 @@ public class GridViewModel implements ViewModel {
 
 	public void putRelatedIcon(int hashCode, RelatedIcon relatedIcon) {
 		this.appContext.putRelatedIcon(hashCode, relatedIcon);
-		
+		this.gridBarIconHashcodeMap .put(relatedIcon.gridBarIcon().hashCode(), hashCode );
 	}
 
 	public DataSetViewModel getDataSetViewModel(int hashCode) {
@@ -114,6 +119,18 @@ public class GridViewModel implements ViewModel {
 
 	public DataSetViewModel getBaseDataSetViewModel(int hashcode) {
 		return appContext.getDataSetViewModel(hashcode);
+	}
+
+	public RelatedIcon getRelatedIcon(int iconHashcode) {
+		Integer dataSetHashcode = this.gridBarIconHashcodeMap.remove(iconHashcode);
+		RelatedIcon relatedIcod = appContext.getRelatedIcon(dataSetHashcode);
+		
+		return relatedIcod;
+	}
+
+	public void bindDraggableEvents(Node node) {
+		appContext.bindDraggableEvents(node);
+		
 	}
 	
 	

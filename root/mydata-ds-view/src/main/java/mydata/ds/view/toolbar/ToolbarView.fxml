@@ -23,6 +23,11 @@
                                     <Insets top="4.0" />
                                  </VBox.margin>
                               </Button>
+                              <Button id="prescriptionButton" fx:id="prescriptionButton" minHeight="25.0" minWidth="115.0" mnemonicParsing="false" onAction="#openNewDataSet" prefHeight="25.0" prefWidth="115.0" text="%toolbar.prescription">
+                                 <VBox.margin>
+                                    <Insets top="4.0" />
+                                 </VBox.margin>
+                              </Button>
                            </children>
                         </VBox>
             			</items>

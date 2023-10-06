@@ -12,6 +12,7 @@ import ds.ehr.research.condition.UIEhrResearchConditions;
 import ds.ehr.research.dataset.UIDataSetEHR;
 import ds.ehr.research.dataset.emr.EmrEhrDataSet;
 import ds.ehr.research.dataset.medvisit.ApPatientEhrDataSet;
+import ds.ehr.research.dataset.prescription.PrescriptionEhrDataSet;
 import ds.ui.condition.DataSetUI;
 
 public class DataSetFactory {
@@ -36,6 +37,9 @@ public class DataSetFactory {
 		
 		else if ( DataSetViewModel.TEXT_EMR_RECORD.equals(dataSetName) )
 			mUIQueryDataSet =  EmrEhrDataSet.getInstance();
+		
+		else if ( DataSetViewModel.PRESCRIPTION.equals(dataSetName) )
+			mUIQueryDataSet =  PrescriptionEhrDataSet.getInstance();
 		
 		return mUIQueryDataSet;
 	}

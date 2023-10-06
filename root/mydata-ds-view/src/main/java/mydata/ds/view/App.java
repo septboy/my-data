@@ -1,5 +1,7 @@
 package mydata.ds.view;
 
+import java.io.File;
+import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
@@ -14,13 +16,14 @@ import jakarta.enterprise.event.Observes;
 import jakarta.inject.Inject;
 import javafx.application.Platform;
 import javafx.scene.Scene;
+import javafx.scene.input.Dragboard;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.input.TransferMode;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import mydata.ds.view.events.TriggerShutdownEvent;
 import mydata.ds.view.main.MainView;
 import mydata.ds.view.main.MainViewModel;
-import mydata.ds.view.scopes.ApplicationScope;
 import mydata.ds.view.util.EventUtils;
 import mydata.ds.view.util.ViewUtils;
 
@@ -61,9 +64,22 @@ public class App extends MvvmfxCdiApplication {
 				.load();
 		
 		Scene rootScene = new Scene(mainRoot.getView());
+		rootScene.getStylesheets().add("/ds-view2.css");
 		ViewUtils.setSceneToAppContext(rootScene);
-		AnchorPane toolbar = (AnchorPane) mainRoot.getView().lookup("#main_toolbar");
 		
+		initializeFileDragAndDrop(rootScene);
+		initializeEventForSceneSizeChage(mainRoot, rootScene);
+				
+		
+		rootScene.setOnMousePressed(this::handleMousePressedOnRootScene );
+		
+		stage.setScene(rootScene);
+	    stage.setMaximized(true);
+		stage.show();
+	}
+
+	private void initializeEventForSceneSizeChage(ViewTuple<MainView, MainViewModel> mainRoot, Scene rootScene) {
+		AnchorPane toolbar = (AnchorPane) mainRoot.getView().lookup("#main_toolbar");
 		
 		// Add a listener to detect when the stage (window) size changes
 		rootScene.heightProperty().addListener((observable, oldValue, newValue) -> {
@@ -73,15 +89,35 @@ public class App extends MvvmfxCdiApplication {
             AnchorPane.setTopAnchor(toolbar, (height/2) - (toolbarHeight/2));
     	    AnchorPane.setLeftAnchor(toolbar, 10.0);
         });
-				
-		rootScene.getStylesheets().add("/ds-view2.css");
-		rootScene.setOnMousePressed(this::handleMousePressedOnRootScene );
-		
-		stage.setScene(rootScene);
-	    stage.setMaximized(true);
-		stage.show();
 	}
 
+	private void initializeFileDragAndDrop(Scene scene) {
+		
+		scene.setOnDragOver(event -> {
+            Dragboard db = event.getDragboard();
+
+            if (db.hasFiles()) {
+                event.acceptTransferModes(TransferMode.COPY);
+            }
+
+            event.consume();
+        });
+		
+		scene.setOnDragDropped(event -> {
+            Dragboard db = event.getDragboard();
+            boolean success = false;
+
+            if (db.hasFiles()) {
+                success = true;
+
+                List<File> files = db.getFiles();
+                handleDroppedFiles(files);
+            }
+
+            event.setDropCompleted(success);
+            event.consume();
+        });
+	}
 	/**
 	 * The shutdown of the application can be triggered by firing the
 	 * {@link TriggerShutdownEvent} CDI event.
@@ -95,6 +131,13 @@ public class App extends MvvmfxCdiApplication {
 		logger.debug("handleMousePressedOnRootScene >> {}", EventUtils.getNodeNameWhenMousePressed(event));
 	}
 	
-
+	private void handleDroppedFiles(List<File> files) {
+        // Perform your desired action with the dropped files
+        System.out.println("Dropped files:");
+        for (File file : files) {
+            System.out.println(file.getAbsolutePath());
+            // Add your custom processing logic here
+        }
+    }
 
 }
