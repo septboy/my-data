@@ -1,6 +1,5 @@
 package mydata.ds.view.dataset;
 
-import java.sql.SQLException;
 import java.util.List;
 
 import org.apache.commons.lang3.ArrayUtils;
@@ -24,21 +23,23 @@ import ds.data.core.column.Col;
 import ds.data.core.column.ColumnInfo;
 import ds.data.core.condition.ConditionInfo;
 import ds.data.core.condition.ui.UIConditions;
-import ds.data.core.context.ContextUtils;
 import ds.data.core.context.IntegratedContext;
+import ds.ehr.dao.constant.EHR;
 import jakarta.inject.Inject;
 import javafx.application.Application;
 import javafx.application.HostServices;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.concurrent.Service;
-import javafx.concurrent.Task;
 import javafx.concurrent.Worker.State;
 import javafx.concurrent.WorkerStateEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Control;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressIndicator;
@@ -50,9 +51,11 @@ import javafx.scene.control.TablePosition;
 import javafx.scene.control.TableView;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
+import javafx.scene.input.Dragboard;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.input.TransferMode;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.Circle;
@@ -60,9 +63,15 @@ import javafx.stage.Stage;
 import mydata.ds.view.condition.ConditionView;
 import mydata.ds.view.condition.ConditionViewInfo;
 import mydata.ds.view.condition.ConditionViewModel;
+import mydata.ds.view.events.BackgroundEventHandler;
+import mydata.ds.view.events.DataSetEventHander;
 import mydata.ds.view.executor.Executor;
-import mydata.ds.view.grid.RelatedIcon;
+import mydata.ds.view.function.FunctionInfo;
+import mydata.ds.view.function.FunctionView;
+import mydata.ds.view.function.FunctionViewModel;
+import mydata.ds.view.grid.IntegratedIcon;
 import mydata.ds.view.scopes.ConditionScope;
+import mydata.ds.view.service.DataSetService;
 import mydata.ds.view.util.DataSetHelper;
 import mydata.ds.view.util.EventUtils;
 import mydata.ds.view.util.LinkUtils;
@@ -106,10 +115,16 @@ public class DataSetView implements FxmlView<DataSetViewModel> {
 	public Circle rightRelationCircle;
 	
 	@FXML
-	public ProgressIndicator progressIndicator;
-	
+	public Button openFunctionViewButton;
+
 	@FXML
 	private Button searchOrCancelButton;
+
+	@FXML
+	public ProgressIndicator progressIndicator;
+
+	@FXML
+	private ChoiceBox<String> hospitalChoiceBox;
 	
 	@Inject
 	Stage mainRootStage;
@@ -137,46 +152,100 @@ public class DataSetView implements FxmlView<DataSetViewModel> {
 	private double initialPressedWidth;
 	private double initialPressedHeight;
 	private Node tmpConditionView;
-	
+
 	private Control tmpConditionControlButton;
-	
+
 	private ConditionViewModel tmpConditionViewModel;
 
 	public static final String css_column_label_border = "-fx-border-color: white; -fx-border-width: 1px 0px 1px 0px;";
 
-	private DataSetEvent mouseEventStatus;
+	private DataSetEventHander mouseEventStatus;
 
 	private RelationPointCenters relationPointCentersPressed;
 
 	private RelationPointCenters relationPointCentersScene;
-	
-	private TableViewData tableViewData ;
-	
-	BackgroundTaskService backgroundTaskService ;
+
+	private TableViewData tableViewData;
+
+	private DataSetService dataSetService;
 
 	public void initialize() {
 
 		progressIndicator.setVisible(false);
 		int dataSetHashcode = dataSetRootAnchorPane.hashCode();
-		
+
 		initializeTitle();
 
 		initializeColumns();
-		
+
 		initializeConditions();
 
 		initializeDataSetRootPane();
 
 		initializeCloseButton(dataSetHashcode);
+		
+		initializeOpenFunctionViewButton();
 
 		initializeDataSetRelation();
-		
+
 		initializeTableView();
 		
+		initializeHospitalChoiceBox();
+		
+		initializeRelationCircle();
+
 		viewModel.getAppContext().putDataSetViewModel(dataSetHashcode, viewModel);
 		viewModel.getAppContext().putDataSetView(dataSetHashcode, this);
 		viewModel.setDataSetHashcode(dataSetHashcode);
+		viewModel.setHospitalChoiceBox(this.hospitalChoiceBox);
+
+	}
+
+	@FXML
+	private void codeTest() {
+		viewModel.setDbLinkCode(EHR.DataSource.GREHRTEST);
+		viewModel.updatedbLinkNameProperty();
+	}
+
+	private void initializeRelationCircle() {
+		topRelationCircle.setVisible(false);
+		bottomRelationCircle.setVisible(false);
+		leftRelationCircle.setVisible(false);
+		rightRelationCircle.setVisible(false);
+	}
+
+	private void initializeHospitalChoiceBox() {
+		this.hospitalChoiceBox.setItems(FXCollections.observableArrayList(
+				viewModel.getDatabaseNames()
+			    )
+			);
 		
+		this.hospitalChoiceBox.valueProperty().bindBidirectional(viewModel.dbLinkNameProperty());
+		viewModel.setDbLinkCode(EHR.DataSource.AAEHRTEST);
+		viewModel.updatedbLinkNameProperty();
+		
+		this.hospitalChoiceBox.getSelectionModel().selectedIndexProperty().addListener(
+				new ChangeListener<Number>() {
+					@Override
+					public void changed(ObservableValue<? extends Number> observable, Number oldValue,
+							Number newValue) {
+						
+						String dbLinkCode = getDbLinkCode((int)newValue);
+						viewModel.setDbLinkCode(dbLinkCode);
+						
+						List<DataSetViewModel> targetDataSetViewModelList = viewModel.getTargetDataSetViewModel();
+						for(DataSetViewModel targetDataSetViewModel: targetDataSetViewModelList) {
+							targetDataSetViewModel.setDbLinkCode(dbLinkCode);
+							targetDataSetViewModel.updatedbLinkNameProperty();
+						}
+						
+					}
+
+					private String getDbLinkCode(int newValue) {
+						String dbLinkName = viewModel.getDatabaseCode(newValue);
+						return dbLinkName;
+					}
+				});
 	}
 
 	private void initializeDataSetRelation() {
@@ -187,54 +256,65 @@ public class DataSetView implements FxmlView<DataSetViewModel> {
 	}
 
 	private void initializeCloseButton(int dataSetHashcode) {
-		
+
 		viewModel.subscribe(DataSetViewModel.CLOSE_DATASET_NOTIFICATION, (key, payload) -> {
 			if (tmpConditionViewModel != null)
 				tmpConditionViewModel.publish(ConditionViewModel.CLOSE_CONDITION_VIEW_NOTIFICATION,
 						tmpConditionControlButton, tmpConditionView);
 
-			DataSetRelation datasetRelation = viewModel.getAppContext().getDataSetRelation(dataSetHashcode);
-			List<RelatedLine> relatedLineList = datasetRelation.getRelatedLineList();
+			viewModel.removeRelations(dataSetHashcode);
 
-			for (RelatedPane relatedPane : datasetRelation.getRelatedPaneList()) {
-				int endPaneKey = relatedPane.endPane().hashCode();
-				int startPaneKey = relatedPane.startPane().hashCode();
-
-				if (dataSetHashcode == endPaneKey) {
-					DataSetRelation datasetRelationStart = viewModel.getAppContext().getDataSetRelation(startPaneKey);
-					datasetRelationStart.reflashRelatedLine(relatedLineList);
-					datasetRelationStart.reflashRelatedPane(dataSetHashcode);
-
-				} else if (dataSetHashcode == startPaneKey) {
-					DataSetRelation datasetRelationEnd = viewModel.getAppContext().getDataSetRelation(endPaneKey);
-					datasetRelationEnd.reflashRelatedLine(relatedLineList);
-					datasetRelationEnd.reflashRelatedPane(dataSetHashcode);
-
-				}
-			}
-
-			for (RelatedLine relatedLine : relatedLineList) {
-				ViewUtils.removeFromScene(relatedLine.line());
-				ViewUtils.removeFromScene(relatedLine.arrowhead());
-			}
-			datasetRelation.reflashRelatedLine(relatedLineList);
-
-			RelatedIcon relatedIcon = viewModel.getAppContext().getRelatedIcon(dataSetHashcode);
+			IntegratedIcon relatedIcon = viewModel.getAppContext().getIntegratedIcon(dataSetHashcode);
 			if (relatedIcon != null) {
 				ViewUtils.removeFromPane(relatedIcon.dataSetIconParent(), relatedIcon.dataSetIcon());
 				ViewUtils.removeFromPane(relatedIcon.gridBarIconParent(), relatedIcon.gridBarIcon());
 			}
 
 			ViewUtils.removeFromScene(dataSetRootAnchorPane);
+			DataSetRelation datasetRelation = viewModel.getDataSetRelation(dataSetHashcode);
 			datasetRelation.getRelatedPaneList().clear();
+			
 			viewModel.getAppContext().removeDataSetHashcode(dataSetHashcode);
 
-			if ( backgroundTaskService.isRunning() ) {
+			if (dataSetService != null && dataSetService.isRunning()) {
 				logger.info("검색중인 서비스가 취소되었습니다.");
-				backgroundTaskService.cancel();
+				dataSetService.cancel();
 			}
-			
+
 		});
+	}
+
+	private DataSetRelation removeRelations(int dataSetHashcode) {
+		DataSetRelation datasetRelation = viewModel.getAppContext().getDataSetRelation(dataSetHashcode);
+		List<RelatedLine> relatedLineList = datasetRelation.getRelatedLineList();
+
+		for (RelatedPane relatedPane : datasetRelation.getRelatedPaneList()) {
+			ViewUtils.removeFromScene(relatedPane.relationPane());
+
+			int endPaneKey = relatedPane.endPane().hashCode();
+			int startPaneKey = relatedPane.startPane().hashCode();
+			int realtionKey = relatedPane.relationPane().hashCode();
+
+			if (dataSetHashcode == endPaneKey) {
+				DataSetRelation datasetRelationStart = viewModel.getAppContext().getDataSetRelation(startPaneKey);
+				datasetRelationStart.reflashRelatedLine(relatedLineList);
+				datasetRelationStart.reflashRelatedPane(dataSetHashcode);
+				datasetRelationStart.reflashRelatedPane(realtionKey);
+
+			} else if (dataSetHashcode == startPaneKey) {
+				DataSetRelation datasetRelationEnd = viewModel.getAppContext().getDataSetRelation(endPaneKey);
+				datasetRelationEnd.reflashRelatedLine(relatedLineList);
+				datasetRelationEnd.reflashRelatedPane(dataSetHashcode);
+				datasetRelationEnd.reflashRelatedPane(realtionKey);
+			}
+		}
+
+		for (RelatedLine relatedLine : relatedLineList) {
+			ViewUtils.removeFromScene(relatedLine.line());
+			ViewUtils.removeFromScene(relatedLine.arrowhead());
+		}
+		datasetRelation.reflashRelatedLine(relatedLineList);
+		return datasetRelation;
 	}
 
 	private void initializeDataSetRootPane() {
@@ -250,32 +330,95 @@ public class DataSetView implements FxmlView<DataSetViewModel> {
 		LinkUtils.link(conditionInfoLabelVBox, conditionInfos, this::handleMouseClickedConditionLabel);
 	}
 
+	private void initializeOpenFunctionViewButton() {
+		this.openFunctionViewButton.setOnAction(event -> {
+			openFunctionView();
+		});
+		
+	}
+
 	private void initializeColumns() {
 		// 데이터셋 항목들
 		ColumnInfo[] columnInfos = viewModel.getColumnInfos();
-		LinkUtils.link(columInfoLabelVBox, columnInfos, 
-					new Executor<Integer>() {
-						
-						@Override
-						public void execute(Integer index) {
-							scrollToColumn(dataSetTableView, index);
-						}
+		LinkUtils.link(columInfoLabelVBox, columnInfos, new Executor<Integer>() {
 
-						@Override
-						public TableViewData getTableViewData() {
-							return tableViewData;
-						}
-					}
-				);
-		
+			@Override
+			public void execute(Integer index) {
+				scrollToColumn(dataSetTableView, index);
+			}
+
+			@Override
+			public TableViewData getTableViewData() {
+				return tableViewData;
+			}
+		});
+
 		dataSetColumnScrollPane.setHbarPolicy(ScrollBarPolicy.NEVER);
+		
+		columInfoLabelVBox.setOnDragOver(event -> {
+			//logger.debug("columInfoLabelVBox setOnDragOver");
+			
+			//아래 코드가 빠진면 setOnDragDropped가 실행이 안됨.
+			 event.acceptTransferModes(TransferMode.MOVE);
+			event.consume();
+	    });
+		
+		columInfoLabelVBox.setOnDragDropped(event -> {
+			logger.debug("columInfoLabelVBox setOnDragDropped");
+			
+			Dragboard db = event.getDragboard();
+	        boolean success = false;
+	
+	        Node source = (Node)event.getGestureSource();
+	        
+	        if (db.hasString()) {
+	            logger.debug("Dropped: [{}] {}", source.getUserData().getClass().getSimpleName(), db.getString());
+	            
+	            Node node = event.getPickResult().getIntersectedNode();
+	            Label label = (Label) ViewUtils.searchParentNodeWithType(Label.class, node);
+	            
+	            int position = getColumnLabelPosition(label);
+	            
+	            FunctionInfo functionInfo = (FunctionInfo)source.getUserData();
+				
+				Label functionLabel = functionInfo.getFunctionLabel();
+				BackgroundEventHandler.bindDragAndRemoveOnBackgroundEvent(
+						functionLabel
+						, BackgroundEventHandler.DRAG_REMOVE_ON_BACKGROUND_FUNCTION_COLUMN
+						) ;
+				
+				double width = ViewUtils.getRigionalWidth(columInfoLabelVBox);
+				if (width > 0) {
+					ViewUtils.setWidth(functionLabel, width);
+				}
+				
+				columInfoLabelVBox.getChildren().add(position+1, functionLabel);
+	            success = true;
+	        }
+	        
+	        event.setDropCompleted(success);
+	        event.consume();
+	    });
+	}
+	
+	
+	private int getColumnLabelPosition(Label label) {
+		ObservableList<Node> list = columInfoLabelVBox.getChildren();
+		int i = 0 ;
+		for (Node node: list ) {
+			if (node == label) {
+				return i ;
+			}
+			i++;
+		}
+		return i ;
 	}
 
 	private void initializeTitle() {
 		// 데이터셋 타이틀
 		String datasetTitle = viewModel.getDataSetTitle();
 		LinkUtils.link(dataSetTitleLabel, datasetTitle);
-		
+
 		dataSetTitlePane.setOnMousePressed(this::handleMousePressedTitlePane);
 		dataSetTitlePane.setOnMouseDragged(this::handleMouseDraggedTitlePane);
 		dataSetTitlePane.setOnMouseClicked(this::handleMouseClickedTitlePane);
@@ -283,83 +426,82 @@ public class DataSetView implements FxmlView<DataSetViewModel> {
 		dataSetTitleLabel.setOnMousePressed(this::handleDummyEvent);
 		dataSetTitleLabel.setOnMouseDragged(this::handleDummyEvent);
 		dataSetTitleLabel.setOnMouseClicked(this::handleDummyEvent);
-		
+
 	}
 
 	private void initializeTableView() {
 		dataSetTableView.setPlaceholder(new Label("데이터를 검색하세요."));
-		
+
 		dataSetTableView.addEventFilter(MouseEvent.MOUSE_PRESSED, event -> {
-            if (event.isShiftDown()) {
-            	dataSetTableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-            } else {
-            	dataSetTableView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
-            }
-        });
-		
+			if (event.isShiftDown()) {
+				dataSetTableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+			} else {
+				dataSetTableView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
+			}
+		});
+
 		dataSetTableView.setOnMousePressed(this::handleParentEvent);
-		
+
 		dataSetTableView.setOnMouseClicked(event -> {
-            if (event.isControlDown() && event.getClickCount() == 1 ) { // Single click
-                TablePosition<Tuple, ?> pos = dataSetTableView.getSelectionModel().getSelectedCells().get(0);
-                int row = pos.getRow();
-                TableColumn<Tuple, ?> col = pos.getTableColumn();
-                String cellText = col.getCellData(row).toString();
-                viewModel.copyToClipboard(cellText);
-                
-                event.consume();
-            }
-        });
-		 
+			if (event.isControlDown() && event.getClickCount() == 1) { // Single click
+				TablePosition<Tuple, ?> pos = dataSetTableView.getSelectionModel().getSelectedCells().get(0);
+				int row = pos.getRow();
+				TableColumn<Tuple, ?> col = pos.getTableColumn();
+				String cellText = col.getCellData(row).toString();
+				viewModel.copyToClipboard(cellText);
+
+				event.consume();
+			}
+		});
+
 		this.viewModel.getAppContext().getScene().addEventFilter(javafx.scene.input.KeyEvent.KEY_PRESSED, event -> {
-            if (event.isControlDown() && event.getCode() == KeyCode.C) {
-                copySelectedRows(dataSetTableView);
-            }
-        });
-		
+			if (event.isControlDown() && event.getCode() == KeyCode.C) {
+				copySelectedRows(dataSetTableView);
+			}
+		});
+
 		// Handle row selection
 		dataSetTableView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
-			
-            if (newSelection != null) {
-                // You can access the values of the selected row here
-                String patno = newSelection.get( this.tableViewData.getColumnExpreesion("patno", String.class) );
+
+			if (newSelection != null) {
+				// You can access the values of the selected row here
+				String patno = newSelection.get(this.tableViewData.getColumnExpreesion("patno", String.class));
 //                long medregno = newSelection.get((Expression<Long>)ColUtils.getColumnExpression("medregno", ColumnType.Long));
-                //viewModel.setRelationColumnValue(patno);
-                logger.debug("selected record patno -> {}", patno);
-                
-                ///////////////////////////////
-                ConditionInfo[] conditionInfos = UIConditions.getConditionInfosFromCondtions(
-                		  this.viewModel.getUIConditions() 
-                		, "patno"
-                	//	, "medregno"
-                		);
-                
-                for (ConditionInfo conditionInfo: conditionInfos) {
-                	if(conditionInfo.getColumnName().equals("patno"))
-                		conditionInfo.setValue(patno);
+				// viewModel.setRelationColumnValue(patno);
+				logger.debug("selected record patno -> {}", patno);
+
+				///////////////////////////////
+				ConditionInfo[] conditionInfos = UIConditions
+						.getConditionInfosFromCondtions(this.viewModel.getUIConditions(), "patno"
+				// , "medregno"
+				);
+
+				for (ConditionInfo conditionInfo : conditionInfos) {
+					if (conditionInfo.getColumnName().equals("patno"))
+						conditionInfo.setValue(patno);
 //                	else
 //                		conditionInfo.setValue(medregno);
-                }
-                
-                viewModel.setJoinConditionInfos(conditionInfos);
-                //////////////////////////////////////////////////////////////////////////////
-                int baseHashcode = this.dataSetRootAnchorPane.hashCode();
-                DataSetRelation dataSetRelation = viewModel.getAppContext().getDataSetRelation(baseHashcode);
-                List<RelatedPane> RelatedPaneList = dataSetRelation.getRelatedPaneList();
-                for(RelatedPane relatedPane: RelatedPaneList) {
-                	int targetHashcode = relatedPane.endPane().hashCode();
-                	
-                	if (targetHashcode == baseHashcode)
-                		continue ;
-                	
-                	DataSetView targetDataSetView = viewModel.getAppContext().getDataSetView(targetHashcode);
-                	if (targetDataSetView != null)
-                		targetDataSetView.searchOrCancel();
-                }
-                
-                viewModel.setJoinConditionInfos(null);
-            }
-        });
+				}
+
+				viewModel.setJoinConditionInfos(conditionInfos);
+				//////////////////////////////////////////////////////////////////////////////
+				int baseHashcode = this.dataSetRootAnchorPane.hashCode();
+				DataSetRelation dataSetRelation = viewModel.getAppContext().getDataSetRelation(baseHashcode);
+				List<RelatedPane> RelatedPaneList = dataSetRelation.getRelatedPaneList();
+				for (RelatedPane relatedPane : RelatedPaneList) {
+					int targetHashcode = relatedPane.endPane().hashCode();
+
+					if (targetHashcode == baseHashcode)
+						continue;
+
+					DataSetView targetDataSetView = viewModel.getAppContext().getDataSetView(targetHashcode);
+					if (targetDataSetView != null)
+						targetDataSetView.searchOrCancel();
+				}
+
+				viewModel.setJoinConditionInfos(null);
+			}
+		});
 	}
 
 	public TableColumn<Tuple, ?>[] getTableColumns() {
@@ -391,20 +533,20 @@ public class DataSetView implements FxmlView<DataSetViewModel> {
 	}
 
 	public UIConditions getUIConditions() {
-		
+
 		viewModel.addDataSetContext();
-		
+
 		UIConditions c = null;
-		
-		if(viewModel.haveTargetDataSet())
+
+		if (viewModel.haveTargetDataSet())
 			c = viewModel.getValueBindedConditions(viewModel.getJoinConditionInfos());
-		else	
+		else
 			c = viewModel.getValueBindedConditions(conditionInfoLabelVBox);
-	
+
 		Col<?>[] columns = viewModel.getColumnCols(columInfoLabelVBox);
 		if (ArrayUtils.isNotEmpty(columns))
 			c.select(columns);
-	
+
 		return c;
 	}
 
@@ -416,7 +558,7 @@ public class DataSetView implements FxmlView<DataSetViewModel> {
 			DataSetView baseDataSetView = viewModel.getBaseDataSetView();
 			TableViewData baseTableViewData = baseDataSetView.getTableViewData();
 			SubQueryExpression<?> baseQuery = baseTableViewData.getQuery();
-			UIConditions conditions = getUIConditions();
+			UIConditions conditions = getUIConditions();			
 			tableViewData = viewModel.getTableViewData(baseQuery, conditions);
 
 		} else {
@@ -427,104 +569,79 @@ public class DataSetView implements FxmlView<DataSetViewModel> {
 		return tableViewData;
 	}
 
-	
-	
 	@FXML
 	private void searchOrCancel() {
+		logger.debug("searchOrCancel.");
 		
 		if (this.searchOrCancelButton.getText().equals("검색취소")) {
-			if ( this.backgroundTaskService != null && this.backgroundTaskService.isRunning()) {
+			if (this.dataSetService != null && this.dataSetService.isRunning()) {
 				logger.debug("검색 취소가 실행되었습니다.");
-				this.backgroundTaskService.cancel();
+				this.dataSetService.cancel();
 			}
-			return ;
+			return;
 		} else {
 			this.searchOrCancelButton.setText("검색취소");
 		}
-		
+
 		this.progressIndicator.visibleProperty().bind((new SimpleBooleanProperty(true)));
-		
+
 		this.dataSetTableView.getItems().clear();
 		this.dataSetTableView.refresh();
-		
+
 		this.tableViewData = getTableViewData();
 		// query 생성후 query 생성관련 context clear
 		IntegratedContext.getInstance().clear();
+
+		this.dataSetService = new DataSetService();
+		this.dataSetService.setTableViewData(this.tableViewData);
+		this.dataSetService.start();
+		this.dataSetService.setOnSucceeded(this::handleSearchSucceed);
+		this.dataSetService.setOnCancelled(this::handleSearchCancel);
+		this.dataSetService.setOnFailed(this::handelSearchFail);
+
+	}
+
+	private void handleSearchSucceed(WorkerStateEvent event) {
+		if (this.dataSetService.getState() == State.CANCELLED)
+			return;
+
+		logger.debug("검색이 정상적으로 완료되었습니다.");
+		tableViewData.setColumnInfos(viewModel.getColumnInfos());
+		LinkUtils.link(dataSetTableView, tableViewData);
+
+		progressIndicator.visibleProperty().bind((new SimpleBooleanProperty(false)));
+		searchOrCancelButton.setText("검색");
+	}
+
+	private void handleSearchCancel(WorkerStateEvent event) {
+		logger.debug("handleSearchCancel.");
 		
-		this.backgroundTaskService = new BackgroundTaskService();
-		this.backgroundTaskService.start();                         
-		this.backgroundTaskService.setOnSucceeded(this::handleSearch);
-        this.backgroundTaskService.setOnCancelled(this::handleCancel);
-        this.backgroundTaskService.setOnFailed(this::handelFail);
 		
+		progressIndicator.visibleProperty().bind((new SimpleBooleanProperty(false)));
+		searchOrCancelButton.setText("검색");
 		
 	}
 
-	private void handleSearch(WorkerStateEvent event) {
-		if ( this.backgroundTaskService.getState() == State.CANCELLED)
-			return;
-		
-		logger.debug("검색이 정상적으로 완료되었습니다.");
-		LinkUtils.link(dataSetTableView, tableViewData);
-		
-		progressIndicator.visibleProperty().bind((new SimpleBooleanProperty(false)));
-		searchOrCancelButton.setText("검색");
-	}
-	
-	private void handleCancel(WorkerStateEvent event) {
-		logger.debug("검색이 강제로 종료되었습니다.");
-		
-		progressIndicator.visibleProperty().bind((new SimpleBooleanProperty(false)));
-		searchOrCancelButton.setText("검색");
-	}
-	
-	private void handelFail(WorkerStateEvent event) {
+	private void handelSearchFail(WorkerStateEvent event) {
 		logger.debug("검색시 오류가 발생했습니다.");
 		searchOrCancelButton.setText("검색");
 		progressIndicator.visibleProperty().bind((new SimpleBooleanProperty(false)));
-		
-		Throwable exception = backgroundTaskService.getException();
-        if (exception != null) {
-            System.out.println("Exception occurred: " + exception.getMessage());
-            exception.printStackTrace();
-        }
+
+		Throwable exception = dataSetService.getException();
+		if (exception != null) {
+			System.out.println("Exception occurred: " + exception.getMessage());
+			exception.printStackTrace();
+		}
 	}
-	
-	// Service for the background task
-    private class BackgroundTaskService extends Service<List<Tuple>> {
-        @Override
-        protected Task<List<Tuple>> createTask() {
-            return new Task<>() {
-                @Override
-                protected List<Tuple> call() throws InterruptedException {
-                	tableViewData.fetch();
-                    return tableViewData.getTupleList();
-                }
-            };
-        }
-        
-        @Override
-        protected void cancelled() {
-        	logger.debug("Database connection closed due to cancellation.");
-        	viewModel.closeEntityManager();
-        	viewModel.rebuildEntityManager();
-        }
-}
-    
-    private void scrollToColumn(TableView<Tuple> tableView, int columnIndex) {
-        // Ensure the column index is valid
-        if (columnIndex >= 0 && columnIndex < tableView.getColumns().size()) {
-            // Scroll to the specified column
-            tableView. scrollToColumn(tableView.getColumns().get(columnIndex));
-        }
-    }
-    
-	@FXML
-	private void codeTest() {
-		 progressIndicator.setVisible(!progressIndicator.isVisible());
+
+	private void scrollToColumn(TableView<Tuple> tableView, int columnIndex) {
+		// Ensure the column index is valid
+		if (columnIndex >= 0 && columnIndex < tableView.getColumns().size()) {
+			// Scroll to the specified column
+			tableView.scrollToColumn(tableView.getColumns().get(columnIndex));
+		}
 	}
-	
-	
+
 	@FXML
 	private void close() {
 		viewModel.publish(DataSetViewModel.CLOSE_DATASET_NOTIFICATION);
@@ -536,37 +653,40 @@ public class DataSetView implements FxmlView<DataSetViewModel> {
 
 	private void openConditionView(Label conditionLabel, double buttonX, double buttonY) {
 		ConditionViewInfo conditionViewInfo = (ConditionViewInfo) conditionLabel.getUserData();
-	
+
 		conditionLabel.setStyle("-fx-background-color: blue;" + "-fx-text-fill: white;" + css_column_label_border);
-	
+
 		conditionViewInfo.setPrevControlButton(tmpConditionControlButton);
 		// root Scene를 기준으로 값을 가져온다.
-	
+
 		conditionViewInfo.setControlButton(conditionLabel);
 		openConditionView(conditionViewInfo, buttonX, buttonY);
-	
+
 		// open한 다음에는 이전버튼으로 저장한다.
 		tmpConditionControlButton = conditionLabel;
 	}
 
 	private void openConditionView(ConditionViewInfo conditionViewInfo, double posX, double posY) {
-	
+
 		ConditionScope conditionScope = new ConditionScope();
 		conditionScope.setConditionViewInfo(conditionViewInfo);
-	
+
 		ViewTuple<ConditionView, ConditionViewModel> load = FluentViewLoader
 				.fxmlView(ConditionView.class, "ConditionText.fxml").providedScopes(conditionScope).load();
-	
+
+		
 		if (existConditionViewOpened())
 			tmpConditionViewModel.publish(ConditionViewModel.CLOSE_CONDITION_VIEW_NOTIFICATION);
-	
-		Parent conditionView = load.getView();
-	
+
+		Parent conditionViewParent = load.getView();
 		AnchorPane rootAnchorPane = (AnchorPane) mainRootStage.getScene().getRoot();
-	
-		DataSetHelper.openDataSet(rootAnchorPane, conditionView, posX, posY);
+		
+		DataSetHelper.openDataSet(rootAnchorPane, conditionViewParent, posX, posY);
+		
+		load.getCodeBehind().getFocusTargetNode().requestFocus();
+		
 		// Open 한 다음은 ConditionView를 이전 뷰로 임시 저장
-		tmpConditionView = conditionView;
+		tmpConditionView = conditionViewParent;
 		tmpConditionViewModel = load.getViewModel();
 	}
 
@@ -685,6 +805,7 @@ public class DataSetView implements FxmlView<DataSetViewModel> {
 
 		DataSetRelation dataSetRelation = viewModel.getAppContext()
 				.getDataSetRelation(dataSetRootAnchorPane.hashCode());
+
 		viewModel.getMouseEventStatus().remakeRelationLine(dataSetRelation);
 		event.consume();
 	}
@@ -692,7 +813,7 @@ public class DataSetView implements FxmlView<DataSetViewModel> {
 	//////////////////////////////////////////////////////////////////////////
 	// dataSetAnchorPane
 	private void handleMousePressedDataSetAnchorPane(MouseEvent event) {
-		
+
 		logger.debug("handleMousePressedDataSetAnchorPane execute.");
 		dataSetRootAnchorPane.toFront();
 
@@ -723,10 +844,9 @@ public class DataSetView implements FxmlView<DataSetViewModel> {
 	}
 
 	private void handleMouseDraggedDataSetAnchorPane(MouseEvent event) {
+		logger.debug("handleMouseDraggedDataSetAnchorPane execute.");
 		if (viewModel.getMouseEventStatus().isRelationMode())
 			return;
-
-		logger.debug("handleMouseDraggedDataSetAnchorPane execute.");
 
 		AnchorPane dataSetPane = (AnchorPane) event.getSource();
 
@@ -779,24 +899,40 @@ public class DataSetView implements FxmlView<DataSetViewModel> {
 		toolbar.toFront();
 	}
 
-	
 	private void copySelectedRows(TableView<Tuple> tableView) {
-        Clipboard clipboard = Clipboard.getSystemClipboard();
-        ClipboardContent content = new ClipboardContent();
+		Clipboard clipboard = Clipboard.getSystemClipboard();
+		ClipboardContent content = new ClipboardContent();
 
-        StringBuilder copiedText = new StringBuilder();
+		StringBuilder copiedText = new StringBuilder();
 
-        for (Tuple rowData : tableView.getSelectionModel().getSelectedItems()) {
-        	Expression<?>[] colExpres = this.tableViewData.getColumnExpressions();
-        	
-        	for ( Expression<?> colExpre : colExpres ) {
-        		copiedText.append(rowData.get(colExpre)).append("	");
-        	}
-        	copiedText.append("\n");
-        }
+		for (Tuple rowData : tableView.getSelectionModel().getSelectedItems()) {
+			Expression<?>[] colExpres = this.tableViewData.getColumnExpressions();
 
-        content.putString(copiedText.toString());
-        
-        clipboard.setContent(content);
-    }
+			for (Expression<?> colExpre : colExpres) {
+				copiedText.append(rowData.get(colExpre)).append("	");
+			}
+			copiedText.append("\n");
+		}
+
+		content.putString(copiedText.toString());
+
+		clipboard.setContent(content);
+	}
+	
+	private void openFunctionView() {
+
+		ViewTuple<FunctionView, FunctionViewModel> load = FluentViewLoader
+				.fxmlView(FunctionView.class)
+				.load();
+		Parent functionViewParent = load.getView();
+		FunctionView functionView = load.getCodeBehind();
+		functionView.setSourceDataSetPane(dataSetRootAnchorPane);
+		
+		dataSetRootAnchorPane.getChildren().add(functionViewParent);
+		functionViewParent.setLayoutX(135);
+		//functionViewParent.setLayoutY(80);
+		AnchorPane.setTopAnchor(functionViewParent, 80.0);
+		AnchorPane.setBottomAnchor(functionViewParent, 80.0);
+		
+	}
 }

@@ -15,12 +15,14 @@ import de.saxsys.mvvmfx.cdi.MvvmfxCdiApplication;
 import jakarta.enterprise.event.Observes;
 import jakarta.inject.Inject;
 import javafx.application.Platform;
+import javafx.fxml.FXML;
 import javafx.scene.Scene;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import mydata.ds.view.events.TriggerShutdownEvent;
 import mydata.ds.view.main.MainView;
 import mydata.ds.view.main.MainViewModel;
@@ -57,7 +59,6 @@ public class App extends MvvmfxCdiApplication {
 		logger.info("Starting the Application");
 		MvvmFX.setGlobalResourceBundle(resourceBundle);
 		
-		stage.setTitle(resourceBundle.getString("window.title"));
 		// 전체화면
 		ViewTuple<MainView, MainViewModel> mainRoot = FluentViewLoader
 				.fxmlView(MainView.class)
@@ -72,12 +73,31 @@ public class App extends MvvmfxCdiApplication {
 				
 		
 		rootScene.setOnMousePressed(this::handleMousePressedOnRootScene );
-		
+		stage.setTitle(resourceBundle.getString("window.title"));		
 		stage.setScene(rootScene);
+		stage.initStyle(StageStyle.DECORATED);
 	    stage.setMaximized(true);
 		stage.show();
 	}
+/*
+	@FXML
+	protected void onRectanglePressed(MouseEvent event) {
+	    X = stage.getX() - event.getScreenX();
+	    Y = stage.getY() - event.getScreenY();
+	}
 
+	@FXML
+	protected void onRectangleReleased(MouseEvent event) {
+		stage.setX(event.getScreenX());
+		stage.setY(event.getScreenY());
+	}
+
+	@FXML
+	protected void onRectangleDragged(MouseEvent event) {
+		stage.setX(event.getScreenX() + X);
+		stage.setY(event.getScreenY() + Y);
+	}
+*/	
 	private void initializeEventForSceneSizeChage(ViewTuple<MainView, MainViewModel> mainRoot, Scene rootScene) {
 		AnchorPane toolbar = (AnchorPane) mainRoot.getView().lookup("#main_toolbar");
 		

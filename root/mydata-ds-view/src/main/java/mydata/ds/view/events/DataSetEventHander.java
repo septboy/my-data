@@ -1,4 +1,4 @@
-package mydata.ds.view.dataset;
+package mydata.ds.view.events;
 
 import java.util.List;
 
@@ -34,6 +34,12 @@ import javafx.util.Duration;
 import mydata.ds.view.condition.ConditionView;
 import mydata.ds.view.condition.ConditionViewInfo;
 import mydata.ds.view.condition.ConditionViewModel;
+import mydata.ds.view.dataset.CirclePair;
+import mydata.ds.view.dataset.DataSetRelation;
+import mydata.ds.view.dataset.DataSetViewModel;
+import mydata.ds.view.dataset.RelatedLine;
+import mydata.ds.view.dataset.RelatedPane;
+import mydata.ds.view.dataset.record.RelationHashCodePair;
 import mydata.ds.view.relation.RelationView;
 import mydata.ds.view.relation.RelationViewModel;
 import mydata.ds.view.scopes.AppContext;
@@ -41,9 +47,9 @@ import mydata.ds.view.scopes.ConditionScope;
 import mydata.ds.view.util.DataSetHelper;
 import mydata.ds.view.util.ViewUtils;
 
-public class DataSetEvent {
+public class DataSetEventHander {
 
-	private static final Logger logger = LoggerFactory.getLogger(DataSetEvent.class);
+	private static final Logger logger = LoggerFactory.getLogger(DataSetEventHander.class);
 
 	private static final long duringTimeForRelation = 1300L;
 	private Timeline timeline;
@@ -59,7 +65,7 @@ public class DataSetEvent {
 
 	private AppContext appContext;
 
-	public DataSetEvent(AppContext appContext) {
+	public DataSetEventHander(AppContext appContext) {
 		this.appContext = appContext;
 		this.timeline = new Timeline(new KeyFrame(Duration.millis(100), event -> checkMousePressDuration()));
 		this.timeline.setCycleCount(Timeline.INDEFINITE);
@@ -88,15 +94,16 @@ public class DataSetEvent {
 		});
 
 		dataSetRootAnchorPane.addEventFilter(MouseDragEvent.MOUSE_DRAGGED, event -> {
+			logger.debug("MOUSE_DRAGGED DataSet is {}",dataSetRootAnchorPane.getUserData());
 			if (!this.isRelatingMode) {
 				statusClear();
 				return;
 			}
-			// logger.debug("MOUSE_DRAGGED DataSet is {}",
-			// dataSetRootAnchorPane.getUserData());
+			
 			this.isMouseDragged = true;
 		});
 
+				
 		dataSetRootAnchorPane.addEventFilter(MouseDragEvent.MOUSE_RELEASED, event -> {
 			if (!this.isRelatingMode) {
 				statusClear();
@@ -136,6 +143,7 @@ public class DataSetEvent {
 			return;
 		}
 
+		// 데이터셋 관계 맺을 때 처리
 		if (eventTarget instanceof AnchorPane && eventTarget.getId().equals("dataSetRootAnchorPane")) {
 
 			if (dataSetRootAnchorPaneSource != event.getTarget()) {
@@ -143,13 +151,25 @@ public class DataSetEvent {
 				logger.debug("MOUSE_ENTERED_TARGET eventTarget {} is saved !!",
 						dataSetRootAnchorPaneTarget.getUserData());
 
-				Pane relationView = (Pane)ViewUtils.openView(RelationView.class);
-				makeRelationLine(dataSetRootAnchorPaneSource, dataSetRootAnchorPaneTarget, relationView);
+				AnchorPane relationPain = (AnchorPane)ViewUtils.openView(RelationView.class);
 				
-				appContext.getDataSetViewModel(dataSetRootAnchorPaneTarget.hashCode())//
-					.setRelationBaseHashcode(//
-							dataSetRootAnchorPaneSource.hashCode()//
-						);//
+				makeRelationLine(dataSetRootAnchorPaneSource, dataSetRootAnchorPaneTarget, relationPain);
+				
+				int sourcePaneHashcode = dataSetRootAnchorPaneSource.hashCode();
+				int targetPaneHashcode = dataSetRootAnchorPaneTarget.hashCode();
+				int relationPainHashcode = relationPain.hashCode();
+
+				DataSetViewModel baseDataSetViewModel = appContext.getDataSetViewModel(sourcePaneHashcode);
+				baseDataSetViewModel.addTargetDataSetHashcode(targetPaneHashcode);//
+				
+				DataSetViewModel targetDataSetViewModel = appContext.getDataSetViewModel(targetPaneHashcode);
+				targetDataSetViewModel.setBaseDataSetHashcode(sourcePaneHashcode);//
+				targetDataSetViewModel.setRelationHashcode(relationPainHashcode);
+				
+				appContext.putRelationHashCode(
+						  relationPainHashcode
+						, new RelationHashCodePair(sourcePaneHashcode, targetPaneHashcode)
+						);
 				
 				statusClear();
 			}
@@ -187,6 +207,7 @@ public class DataSetEvent {
 		double toCircleY = toCircle.localToScene(toCircle.getBoundsInLocal()).getCenterY(); //
 
 		if (fromCircle != null && toCircle != null) {
+			
 			line.setStartX(fromCircleX);// rightCircle.getLayoutX()
 			line.setStartY(fromCircleY);// rightCircle.getLayoutY()
 			line.setEndX(toCircleX);// leftCircle.getLayoutX()
@@ -220,23 +241,28 @@ public class DataSetEvent {
 
 			// Rotate the arrowhead
 			arrowhead.setRotate(angle);
-
-			relationPane.setLayoutX(fromCircleX);
-			relationPane.setLayoutY(fromCircleY);
+			
+			double posX = (fromCircleX + toCircleX) / 2 ;
+			double posY = (fromCircleY + toCircleY) / 2 ;
+			double halfWidth = ViewUtils.getRigionalWidth(relationPane)/2;
+			double halfHeight =ViewUtils.getRigionalHeight(relationPane)/2;
+			relationPane.setLayoutX(posX-halfWidth);
+			relationPane.setLayoutY(posY-halfHeight);
 			
 			AnchorPane parentPane = (AnchorPane) scene.getRoot();
-			parentPane.getChildren().addAll(line, arrowhead, relationPane);
-			line.toFront();
+			parentPane.getChildren().addAll(line, arrowhead);
 			relationPane.toFront();
 
 			// 같은 관계 line을 두개의 데이터셋에서 공유하고 잇음
 			DataSetRelation dataSetRelationStart = this.appContext.getDataSetRelation(startPane.hashCode())
-					.addRelatedLine(circlePair.getStartCirclePos(), 0, line, arrowhead) ;
+					.addRelatedLine(circlePair.getStartCirclePos(), 0, line, arrowhead, relationPane) ;
 			
 			DataSetRelation dataSetRelationEnd = this.appContext.getDataSetRelation(endPane.hashCode())
-					.addRelatedLine(circlePair.getEndCirclePos(), 1, line, arrowhead);
+					.addRelatedLine(circlePair.getEndCirclePos(), 1, line, arrowhead, relationPane);
 			
 			if ( !isRedraw ) { // 처음으로 관계를 맺는 경우
+				parentPane.getChildren().addAll(relationPane);
+				relationPane.toFront();
 				dataSetRelationStart.addRelatedPane(new RelatedPane(startPane, endPane, relationPane)); 	// start
 				dataSetRelationEnd.addRelatedPane(new RelatedPane(startPane, endPane, relationPane)); 	// end
 			}
@@ -244,6 +270,9 @@ public class DataSetEvent {
 	}
 
 	public void remakeRelationLine(DataSetRelation dataSetRelation) {
+		if ( dataSetRelation == null )
+			return ;
+		
 		List<RelatedPane> relatedPaneList = dataSetRelation.getRelatedPaneList();
 		List<RelatedLine> relatedLineList = dataSetRelation.getRelatedLineList();
 

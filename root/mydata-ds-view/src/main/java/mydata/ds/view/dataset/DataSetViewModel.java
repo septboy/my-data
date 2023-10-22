@@ -1,5 +1,8 @@
 package mydata.ds.view.dataset;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -9,22 +12,28 @@ import de.saxsys.mvvmfx.InjectScope;
 import de.saxsys.mvvmfx.ScopeProvider;
 import de.saxsys.mvvmfx.data.TableViewData;
 import ds.common.util.ArrayUtil;
+import ds.common.util.CommonUtil;
 import ds.data.core.column.Col;
 import ds.data.core.column.ColumnInfo;
 import ds.data.core.column.ColumnSet;
 import ds.data.core.condition.ConditionInfo;
 import ds.data.core.condition.ui.UIConditions;
 import ds.data.core.join.JoinOn;
+import ds.ehr.dao.constant.EHR;
 import ds.ui.condition.DataSetUI;
-import jakarta.inject.Inject;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Control;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.layout.VBox;
 import mydata.ds.view.condition.ConditionViewInfo;
+import mydata.ds.view.events.DataSetEventHander;
 import mydata.ds.view.model.DSViewModel;
+import mydata.ds.view.relation.RelationViewModel;
 import mydata.ds.view.scopes.ApplicationScope;
 import mydata.ds.view.scopes.ConditionScope;
 import mydata.ds.view.scopes.DataSetScope;
@@ -46,8 +55,6 @@ public class DataSetViewModel extends DSViewModel {
 	public static final String PRESCRIPTION = "prescriptionButton";
 
 
-
-	@Inject
 	private DataSetFactory dataSetFactory;
 	
 	@InjectScope
@@ -62,12 +69,25 @@ public class DataSetViewModel extends DSViewModel {
 	 */
 	private DataSetRelation dataSetRelation;
 
-	private int dataSetIdNumber;
+	private int dataSetHashcode;
 
-	private int relationBaseHashcode = 0;
+	private int baseDataSetHashcode = 0;
 
+	private int relationHashcode = 0 ;
+	
 	private ConditionInfo[] joinConditionInfos;
 
+	private List<Integer> targetDataSetHashcodeList;
+
+	private ChoiceBox<String> hospitalChoiceBox;
+
+	private StringProperty dbLinkNameProperty = new SimpleStringProperty();
+	
+	public DataSetViewModel() {
+		this.targetDataSetHashcodeList = new ArrayList<>();
+		this.dataSetFactory = new DataSetFactory();
+	}
+	
 	public void initialize() {
 		String dataSetId = dataSetScope.getDataSetId();
 		logger.info("dataSetId is selected '{}'", dataSetId);
@@ -85,6 +105,9 @@ public class DataSetViewModel extends DSViewModel {
 	}
 	
 	public String getDataSetTitle() {
+		if(this.dataSetUI == null)
+			return "is not prepared specific DataSet.";
+		
 		return this.dataSetUI.getDataSetTitle();
 	}
 
@@ -108,18 +131,24 @@ public class DataSetViewModel extends DSViewModel {
 	public TableViewData getTableViewData(UIConditions conditions) {
 		SubQueryExpression<?> query = dataSetUI.getQuerySearch(conditions);
 		TableViewData tableViewData = ViewUtils.getTableViewData(query);
+		tableViewData.setDatabaseManager(getDatabaseManager());
 		return tableViewData;
 	}
 
 	public TableViewData getTableViewData(SubQueryExpression<?> baseQuery,  UIConditions conditions) {
-		SubQueryExpression<?> query = dataSetUI.getQuerySearch(baseQuery, JoinOn.PATNO , conditions);
+		
+		RelationViewModel relationViewModel = getAppContext().getRelationViewModel(relationHashcode);
+		JoinOn joinOn = relationViewModel.getJoinOn();
+		SubQueryExpression<?> query = dataSetUI.getQuerySearch(baseQuery, joinOn , conditions);
 		TableViewData tableViewData = ViewUtils.getTableViewData(query);
+		tableViewData.setDatabaseManager(getDatabaseManager());
 		return tableViewData;
 	}
 	
 	public TableViewData getTableViewDataIntegrated(SubQueryExpression<?>...queries) {
 		SubQueryExpression<?> query = dataSetUI.getQueryIntegrateLeftJoin(queries);
 		TableViewData tableViewData = ViewUtils.getTableViewData(query);
+		tableViewData.setDatabaseManager(getDatabaseManager());
 		return tableViewData;
 	}
 	
@@ -161,20 +190,23 @@ public class DataSetViewModel extends DSViewModel {
 		return this.uiConditions;
 	}
 
-	public DataSetEvent getMouseEventStatus() {
+	public DataSetEventHander getMouseEventStatus() {
 
 		return getAppContext().getMouseEventStatus();
 	}
 
-	public void setDataSetHashcode(int dataSetIdNumber) {
-		this.dataSetIdNumber = dataSetIdNumber;
+	public void setDataSetHashcode(int dataSetHashcode) {
+		this.dataSetHashcode = dataSetHashcode;
 		this.dataSetRelation = new DataSetRelation();
-		getAppContext().putDataSetRelation(dataSetIdNumber, this.dataSetRelation);
-		getAppContext().addDataSetHashcode(dataSetIdNumber);
+		getAppContext().putDataSetRelation(dataSetHashcode, this.dataSetRelation);
+		getAppContext().addDataSetHashcode(dataSetHashcode);
 	}
 
+	public int getDataSetHashcode() {
+		return this.dataSetHashcode ;
+	}
+	
 	public void moveRelationLine(double deltaX, double deltaY) {
-		logger.debug("moveRelationLine( {}, {} )", deltaX, deltaY);
 		dataSetRelation.moveRelationLine(deltaX, deltaY);
 
 	}
@@ -205,21 +237,29 @@ public class DataSetViewModel extends DSViewModel {
 		getApplicationScope().publish(ApplicationScope.ADD_OR_REMOVE_GRID_COLUMN, columnInfo);
 	}
 
-	public void setRelationBaseHashcode(int relationBaseHashcode) {
-		this.relationBaseHashcode = relationBaseHashcode;
+	public void setBaseDataSetHashcode(int baseDataSetHashcode) {
+		this.baseDataSetHashcode = baseDataSetHashcode;
 		
+	}
+	
+	public void setRelationHashcode(int relationHashcode ) {
+		this.relationHashcode = relationHashcode;
 	}
 
 	public boolean hasBaseDataSet() {
-		return this.relationBaseHashcode > 0;
+		return this.baseDataSetHashcode > 0;
 	}
 
 	public DataSetView getBaseDataSetView() {
-		return getAppContext().getDataSetView(relationBaseHashcode);
+		return getAppContext().getDataSetView(this.baseDataSetHashcode);
 	}
 	
 	public DataSetViewModel getBaseDataSetViewModel() {
-		return getAppContext().getDataSetViewModel(relationBaseHashcode);
+		return getAppContext().getDataSetViewModel(this.baseDataSetHashcode);
+	}
+
+	public List<DataSetViewModel> getTargetDataSetViewModel() {
+		return getAppContext().getDataSetViewModelList(this.targetDataSetHashcodeList);
 	}
 
 	public boolean haveTargetDataSet() {
@@ -242,4 +282,89 @@ public class DataSetViewModel extends DSViewModel {
         clipboard.setContent(content);
 	}
 
+	public void removeRelations(int removedPaneHashcode) {
+		DataSetRelation datasetRelation = getAppContext().getDataSetRelation(removedPaneHashcode);
+		List<RelatedLine> relatedLineList = datasetRelation.getRelatedLineList();
+
+		for (RelatedPane relatedPane : datasetRelation.getRelatedPaneList()) {
+			// relationView 삭제
+			ViewUtils.removeFromScene(relatedPane.relationPane());
+
+			int endPaneKey = relatedPane.endPane().hashCode();
+			int startPaneKey = relatedPane.startPane().hashCode();
+			int realtionKey = relatedPane.relationPane().hashCode();
+
+			if (removedPaneHashcode == endPaneKey) {
+				DataSetRelation datasetRelationStart = getAppContext().getDataSetRelation(startPaneKey);
+				datasetRelationStart.reflashRelatedLine(relatedLineList);
+				datasetRelationStart.reflashRelatedPane(removedPaneHashcode);
+				datasetRelationStart.reflashRelatedPane(realtionKey);
+
+			} else if (removedPaneHashcode == startPaneKey) {
+				DataSetRelation datasetRelationEnd = getAppContext().getDataSetRelation(endPaneKey);
+				datasetRelationEnd.reflashRelatedLine(relatedLineList);
+				datasetRelationEnd.reflashRelatedPane(removedPaneHashcode);
+				datasetRelationEnd.reflashRelatedPane(realtionKey);
+			}
+		}
+
+		for (RelatedLine relatedLine : relatedLineList) {
+			//0:source //1:target
+			ViewUtils.removeFromScene(relatedLine.line());
+			ViewUtils.removeFromScene(relatedLine.arrowhead());
+		}
+		
+		datasetRelation.reflashRelatedLine(relatedLineList);
+	}
+
+	public DataSetRelation getDataSetRelation(int dataSetHashcode) {
+		return getAppContext().getDataSetRelation(dataSetHashcode);
+	}
+
+	public void setDbLinkCode(String dbLinkName) {
+		logger.debug("newvalue={}",dbLinkName);
+		
+		this.dataSetFactory.setDbLinkCode(dbLinkName);
+	}
+
+	public void addTargetDataSetHashcode(Integer targetPaneHashcode) {
+		this.targetDataSetHashcodeList.add(targetPaneHashcode);
+		
+	}
+
+	public void removeTargetDataSetHashcode(Integer targetPaneHashcode) {
+		this.targetDataSetHashcodeList.remove(targetPaneHashcode);
+	}
+
+	public ChoiceBox<String> getHospitalChoiceBox() {
+
+		return this.hospitalChoiceBox;
+	}
+
+	public void setHospitalChoiceBox(ChoiceBox<String> hospitalChoiceBox) {
+		this.hospitalChoiceBox = hospitalChoiceBox;
+	}
+	
+
+	public StringProperty dbLinkNameProperty() {
+		return this.dbLinkNameProperty ;
+	}
+	
+	public void updatedbLinkNameProperty() {
+		String databaseCode = this.dataSetFactory.getDbLinkCode();
+		this.dbLinkNameProperty.setValue(getDatabaseManager().getDatabaseName(databaseCode));
+	}
+	
+	protected String[] getDatabaseNames() {
+		return getDatabaseManager().getDatabaseNames();
+	}
+	
+	protected String getDatabaseCode(int index) {
+		return getDatabaseManager().getDatabaseCode(getDatabaseNames()[index]);
+	}
+	
+	@Override
+	public String toString() {
+		return String.format("%s [%d]: %s", this.getClass().getSimpleName(), this.hashCode(), getDataSetTitle());
+	}
 }

@@ -4,10 +4,14 @@ import java.math.BigDecimal;
 import java.sql.Date;
 import java.sql.Timestamp;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Expression;
 
 import de.saxsys.mvvmfx.data.TableViewData;
+import de.saxsys.mvvmfx.data.TupleCellFactory;
 import de.saxsys.mvvmfx.data.TupleValueFactory;
 import ds.common.util.ArrayUtil;
 import ds.data.core.column.ColumnInfo;
@@ -19,13 +23,16 @@ import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.input.MouseDragEvent;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.input.TransferMode;
 import javafx.scene.layout.VBox;
-import mydata.ds.view.events.ColumnSelectEventHandler;
+import mydata.ds.view.events.ColumnEventHandler;
 import mydata.ds.view.executor.Executor;
 
 public class LinkUtils {
-
+	private static final Logger logger = LoggerFactory.getLogger(LinkUtils.class);
+	
 	public static void link(TableView<Tuple> tableView, TableViewData tableViewData) {
 		if (tableViewData == null || tableViewData.getTupleList() == null)
 			return;
@@ -84,9 +91,13 @@ public class LinkUtils {
 				label.setOnMouseClicked(eventHandler);
 			}
 			
+			label.setOnMouseDragOver(event -> {
+	            logger.debug("setOnMouseDragOver -> ", columnInfo.getColumnName());
+	        });
+			
 			if (executor != null) {
-				ColumnSelectEventHandler duringPressEvent = ColumnSelectEventHandler.newInstance(label, 60);
-				duringPressEvent.setExecutor(executor);
+				ColumnEventHandler columnSelectEventHandler = ColumnEventHandler.newInstance(label);
+				columnSelectEventHandler.setExecutor(executor);
 			}
 
 			labels = ArrayUtil.addArrayOne(labels, label, Label.class);
@@ -96,38 +107,43 @@ public class LinkUtils {
 
 	@SuppressWarnings("unchecked")
 	private static TableColumn<Tuple, ?> getTableColumn(TableViewData tableViewData, Expression<?> expre) {
+		
+		TableColumn<Tuple, ?> tableColumn = null ;
+		
 		Class<?> clazz = expre.getType();
 		if (Timestamp.class.isAssignableFrom(clazz)) {
 			TableColumn<Tuple, Timestamp> column = new TableColumn<>(tableViewData.getHeaderName(expre));
 			column.setCellValueFactory(new TupleValueFactory<>((Expression<Timestamp>) expre));
-			return column;
+			tableColumn = column;
 
 		} else if (Date.class.isAssignableFrom(clazz)) {
 			TableColumn<Tuple, Date> column = new TableColumn<>(tableViewData.getHeaderName(expre));
 			column.setCellValueFactory(new TupleValueFactory<>((Expression<Date>) expre));
-			return column;
+			tableColumn = column;
 
 		} else if (String.class.isAssignableFrom(clazz)) {
 			TableColumn<Tuple, String> column = new TableColumn<>(tableViewData.getHeaderName(expre));
 			column.setCellValueFactory(new TupleValueFactory<>((Expression<String>) expre));
-			return column;
+			tableColumn = column;
 
 		} else if (BigDecimal.class.isAssignableFrom(clazz)) {
 			TableColumn<Tuple, BigDecimal> column = new TableColumn<>(tableViewData.getHeaderName(expre));
 			column.setCellValueFactory(new TupleValueFactory<>((Expression<BigDecimal>) expre));
-			return column;
+			tableColumn = column;
 
 		} else if (Long.class.isAssignableFrom(clazz)) {
 			TableColumn<Tuple, Long> column = new TableColumn<>(tableViewData.getHeaderName(expre));
 			column.setCellValueFactory(new TupleValueFactory<>((Expression<Long>) expre));
-			return column;
+			tableColumn = column;
 
 		} else if (Integer.class.isAssignableFrom(clazz)) {
 			TableColumn<Tuple, Integer> column = new TableColumn<>(tableViewData.getHeaderName(expre));
 			column.setCellValueFactory(new TupleValueFactory<>((Expression<Integer>) expre));
-			return column;
+			tableColumn = column;
 		}
-
-		return null;
+		
+		tableColumn.setCellFactory(new TupleCellFactory<>(tableViewData.getColumnInfos()));
+		
+		return tableColumn;
 	}
 }

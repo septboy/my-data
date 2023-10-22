@@ -12,69 +12,87 @@ import de.saxsys.mvvmfx.ViewModel;
 import jakarta.enterprise.context.ApplicationScoped;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.input.ClipboardContent;
-import javafx.scene.input.DragEvent;
-import javafx.scene.input.Dragboard;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.input.TransferMode;
-import mydata.ds.view.dataset.DataSetEvent;
 import mydata.ds.view.dataset.DataSetRelation;
 import mydata.ds.view.dataset.DataSetView;
 import mydata.ds.view.dataset.DataSetViewModel;
-import mydata.ds.view.grid.RelatedIcon;
-import mydata.ds.view.util.ViewUtils;
+import mydata.ds.view.dataset.record.RelationHashCodePair;
+import mydata.ds.view.events.BackgroundEventHandler;
+import mydata.ds.view.events.DataSetEventHander;
+import mydata.ds.view.grid.IntegratedIcon;
+import mydata.ds.view.relation.RelationView;
+import mydata.ds.view.relation.RelationViewModel;
 
 @ApplicationScoped
 public class AppContext {
 	
 	private static final Logger logger = LoggerFactory.getLogger(AppContext.class);
+
+	private DataSetEventHander mouseEventStatus ;
 	
-	private DataSetEvent mouseEventStatus ;
+	private BackgroundEventHandler backgroundEventHandler ;
+	
 	private Map<Integer, DataSetRelation> dataSetRelationMap ;
 
 	private Scene scene;
 
-	private Map<Integer, RelatedIcon> relationIconMap;
+	private Map<Integer, IntegratedIcon> relationIconMap;
 	
-	private Map<Integer, DataSetViewModel> viewModelMap;
+	private Map<Integer, DataSetViewModel> dataSetViewModelMap;
 	
-	private Map<Integer, DataSetView> viewMap;
+	private Map<Integer, DataSetView> dataSetViewMap;
 
-	private List<Integer> dataSetHashcodeList ;
+	private List<Integer> appContextIntegratedDataSetHashcodeList ;
+
+	private Map<Integer, RelationHashCodePair>  relationHashCodePairMap;
+
+	private Map<Integer, RelationViewModel> relationViewModelMap;
+
+	private Map<Integer, RelationView> relationViewMap;
 
 	public AppContext() {
 		dataSetRelationMap = new HashMap<>();
+		//////////////////////////////////////////////
 		relationIconMap = new HashMap<>();
-		viewModelMap = new HashMap<>();
-		viewMap = new HashMap<>();
+		//////////////////////////////////////////////
+		dataSetViewModelMap = new HashMap<>();
+		dataSetViewMap = new HashMap<>();
+
+		//////////////////////////////////////////////
+		relationViewModelMap = new HashMap<>();
+		relationViewMap = new HashMap<>();
 		
-		dataSetHashcodeList = new ArrayList<>();
-		mouseEventStatus = new DataSetEvent(this);
+		//////////////////////////////////////////////
+		relationHashCodePairMap = new HashMap<>();
+		
+		//////////////////////////////////////////////
+		appContextIntegratedDataSetHashcodeList = new ArrayList<>();
+		mouseEventStatus = new DataSetEventHander(this);
+		backgroundEventHandler = new BackgroundEventHandler(this);
 	}
 
-	public DataSetEvent getMouseEventStatus() {
+	public DataSetEventHander getMouseEventStatus() {
 		return mouseEventStatus;
 	}
 
-	public DataSetRelation getDataSetRelation(int dataSetIdNmeber) {
-		logger.debug("getDataSetRelation( {} )", dataSetIdNmeber);
-		return this.dataSetRelationMap.get(dataSetIdNmeber);
+	public DataSetRelation getDataSetRelation(int dataSetHashcode) {
+		logger.debug("getDataSetRelation( {} )", dataSetHashcode);
+		return this.dataSetRelationMap.get(dataSetHashcode);
 	}
 
-	public void putDataSetRelation(int dataSetIdNumber, DataSetRelation dataSetRelation) {
-		logger.debug("putDataSetRelation( {} )", dataSetIdNumber); 
+	public void putDataSetRelation(int dataSetHashcode, DataSetRelation dataSetRelation) {
+		logger.debug("putDataSetRelation( {} )", dataSetHashcode); 
 		
-		if(!dataSetRelationMap.containsKey(dataSetIdNumber) )
-			this.dataSetRelationMap.put(dataSetIdNumber, dataSetRelation);
+		if(!dataSetRelationMap.containsKey(dataSetHashcode) )
+			this.dataSetRelationMap.put(dataSetHashcode, dataSetRelation);
 	}
 
-	public void putRelatedIcon(int hashCode, RelatedIcon relatedIcon) {
-		this.relationIconMap.put(hashCode, relatedIcon);
+	public void putRelatedIcon(int dataSethashCode, IntegratedIcon relatedIcon) {
+		this.relationIconMap.put(dataSethashCode, relatedIcon);
 		
 	}
 
 	public ViewModel getViewModel(int dataSetKey) {
-		return this.viewModelMap.get(dataSetKey);
+		return this.dataSetViewModelMap.get(dataSetKey);
 	}
 	
 	public Scene getScene() {
@@ -89,98 +107,77 @@ public class AppContext {
 	 * @param dataSetHashcode  dataset hashcode
 	 * @return
 	 */
-	public RelatedIcon getRelatedIcon(int dataSetHashcode) {
+	public IntegratedIcon getIntegratedIcon(int dataSetHashcode) {
 		return this.relationIconMap.remove(dataSetHashcode);
 	}
 	
 	public void putDataSetViewModel(int hashcode, DataSetViewModel viewModel) {
-		this.viewModelMap.put(hashcode, viewModel) ;
+		this.dataSetViewModelMap.put(hashcode, viewModel) ;
 		
 	}
 	
 	public DataSetViewModel getDataSetViewModel(int hashcode) {
-		return this.viewModelMap.get(hashcode);
+		return this.dataSetViewModelMap.get(hashcode);
 	}
 	
 	public DataSetView getDataSetView(int hashcode) {
-		return this.viewMap.get(hashcode);
+		return this.dataSetViewMap.get(hashcode);
 	}
 	
 	public void putDataSetView(int hashcode, DataSetView view) {
-		this.viewMap.put(hashcode, view) ;
+		this.dataSetViewMap.put(hashcode, view) ;
 		
 	}
 
 	public void addDataSetHashcode(int dataSetHashcode) {
-		this.dataSetHashcodeList.add(dataSetHashcode);
+		this.appContextIntegratedDataSetHashcodeList.add(dataSetHashcode);
 		
 	}
 	
-	public List<Integer> getDataSetHashcodeList() {
-		return this.dataSetHashcodeList;
+	public List<Integer> getIntegratedDataSetHashcodeList() {
+		return this.appContextIntegratedDataSetHashcodeList;
 	}
 
 	public void removeDataSetHashcode(Integer dataSetHashcode) {
-		this.dataSetHashcodeList.remove(dataSetHashcode);
+		this.appContextIntegratedDataSetHashcodeList.remove(dataSetHashcode);
 	}
 
-	public void bindDraggableEvents(Node node) {
-		
-		Node backgroundNode = this.scene.lookup("#appBackground");
-				
-        node.setOnDragDetected(event -> {
-        	logger.debug("setOnDragDetected execute.");
-            Dragboard dragboard = node.startDragAndDrop(TransferMode.ANY);
-
-            ClipboardContent content = new ClipboardContent();
-            content.putString("Circle source text");
-            dragboard.setContent(content);
-
-            event.consume();
-        });
-
-        node.setOnMouseDragged((MouseEvent event) -> {
-            event.setDragDetect(true);
-            
-            event.consume();
-        });
-        
-        backgroundNode.setOnDragOver(event -> {
-        	logger.debug("setOnDragOver execute.");
-        	
-        	if (event.getGestureSource() != backgroundNode && event.getDragboard().hasString()) {
-                event.acceptTransferModes(TransferMode.MOVE);
-            }
-
-            event.consume();
-        });
-
-
-        backgroundNode.setOnDragDropped(event -> {
-        	logger.debug("setOnDragDropped execute.");
-            Dragboard db = event.getDragboard();
-            boolean success = false;
-
-            if (db.hasString()) {
-                logger.debug("Dropped: " + db.getString());
-
-                int dataSetHashcode = (Integer)node.getUserData();
-        		RelatedIcon relatedIcon = getRelatedIcon(dataSetHashcode);
-        		
-        		if ( relatedIcon != null ) {
-	                ViewUtils.removeFromPane( relatedIcon.dataSetIconParent(), relatedIcon.dataSetIcon());
-	                ViewUtils.removeFromPane( relatedIcon.gridBarIconParent(), relatedIcon.gridBarIcon());
-        		}
-        		
-                success = true;
-            }
-            
-            event.setDropCompleted(success);
-            event.consume();
-        });
-
-        node.setOnDragDone(DragEvent::consume);
-        
-    }
+	public void putRelationHashCode(int relationPainHashcode, RelationHashCodePair relationCodePairHashCode) {
+		this.relationHashCodePairMap.put(relationPainHashcode, relationCodePairHashCode);
+	}
 	
+	public RelationHashCodePair getRelationHashCodePair(int relationPaneHashcode) {
+		return this.relationHashCodePairMap.get(relationPaneHashcode);
+	}
+
+	public void putRelationViewModel(int relationHashcode, RelationViewModel relationViewModel) {
+		this.relationViewModelMap.put( relationHashcode, relationViewModel);
+	}
+
+	public RelationViewModel getRelationViewModel(int relationHashcode) {
+		return this.relationViewModelMap.get(relationHashcode);
+	}
+	
+	public void putRelationView(int relationHashcode, RelationView relationView) {
+		this.relationViewMap.put( relationHashcode, relationView);
+	}
+	
+	public RelationView getRelationView(int relationHashcode) {
+		return this.relationViewMap.get(relationHashcode);
+	}
+
+	public void initalizeBackgroundEvent(Node background) {
+		this.backgroundEventHandler.initilize(background);
+		
+	}
+
+
+	public List<DataSetViewModel> getDataSetViewModelList(List<Integer> targetDataSetHashcodeList) {
+		List<DataSetViewModel> list = new ArrayList<>();
+		for (int targetDataSetHashcode: targetDataSetHashcodeList) {
+			DataSetViewModel datasetViewModel = this.dataSetViewModelMap.get(targetDataSetHashcode);
+			list.add(datasetViewModel);
+		}
+		return list;
+	}
 }

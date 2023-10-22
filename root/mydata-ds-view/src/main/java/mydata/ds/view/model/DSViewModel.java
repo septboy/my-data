@@ -34,11 +34,8 @@ public class DSViewModel implements ViewModel{
 		return defaultResourceBundle;
 	}
 
-	public void closeEntityManager() {
-		databaseManager.closeConnectionAndManager();
+	public DatabaseManager getDatabaseManager() {
+		return databaseManager;
 	}
 	
-	public void rebuildEntityManager() {
-		databaseManager.initialize();
-	}
 }

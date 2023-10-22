@@ -18,9 +18,9 @@ import javafx.util.Duration;
 import mydata.ds.view.executor.Executor;
 import mydata.ds.view.util.ViewUtils;
 
-public class ColumnSelectEventHandler {
+public class ColumnSelectEventHandler3 {
 
-	private static final Logger logger = LoggerFactory.getLogger(ColumnSelectEventHandler.class);
+	private static final Logger logger = LoggerFactory.getLogger(ColumnSelectEventHandler3.class);
 	
 	public static final String css_column_label_border = "-fx-border-color: white; -fx-border-width: 1px 0px 1px 0px;";
 
@@ -38,15 +38,15 @@ public class ColumnSelectEventHandler {
 
 	private Executor<Integer> executor;
 	
-	private ColumnSelectEventHandler(Node node) {
+	private ColumnSelectEventHandler3(Node node) {
 		this.node = node;
 		this.timeline = new Timeline(new KeyFrame(Duration.millis(100), event -> checkMousePressDuration()));
 		this.timeline.setCycleCount(Timeline.INDEFINITE);
 	}
 
-	public static ColumnSelectEventHandler newInstance(Node node, int sec) {
+	public static ColumnSelectEventHandler3 newInstance(Node node, int sec) {
 
-		ColumnSelectEventHandler duringPressEvent = new ColumnSelectEventHandler(node);
+		ColumnSelectEventHandler3 duringPressEvent = new ColumnSelectEventHandler3(node);
 
 		duringPressEvent.duringTimeForEvent = sec * 10;
 
@@ -124,7 +124,7 @@ public class ColumnSelectEventHandler {
 			if (currentTime - mousePressedTime >= duringTimeForEvent) {
 				this.isLessThanDuringTime = false;
 			} else {
-				this.isLessThanDuringTime = true;
+				this.isLessThanDuringTime = true; 
 			}
 
 		} else {

@@ -5,19 +5,21 @@ import org.slf4j.LoggerFactory;
 
 import de.saxsys.mvvmfx.InjectScope;
 import de.saxsys.mvvmfx.ViewModel;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
-import javafx.scene.Node;
 import mydata.ds.view.scopes.ConditionScope;
 
 public class ConditionViewModel implements ViewModel {
 	
 	private static final Logger logger = LoggerFactory.getLogger(ConditionViewModel.class);
 
-
 	public static final String CLOSE_CONDITION_VIEW_NOTIFICATION = "CLOSE_CONDITION_VIEW_NOTIFICATION";
 	
 	private final StringProperty text = new SimpleStringProperty();
+	
+	private BooleanProperty checkRegexp = new SimpleBooleanProperty(false);	
 	
 	@InjectScope
 	private ConditionScope conditionScope ;
@@ -33,6 +35,10 @@ public class ConditionViewModel implements ViewModel {
 
 	public StringProperty textPropery() {
 		return text;
+	}
+
+	public BooleanProperty  checkRegexpProverty() {
+		return checkRegexp;
 	}
 
 }

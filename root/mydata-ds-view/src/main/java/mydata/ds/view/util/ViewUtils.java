@@ -3,7 +3,6 @@ package mydata.ds.view.util;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Expression;
 import com.querydsl.core.types.Operation;
 import com.querydsl.core.types.SubQueryExpression;
@@ -13,17 +12,23 @@ import de.saxsys.mvvmfx.FxmlView;
 import de.saxsys.mvvmfx.ViewModel;
 import de.saxsys.mvvmfx.ViewTuple;
 import de.saxsys.mvvmfx.data.TableViewData;
-import ds.data.core.context.IntegratedContext;
+import ds.data.core.column.ColumnInfo;
 import ds.data.core.util.CdiUtils;
 import ds.data.core.util.ColUtils;
-import ds.data.core.util.SqlUtil;
 import jakarta.enterprise.inject.spi.BeanManager;
 import jakarta.enterprise.inject.spi.CDI;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.ContentDisplay;
+import javafx.scene.control.Label;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
@@ -239,11 +244,32 @@ public class ViewUtils {
 		
 	}
 	
+	public static void moveOnAppScene(Node node, double x, double y) {
+		System.out.println(  x+","+y);
+		node.setLayoutX(x);
+		node.setLayoutY(y);
+		node.toFront();
+	}
+	
 	public static void addNodeIntoPane(Pane parent, Node node) {
 		parent.getChildren().add(node);
 		node.toFront();
 		
 	}
 	
+	public static Button getImageButton(String imagePath, double buttonHeight) {
+		//Create a Button
+	    Button button = new Button();
+	    button.setPrefSize(Region.USE_PREF_SIZE, buttonHeight);
+	 
+	    //Create imageview with background image
+	    ImageView view = new ImageView(new Image(imagePath));
+	    view.setFitHeight(buttonHeight);
+	    view.setPreserveRatio(true);
+	 
+	    button.setGraphic(view);
+	    
+	    return button ;
+	}
 	
 }

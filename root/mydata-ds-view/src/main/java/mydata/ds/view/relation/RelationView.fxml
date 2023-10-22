@@ -6,20 +6,20 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane id="relationViewPain" fx:id="relationViewPain" maxWidth="90.0" minWidth="90.0" prefWidth="90.0" style="-fx-background-color: black;" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1"
-	fx:controller="mydata.ds.view.relation.RelationView">
+<AnchorPane id="relationViewPain" fx:id="relationViewPain" maxWidth="90.0" minWidth="90.0" prefWidth="90.0" prefHeight="48.0" style="-fx-background-color: black;" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mydata.ds.view.relation.RelationView">
    <children>
-      <VBox  alignment="TOP_CENTER" nodeOrientation="RIGHT_TO_LEFT" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <VBox id="relationViewBox" fx:id="relationViewBox" alignment="TOP_CENTER" nodeOrientation="RIGHT_TO_LEFT" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
-            <Label alignment="CENTER" contentDisplay="CENTER" maxHeight="23.0" maxWidth="1.7976931348623157E308" minHeight="23.0" style="-fx-background-color: #8b0000;" text="관계항목" textFill="WHITE">
-               <font>
-                  <Font name="Arial Rounded MT Bold" size="12.0" />
-               </font>
-               <VBox.margin>
-                  <Insets left="1.0" right="1.0" top="1.0" />
-               </VBox.margin>
-            </Label>
-            <Label alignment="CENTER" contentDisplay="CENTER" maxHeight="23.0" maxWidth="1.7976931348623157E308" minHeight="23.0" style="-fx-background-color: #d2b48c;" text="환자번호" textFill="#40424a">
+            <AnchorPane id="relationTitle" fx:id="relationTitle">
+               <children>
+                  <Label alignment="CENTER" contentDisplay="CENTER" maxHeight="23.0" maxWidth="1.7976931348623157E308" minHeight="23.0" prefHeight="23.0" style="-fx-background-color: #8b0000;" text="관계항목   " textFill="WHITE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                     <font>
+                        <Font name="Arial Rounded MT Bold" size="12.0" />
+                     </font>
+                  </Label>
+               </children>
+            </AnchorPane>
+            <Label alignment="CENTER" contentDisplay="CENTER" maxHeight="23.0" maxWidth="1.7976931348623157E308" minHeight="23.0" prefHeight="23.0" style="-fx-background-color: #d2b48c;" text="환자번호" textFill="#40424a">
                <font>
                   <Font name="Arial Rounded MT Bold" size="12.0" />
                </font>

@@ -92,6 +92,7 @@ public class TupleValueFactory<T> implements Callback<CellDataFeatures<Tuple, T>
 		this.expressionKey = expressionKey;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public ObservableValue<T> call(CellDataFeatures<Tuple, T> cdf) {
 		Tuple tuple = cdf.getValue();

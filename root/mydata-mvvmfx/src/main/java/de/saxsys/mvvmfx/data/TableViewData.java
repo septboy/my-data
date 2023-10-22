@@ -11,7 +11,9 @@ import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Expression;
 import com.querydsl.core.types.SubQueryExpression;
 
+import ds.data.core.column.ColumnInfo;
 import ds.data.core.context.IntegratedContext;
+import ds.data.core.dao.DatabaseManager;
 import ds.data.core.excel.xssf.TupleItemDesc;
 import ds.data.core.util.ColUtils;
 import ds.data.core.util.SqlUtil;
@@ -29,6 +31,10 @@ public class TableViewData {
 	private SubQueryExpression<?> query;
 	
 	private List<Tuple> dataList  ;
+
+	private DatabaseManager databaseManager;
+
+	private ColumnInfo[] columnInfos;
 
 	public Expression<?>[] getColumnExpressions() {
 		return mColumnExpressions;
@@ -62,7 +68,14 @@ public class TableViewData {
 
 	public void fetch()  {
 		this.dataList = SqlUtil.fetch(query);
-		logger.info("{}건이 검색되었습니다.", this.dataList.size());
+		
+		Integer size = null ; 
+		if (this.dataList == null )
+			size = 0 ;
+		else 
+			size= this.dataList.size();
+		
+		logger.info("{}건이 검색되었습니다.", size);
 	}
 	
 	public List<Tuple> getTupleList(){
@@ -78,5 +91,23 @@ public class TableViewData {
 				return (Expression<T>)columnExpre;
 		}
 		return null;
+	}
+
+	public void setDatabaseManager(DatabaseManager databaseManager) {
+		this.databaseManager = databaseManager;
+	}
+
+	public DatabaseManager getDatabaseManager() {
+		return this.databaseManager;
+	}
+
+	public void setColumnInfos(ColumnInfo[] columnInfos) {
+		this.columnInfos = columnInfos ;
+		
+	}
+
+	public ColumnInfo[] getColumnInfos() {
+		return this.columnInfos;
+		
 	}
 }

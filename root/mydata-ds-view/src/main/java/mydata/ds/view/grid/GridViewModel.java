@@ -1,10 +1,8 @@
 package mydata.ds.view.grid;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,11 +12,17 @@ import de.saxsys.mvvmfx.ViewModel;
 import ds.data.core.column.ColumnInfo;
 import jakarta.inject.Inject;
 import javafx.scene.Node;
+import javafx.scene.input.ClipboardContent;
+import javafx.scene.input.DragEvent;
+import javafx.scene.input.Dragboard;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.input.TransferMode;
 import javafx.scene.layout.Pane;
 import mydata.ds.view.dataset.DataSetRelation;
 import mydata.ds.view.dataset.DataSetView;
 import mydata.ds.view.dataset.DataSetViewModel;
 import mydata.ds.view.dataset.RelatedPane;
+import mydata.ds.view.events.BackgroundEventHandler;
 import mydata.ds.view.scopes.AppContext;
 import mydata.ds.view.scopes.ApplicationScope;
 
@@ -32,10 +36,8 @@ public class GridViewModel implements ViewModel {
 	@InjectScope
 	private ApplicationScope applicationScope ;
 
-	private LinkedList<Integer> datasetHashcodeList = new LinkedList<>();
+	private LinkedList<Integer> integratedDatasetHashcodeList = new LinkedList<>();
 
-	private Map<Integer, Integer> gridBarIconHashcodeMap = new HashMap<>();
-	
 	public void initialize() {
 		applicationScope.subscribe(applicationScope.ADD_OR_REMOVE_GRID_COLUMN, (key, payload) -> {
 			logger.debug("ADD_OR_REMOVE_GRID_COLUMN- {}", ((ColumnInfo)payload[0]).getColumnComment());
@@ -51,7 +53,7 @@ public class GridViewModel implements ViewModel {
 		
 	}
 
-	public Pane getConnectableDataSetPane() {
+	public Pane getIntegratedSourceDataSetPane() {
 		return this.appContext.getMouseEventStatus().getStartPane();
 	}
 
@@ -59,9 +61,8 @@ public class GridViewModel implements ViewModel {
 		this.appContext.getMouseEventStatus().statusClear();
 	}
 
-	public void putRelatedIcon(int hashCode, RelatedIcon relatedIcon) {
-		this.appContext.putRelatedIcon(hashCode, relatedIcon);
-		this.gridBarIconHashcodeMap .put(relatedIcon.gridBarIcon().hashCode(), hashCode );
+	public void putIntegratedIcon(int dataSethashCode, IntegratedIcon relatedIcon) {
+		this.appContext.putRelatedIcon(dataSethashCode, relatedIcon);
 	}
 
 	public DataSetViewModel getDataSetViewModel(int hashCode) {
@@ -72,20 +73,20 @@ public class GridViewModel implements ViewModel {
 		return this.appContext.getDataSetView(hashCode);
 	}
 
-	public void addIntegratedDataSetHashCode(int hashcode) {
-		this.datasetHashcodeList.add(hashcode);
+	public void addIntegratedDataSetHashCode(int dataSetHashcode) {
+		this.integratedDatasetHashcodeList.add(dataSetHashcode);
 	}
 	
 	public List<Integer> getIntegratedDataSetHashcodeList() {
-		return this.datasetHashcodeList;
+		return this.integratedDatasetHashcodeList;
 	}
 	
 	public List<Integer> getAppContextDataSetHashcodeList() {
 		
-		LinkedList<Integer> linkedDataSetHashcodeList = new LinkedList<>(appContext.getDataSetHashcodeList());
+		LinkedList<Integer> integratedDataSetHashcodeList = new LinkedList<>(appContext.getIntegratedDataSetHashcodeList());
 		
 		List<RelatedPane> tmpRelatedPaneList = new ArrayList<>();
-		for ( int dataSetHashcode: linkedDataSetHashcodeList ) {
+		for ( int dataSetHashcode: integratedDataSetHashcodeList ) {
 			DataSetRelation dataSetRelation = appContext.getDataSetRelation(dataSetHashcode);
 			List<RelatedPane> relatedPaneList = dataSetRelation.getRelatedPaneList();
 			for(RelatedPane relatedPane: relatedPaneList) {
@@ -98,19 +99,19 @@ public class GridViewModel implements ViewModel {
 			int startHashcode = relatedPane.startPane().hashCode();
 			int endHashcode = relatedPane.endPane().hashCode();
 			
-			int startIndex = linkedDataSetHashcodeList.indexOf(startHashcode);
-			int endIndex = linkedDataSetHashcodeList.indexOf(endHashcode);
+			int startIndex = integratedDataSetHashcodeList.indexOf(startHashcode);
+			int endIndex = integratedDataSetHashcodeList.indexOf(endHashcode);
 			
 			if( startIndex > endIndex ) {//start hashcode가 뒤에 위치하고 잇으면 endIndex 앞으로 보낸다.
-				linkedDataSetHashcodeList.remove(startIndex);
+				integratedDataSetHashcodeList.remove(startIndex);
 				if(endIndex >= 1)
-					linkedDataSetHashcodeList.add(endIndex-1, startHashcode);
+					integratedDataSetHashcodeList.add(endIndex-1, startHashcode);
 				else
-					linkedDataSetHashcodeList.addFirst(startHashcode);
+					integratedDataSetHashcodeList.addFirst(startHashcode);
 			}
 		}
 		
-		return linkedDataSetHashcodeList;
+		return integratedDataSetHashcodeList;
 	}
 
 	public DataSetView getBaseDataSetView(int hashcode) {
@@ -121,17 +122,28 @@ public class GridViewModel implements ViewModel {
 		return appContext.getDataSetViewModel(hashcode);
 	}
 
-	public RelatedIcon getRelatedIcon(int iconHashcode) {
-		Integer dataSetHashcode = this.gridBarIconHashcodeMap.remove(iconHashcode);
-		RelatedIcon relatedIcod = appContext.getRelatedIcon(dataSetHashcode);
-		
-		return relatedIcod;
-	}
-
 	public void bindDraggableEvents(Node node) {
-		appContext.bindDraggableEvents(node);
+		
+		logger.debug("node.getUserData()={}", node.getUserData() );
+		
+		node.setOnDragDetected(event -> {
+	        Dragboard dragboard = node.startDragAndDrop(TransferMode.ANY);
+
+	        ClipboardContent content = new ClipboardContent();
+			content.putString(BackgroundEventHandler.DRAG_REMOVE_ON_BACKGROUND_INTEGRATED_RELATION_ICON);
+	        dragboard.setContent(content);
+
+	        event.consume();
+	    });
+		
+		node.setOnMouseDragged((MouseEvent event) -> {
+	        event.setDragDetect(true);
+	        
+	        event.consume();
+	    });
+		
+		node.setOnDragDone(DragEvent::consume);
 		
 	}
-	
 	
 }

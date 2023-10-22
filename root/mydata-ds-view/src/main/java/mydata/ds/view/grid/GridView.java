@@ -162,11 +162,9 @@ public class GridView implements FxmlView<GridViewModel> {
 			Pane integratedGridBarIcon = getNumberCircle(number);
 			gridBarHBox.getChildren().add(integratedGridBarIcon);
 	
-			
-			
 			// DataSetView 안에 IntegratedNumber 삽입
-			Pane sourcePane = viewModel.getConnectableDataSetPane();
-			int sourcePaneHashcode = sourcePane.hashCode();
+			Pane sourcePane = viewModel.getIntegratedSourceDataSetPane();
+			Integer sourcePaneHashcode = sourcePane.hashCode();
 			
 			Pane integratedDataSetIcon = getNumberCircle(number);
 			sourcePane.getChildren().add(integratedDataSetIcon);
@@ -178,12 +176,14 @@ public class GridView implements FxmlView<GridViewModel> {
 			
 			integratedDataSetIcon.setUserData(sourcePaneHashcode);
 			bindDraggableEvents(integratedDataSetIcon);
+			
 			/////////////////////////////////////////////////////////////////
-			viewModel.putRelatedIcon(//
+			viewModel.putIntegratedIcon(//
 					sourcePaneHashcode//
-					,new RelatedIcon(sourcePane, integratedDataSetIcon, gridBarHBox, integratedGridBarIcon)//
+					,new IntegratedIcon(sourcePane, integratedDataSetIcon, gridBarHBox, integratedGridBarIcon)//
 				);//
 	
+			
 			/// 통합그리드에 컬럼 생성
 			DataSetView dataSetView = viewModel.getDataSetView(sourcePaneHashcode);
 			TableColumn<Tuple, ?>[] columns = dataSetView.getTableColumns();
@@ -206,6 +206,9 @@ public class GridView implements FxmlView<GridViewModel> {
 	public Label getArrowGridButton(int updown) {
 	
 		Group group = getDirectionShape(updown);
+		group.setScaleX(0.8);
+		group.setScaleY(0.8);
+		
 		Label label = new Label();
 		label.setGraphic(group);
 		label.setStyle("-fx-background-color: #2E8B57;");

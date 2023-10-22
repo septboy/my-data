@@ -23,12 +23,12 @@
                         <Font name="System Bold" size="14.0" />
                      </font>
                   </Label>
-                  <CheckBox layoutX="186.0" layoutY="10.0" mnemonicParsing="false" text="정규식" textFill="#f5c800" AnchorPane.rightAnchor="5.0" />
+                  <CheckBox id="regexCheckBox" fx:id="regexCheckBox" layoutX="186.0" layoutY="10.0" mnemonicParsing="false" text="정규식" textFill="#f5c800" AnchorPane.rightAnchor="5.0" />
                </children>
             </AnchorPane>
             <HBox prefHeight="31.0">
                <children>
-                  <TextField id="inputText" fx:id="inputText" prefHeight="21.0" prefWidth="222.0">
+                  <TextField id="inputTextField" fx:id="inputTextField" prefHeight="21.0" prefWidth="222.0">
                      <font>
                         <Font name="Batang" size="12.0" />
                      </font></TextField>

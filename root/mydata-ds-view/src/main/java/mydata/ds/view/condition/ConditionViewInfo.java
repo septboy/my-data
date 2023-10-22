@@ -49,4 +49,5 @@ public class ConditionViewInfo extends ConditionInfo{
 	public Control getPrevControlButton() {
 		return this.prevControlButton;
 	}
+
 }

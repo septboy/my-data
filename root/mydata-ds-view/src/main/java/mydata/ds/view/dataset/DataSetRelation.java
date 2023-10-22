@@ -10,6 +10,8 @@ import ds.common.util.CommonUtil;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Polygon;
+import mydata.ds.view.dataset.record.RelationHashCodePair;
+import mydata.ds.view.util.ViewUtils;
 
 public class DataSetRelation {
 
@@ -66,24 +68,24 @@ public class DataSetRelation {
 		}
 	}
 
-	public DataSetRelation addRelatedLine(CirclePos circlePos, int gubun, Line line, Polygon arrowhead) {
-		this.relatedLineList.add(new RelatedLine(circlePos, gubun, line, arrowhead));
+	public DataSetRelation addRelatedLine(CirclePos circlePos, int gubun, Line line, Polygon arrowhead, Pane relationPane) {
+		this.relatedLineList.add(new RelatedLine(circlePos, gubun, line, arrowhead, relationPane));
 		return this ;
 	}
 
-	private void adjustRelationArrowLine(RelatedLine arrowLine, double deltaX, double deltaY) {
+	private void adjustRelationArrowLine(RelatedLine relatedLine, double deltaX, double deltaY) {
 
-		Line line = arrowLine.line();
-		Polygon arrowhead = arrowLine.arrowhead();
+		Line line = relatedLine.line();
+		Polygon arrowhead = relatedLine.arrowhead();
 		
 		// start circle
-		double fromCircleX = CommonUtil.decode(arrowLine.gubun(), 0, line.getStartX() + deltaX, line.getStartX()); // 0: start
-		double fromCircleY = CommonUtil.decode(arrowLine.gubun(), 0, line.getStartY() + deltaY, line.getStartY()); //
+		double fromCircleX = CommonUtil.decode(relatedLine.gubun(), 0, line.getStartX() + deltaX, line.getStartX()); // 0: start
+		double fromCircleY = CommonUtil.decode(relatedLine.gubun(), 0, line.getStartY() + deltaY, line.getStartY()); //
 
 		// end circle
-		double toCircleX = CommonUtil.decode(arrowLine.gubun(), 1, line.getEndX() + deltaX, line.getEndX()); // 1: end
-		double toCircleY = CommonUtil.decode(arrowLine.gubun(), 1, line.getEndY() + deltaY, line.getEndY()); //
-
+		double toCircleX = CommonUtil.decode(relatedLine.gubun(), 1, line.getEndX() + deltaX, line.getEndX()); // 1: end
+		double toCircleY = CommonUtil.decode(relatedLine.gubun(), 1, line.getEndY() + deltaY, line.getEndY()); //
+		
 		line.setStartX(fromCircleX);// rightCircle.getLayoutX()
 		line.setStartY(fromCircleY);// rightCircle.getLayoutY()
 		line.setEndX(toCircleX);// leftCircle.getLayoutX()
@@ -99,10 +101,19 @@ public class DataSetRelation {
 		// Rotate the arrowhead
 		arrowhead.setRotate(angle);
 
+		Pane relationPane = relatedLine.relationPane();
+		double posX = (fromCircleX + toCircleX) / 2 ;
+		double posY = (fromCircleY + toCircleY) / 2 ;
+		double halfWidth = ViewUtils.getRigionalWidth(relationPane)/2;
+		double halfHeight =ViewUtils.getRigionalHeight(relationPane)/2;
+		relationPane.setLayoutX(posX-halfWidth);
+		relationPane.setLayoutY(posY-halfHeight);
+		relationPane.toFront();
+		
 	}
 
 	public void addRelatedPane(RelatedPane relatedPane) {
-		this.relatedPainList .add(relatedPane);
+		this.relatedPainList.add(relatedPane);
 	}
 
 	public List<RelatedPane> getRelatedPaneList() {
@@ -111,6 +122,12 @@ public class DataSetRelation {
 
 	public List<RelatedLine> getRelatedLineList() {
 		return this.relatedLineList;
+	}
+
+	public List<RelatedLine> getRelatedLineList(int relationPaneHahscode) {
+		return this.relatedLineList.stream()
+				.filter(item -> item.relationPane().hashCode() == relationPaneHahscode)
+				.toList();
 	}
 
 	public void removeRelatedLineList() {
@@ -130,5 +147,10 @@ public class DataSetRelation {
 	public void reflashRelatedPane(int hashcode) {
 		this.relatedPainList.removeIf(item -> item.endPane().hashCode() == hashcode);
 		this.relatedPainList.removeIf(item -> item.startPane().hashCode() == hashcode);
+		this.relatedPainList.removeIf(item -> item.relationPane().hashCode() == hashcode);
+	}
+
+	public boolean isOkWhenRemove() {
+		return this.relatedLineList.size() == 0;
 	}
 }

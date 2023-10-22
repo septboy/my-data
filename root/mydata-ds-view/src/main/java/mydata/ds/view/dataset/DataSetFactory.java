@@ -14,8 +14,11 @@ import ds.ehr.research.dataset.emr.EmrEhrDataSet;
 import ds.ehr.research.dataset.medvisit.ApPatientEhrDataSet;
 import ds.ehr.research.dataset.prescription.PrescriptionEhrDataSet;
 import ds.ui.condition.DataSetUI;
+import jakarta.enterprise.context.RequestScoped;
 
 public class DataSetFactory {
+	
+	private String dbLinkCode = null;
 	
 	private DataSetUI mUIQueryDataSet ;
 	
@@ -44,10 +47,18 @@ public class DataSetFactory {
 		return mUIQueryDataSet;
 	}
 
-	public UIConditions getUIConditionsAndAddDataSetContext(String dataSetName) {
-		UIConditions c = getUIConditions(dataSetName);
-		DataSet.add(c);
+	public void setDbLinkCode(String dbLinkCode) {
+		this.dbLinkCode = dbLinkCode ;
+	}
+	
+	public UIConditions getUIConditionsAndAddDataSetContext(String dataSetCode) {
+		UIConditions c = getUIConditions(dataSetCode);
+		DataSet.add(c, this.dbLinkCode);
 		return c ;
+	}
+	
+	public String getDbLinkCode() {
+		return  this.dbLinkCode;
 	}
 	
 	public UIConditions getUIConditions(String dataSetName) {
