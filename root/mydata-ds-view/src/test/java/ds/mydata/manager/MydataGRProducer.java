@@ -10,16 +10,16 @@ import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
 
 
-@Vetoed
-public class MydataAAProducer {
+//@Vetoed
+public class MydataGRProducer {
 	
 	@Produces
 	@Singleton
 	@Ehr
-	@Named(EHR.DataSource.AARODB)
+	@Named(EHR.DataSource.GRRODB)
 	private EntityManagerFactory getEntityManagerFactory_EHR() {
         return Persistence
-                .createEntityManagerFactory(EHR.DataSource.AARODB);
+                .createEntityManagerFactory(EHR.DataSource.GRRODB);
     }
 
 }

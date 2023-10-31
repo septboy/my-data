@@ -19,7 +19,7 @@
                   </Label>
                </children>
             </AnchorPane>
-            <Label alignment="CENTER" contentDisplay="CENTER" maxHeight="23.0" maxWidth="1.7976931348623157E308" minHeight="23.0" prefHeight="23.0" style="-fx-background-color: #d2b48c;" text="환자번호" textFill="#40424a">
+            <Label id="relationPatnoLabel" fx:id="relationPatnoLabel" alignment="CENTER" contentDisplay="CENTER" maxHeight="23.0" maxWidth="1.7976931348623157E308" minHeight="23.0" prefHeight="23.0" style="-fx-background-color: #d2b48c;" text="환자번호" textFill="#40424a">
                <font>
                   <Font name="Arial Rounded MT Bold" size="12.0" />
                </font>

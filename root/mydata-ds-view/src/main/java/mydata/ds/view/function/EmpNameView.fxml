@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.text.Font?>
+
+<StackPane id="EmpNameRootStackPane" fx:id="EmpNameRootStackPane" style="-fx-background-color: #E9E9E9;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mydata.ds.view.function.EmpNameView">
+    <children>
+          <AnchorPane prefHeight="135.0" prefWidth="315.0">
+             <children>
+              <Label layoutX="3.0" layoutY="52.0" prefHeight="24.0" prefWidth="112.0" style="-fx-background-color: #BACEED; -fx-background-radius: 20;" text="StaffName" textAlignment="CENTER" AnchorPane.leftAnchor="3.0" AnchorPane.topAnchor="52.0">
+                   <font>
+                      <Font size="16.0" />
+                   </font>
+                   <padding>
+                      <Insets bottom="3.0" left="10.0" right="5.0" top="2.0" />
+                   </padding>
+                </Label>
+                <HBox id="empNameHBox" fx:id="empNameHBox" layoutX="-1.0" layoutY="79.0" maxHeight="46.0" minHeight="46.0" prefHeight="46.0" prefWidth="316.0" style="-fx-background-color: #DEDEDE; -fx-border-color: black; -fx-border-width: 1 0 1 0; -fx-border-style: dotted;" AnchorPane.leftAnchor="-1.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="79.0" />
+            <Label layoutX="5.0" layoutY="12.0" prefHeight="24.0" prefWidth="112.0" style="-fx-background-color: #BACEED;" text="별칭" textAlignment="CENTER">
+               <font>
+                  <Font size="16.0" />
+               </font>
+               <padding>
+                  <Insets bottom="3.0" left="10.0" right="5.0" top="2.0" />
+               </padding>
+            </Label>
+            <TextField id="functionAliasTextField" fx:id="functionAliasTextField" layoutX="117.0" layoutY="12.0" maxHeight="24.0" minHeight="24.0" prefHeight="24.0" prefWidth="198.0" />
+             </children>
+             <StackPane.margin>
+                <Insets />
+             </StackPane.margin>
+          </AnchorPane>
+    </children>
+</StackPane>

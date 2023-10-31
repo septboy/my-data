@@ -83,7 +83,7 @@ public class TableViewData {
 	}
 
 	@SuppressWarnings("unchecked")
-	public <T> Expression<T> getColumnExpreesion(String name, Class<T> clazz) {
+	public <T> Expression<T> getColumnExpression(String name, Class<T> clazz) {
 		
 		for(Expression<?> columnExpre: mColumnExpressions) {
 			String columnName = ColUtils.getColumnName(columnExpre);

@@ -72,9 +72,13 @@ public class ViewUtils {
 
 	@SuppressWarnings("unchecked")
 	public static <T> T searchParentNodeWithType(Class<T> clazz, Node targetNode) {
+		if(clazz.isAssignableFrom(targetNode.getClass()))
+			return (T)targetNode ;
+		
 		Node parentNode = targetNode.getParent();
 		if (parentNode == null)
 			return null;
+		
 		else {
 			if (clazz.isAssignableFrom(parentNode.getClass()))
 				return (T)parentNode;
@@ -160,13 +164,6 @@ public class ViewUtils {
 		return 0.0;
 	}
 
-	public static void setWidth(Region region, double width) {
-		region.setMinWidth(width);
-		region.setMaxWidth(width);
-		region.setPrefWidth(width);
-	}
-	
-	
 	public static FXMLLoader getFXMLLoader(Class<?> baseClazz, String fxml) {
         FXMLLoader fxmlLoader = new FXMLLoader(baseClazz.getResource(fxml));
         return fxmlLoader;
@@ -270,6 +267,41 @@ public class ViewUtils {
 	    button.setGraphic(view);
 	    
 	    return button ;
+	}
+
+	public static void setHeight(Label region, double height) {
+		region.setMinHeight(height);
+		region.setMaxHeight(height);
+		region.setPrefHeight(height);
+	}
+
+	public static void setWidth(Region region, double width) {
+		region.setMinWidth(width);
+		region.setMaxWidth(width);
+		region.setPrefWidth(width);
+	}
+
+	public static Node findNodeById(Node node, String id) {
+		if (node.getId() != null && node.getId().equals(id))
+			return node ;
+		
+		Node nodeSelected = null ;
+		
+		if (node instanceof Pane) {
+			Pane pane = (Pane)node ;
+			ObservableList<Node> nodes = pane.getChildren();
+			for (Node itemNode : nodes) {
+	            if (itemNode.getId() != null && itemNode.getId().equals(id)) {
+	                return itemNode;
+	            } else {
+	            	nodeSelected = findNodeById(itemNode, id);
+	            	if (nodeSelected != null)
+	            		return nodeSelected;
+	            }
+	        }
+		}
+		
+        return null; // Node with the specified ID not found
 	}
 	
 }

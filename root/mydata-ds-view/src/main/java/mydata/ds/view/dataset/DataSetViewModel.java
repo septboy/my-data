@@ -1,25 +1,29 @@
 package mydata.ds.view.dataset;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.querydsl.core.Tuple;
 import com.querydsl.core.types.SubQueryExpression;
 
 import de.saxsys.mvvmfx.InjectScope;
 import de.saxsys.mvvmfx.ScopeProvider;
 import de.saxsys.mvvmfx.data.TableViewData;
 import ds.common.util.ArrayUtil;
-import ds.common.util.CommonUtil;
 import ds.data.core.column.Col;
 import ds.data.core.column.ColumnInfo;
 import ds.data.core.column.ColumnSet;
+import ds.data.core.column.ColumnType;
 import ds.data.core.condition.ConditionInfo;
 import ds.data.core.condition.ui.UIConditions;
 import ds.data.core.join.JoinOn;
-import ds.ehr.dao.constant.EHR;
 import ds.ui.condition.DataSetUI;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
@@ -33,6 +37,7 @@ import javafx.scene.layout.VBox;
 import mydata.ds.view.condition.ConditionViewInfo;
 import mydata.ds.view.events.DataSetEventHander;
 import mydata.ds.view.model.DSViewModel;
+import mydata.ds.view.relation.RelationInfo;
 import mydata.ds.view.relation.RelationViewModel;
 import mydata.ds.view.scopes.ApplicationScope;
 import mydata.ds.view.scopes.ConditionScope;
@@ -82,6 +87,8 @@ public class DataSetViewModel extends DSViewModel {
 	private ChoiceBox<String> hospitalChoiceBox;
 
 	private StringProperty dbLinkNameProperty = new SimpleStringProperty();
+
+	private ConditionInfo[] conditionInfosFromRowSelected;
 	
 	public DataSetViewModel() {
 		this.targetDataSetHashcodeList = new ArrayList<>();
@@ -160,7 +167,6 @@ public class DataSetViewModel extends DSViewModel {
 			ColumnInfo columnInfo = (ColumnInfo) object;
 			if (columnInfo == null)
 				continue;
-			Col<?> col = columnInfo.getCol();
 			Col<?> colSelected = columnInfo.getColIfSelected();
 			colsSelected = ArrayUtil.addArrayOne(colsSelected, colSelected, Col.class);
 		}
@@ -168,25 +174,24 @@ public class DataSetViewModel extends DSViewModel {
 		return colsSelected;
 	}
 
-	public UIConditions getValueBindedConditions(VBox conditionInfoLabelVBox) {
+	public ConditionInfo[] getConditionInfos(VBox conditionInfoLabelVBox) {
 		ObservableList<Node> conditionLabels = conditionInfoLabelVBox.getChildren();
-
+		ConditionInfo[] conditionInfos = null ;
 		for (Node node : conditionLabels) {
 			Object object = ((Control) node).getUserData();
 			ConditionInfo conditionInfo = (ConditionInfo) object;
 			if (conditionInfo != null && conditionInfo.isSelected()) {
-				conditionInfo.fillConditionValue(this.uiConditions);
+				conditionInfos = ArrayUtil.addArrayOne(conditionInfos, conditionInfo, ConditionInfo.class);
 			}
 		}
-
-		return this.uiConditions;
+		return conditionInfos;
 	}
-
+	
 	public UIConditions getValueBindedConditions(ConditionInfo...conditionInfos) {
-		
-		for ( ConditionInfo conditionInfo: joinConditionInfos ) {
-			conditionInfo.fillConditionValue(this.uiConditions);
-		}
+		if (ArrayUtils.isNotEmpty(conditionInfos))
+			for ( ConditionInfo conditionInfo: conditionInfos ) {
+				conditionInfo.fillConditionValue(this.uiConditions);
+			}
 		return this.uiConditions;
 	}
 
@@ -264,15 +269,6 @@ public class DataSetViewModel extends DSViewModel {
 
 	public boolean haveTargetDataSet() {
 		return this.joinConditionInfos != null;
-	}
-
-	public void setJoinConditionInfos(ConditionInfo... conditionInfos) {
-		this.joinConditionInfos = conditionInfos;
-		
-	}
-
-	public ConditionInfo[] getJoinConditionInfos() {
-		return this.joinConditionInfos ;
 	}
 
 	public void copyToClipboard(String text) {
@@ -366,5 +362,76 @@ public class DataSetViewModel extends DSViewModel {
 	@Override
 	public String toString() {
 		return String.format("%s [%d]: %s", this.getClass().getSimpleName(), this.hashCode(), getDataSetTitle());
+	}
+
+	public ConditionInfo[] getJoinConditionInfos(RelatedPane relatedPane, TableViewData tableViewData, Tuple row) {
+		///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		// 진행중 관계 맺기 코드 작성 진행 중...
+		int relationHashcode = relatedPane.relationPane().hashCode();
+		RelationViewModel relationViewModel = getAppContext().getRelationViewModel(relationHashcode);
+		
+		Map<String, Object> columnNameMap = new HashMap<>();
+		for (RelationInfo relationInfo: relationViewModel.getRelationInfoList()) {
+			String columnName = relationInfo.getColumnName();
+			ColumnType columnType = relationInfo.getColumnType();
+			
+			Object value = null ;
+			if (columnType == ColumnType.Date)
+				value = row.get(tableViewData.getColumnExpression(columnName, java.sql.Date.class));
+			
+			else if (columnType == ColumnType.String)
+				value = row.get(tableViewData.getColumnExpression(columnName, String.class));
+			
+			else if (columnType == ColumnType.Time)
+				value = row.get(tableViewData.getColumnExpression(columnName, java.sql.Timestamp.class));
+			
+			else if (columnType == ColumnType.Integer)
+				value = row.get(tableViewData.getColumnExpression(columnName, Integer.class));
+			
+			else if (columnType == ColumnType.Long)
+				value = row.get(tableViewData.getColumnExpression(columnName, Long.class));
+			
+			else if (columnType == ColumnType.Decimal)
+				value = row.get(tableViewData.getColumnExpression(columnName, BigDecimal.class));
+			
+			columnNameMap.put(columnName, value );
+		}
+		
+		logger.debug("selected record Join status -> {}", columnNameMap);
+		
+		String[] joinColumnNames = columnNameMap.keySet().toArray(String[]::new);
+		
+		ConditionInfo[] conditionInfos = UIConditions.getConditionInfosFromCondtions(getUIConditions(), joinColumnNames);
+		
+		for (ConditionInfo conditionInfo : conditionInfos) {
+			for( String joinColumnName: joinColumnNames ) {
+				if ( conditionInfo.getColumnName().equals(joinColumnName) ) {
+					conditionInfo.setValue(columnNameMap.get(joinColumnName));
+				}
+			}
+		}
+		
+		return conditionInfos;
+	}
+
+	public ConditionInfo[] getJoinConditionInfos() {
+		return this.joinConditionInfos ;
+	}
+
+	public void setJoinConditionInfos(ConditionInfo... conditionInfos) {
+		this.joinConditionInfos = conditionInfos;
+		
+	}
+
+	public void setConditionInfosFromRowSelected(ConditionInfo[] conditionInfos) {
+		this.conditionInfosFromRowSelected = conditionInfos;
+	}
+	
+	public ConditionInfo[] getConditionInfosFromRowSelected() {
+		return this.conditionInfosFromRowSelected;
+	}
+	
+	public boolean isBaseTableRowSelected() {
+		return ArrayUtils.isNotEmpty(this.conditionInfosFromRowSelected);
 	}
 }

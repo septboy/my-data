@@ -25,12 +25,12 @@ public class RelationViewModel implements ViewModel {
 	@Inject
 	private ResourceBundle defaultResourceBundle;
 
-	private List<RelationColumnInfo> relationColumnInfoList ;
+	private List<RelationInfo> relationInfoList ;
 
 	private Integer relationHashCode;
 	
 	public void initialize() {
-		this.relationColumnInfoList = new ArrayList<>();
+		this.relationInfoList = new ArrayList<>();
 	}
 
 	public void closeRelationView(Pane relationViewPane) {
@@ -77,21 +77,21 @@ public class RelationViewModel implements ViewModel {
 	}
 
 	public JoinOn getJoinOn() {
-		C[] cols = new C[] {C.patno} ;
-		for( RelationColumnInfo relationColumnInfo :this.relationColumnInfoList) {
+		C[] cols = null ;
+		for( RelationInfo relationColumnInfo :this.relationInfoList) {
 			C col = (C)relationColumnInfo.getCol();
 			cols = ArrayUtil.addArrayOne(cols, col, C.class); 
 		}
 		return JoinOn.c(cols);
 	}
 
-	public void addRelationColumnInfo(RelationColumnInfo relationColumInfo) {
-		this.relationColumnInfoList.add(relationColumInfo);
+	public void addRelationColumnInfo(RelationInfo relationColumInfo) {
+		this.relationInfoList.add(relationColumInfo);
 		
 	}
 	
-	public void removeRelationColumnInfo(RelationColumnInfo relationColumInfo) {
-		this.relationColumnInfoList.remove(relationColumInfo);
+	public void removeRelationColumnInfo(RelationInfo relationColumInfo) {
+		this.relationInfoList.remove(relationColumInfo);
 	}
 
 	public void putRelationViewModel(int relationHashcode, RelationViewModel relationViewModel) {
@@ -102,4 +102,7 @@ public class RelationViewModel implements ViewModel {
 		this.appContext.putRelationView(relationHashcode, relationView);
 	}
 
+	public List<RelationInfo> getRelationInfoList(){
+		return this.relationInfoList;
+	}
 }

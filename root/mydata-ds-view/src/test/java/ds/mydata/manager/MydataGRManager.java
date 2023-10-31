@@ -30,17 +30,17 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 
 @Singleton
-@Vetoed
-public class MydataAAManager implements DatabaseManager {
+//@Vetoed
+public class MydataGRManager implements DatabaseManager {
 
-	private static final Logger logger = LoggerFactory.getLogger(MydataAAManager.class);
+	private static final Logger logger = LoggerFactory.getLogger(MydataGRManager.class);
 
 	
 	@Inject
 	@Ehr
-	@Named(EHR.DataSource.AARODB)
-	private EntityManagerFactory mEntityManagerFactoryEHR_AA;
-	private EntityManager mEntityManagerEHR_AA;
+	@Named(EHR.DataSource.GRRODB)
+	private EntityManagerFactory mEntityManagerFactoryEHR_GR;
+	private EntityManager mEntityManagerEHR_GR;
 
 	private String mLocate = null;
 
@@ -48,19 +48,19 @@ public class MydataAAManager implements DatabaseManager {
 	@Override
 	public void initialize() {
 		logger.info("initialize");
-		mEntityManagerEHR_AA = mEntityManagerFactoryEHR_AA.createEntityManager();
+		mEntityManagerEHR_GR = mEntityManagerFactoryEHR_GR.createEntityManager();
 	}
 
 	@Override
 	public void refresh() {
-		mEntityManagerEHR_AA = mEntityManagerFactoryEHR_AA.createEntityManager();		
+		mEntityManagerEHR_GR = mEntityManagerFactoryEHR_GR.createEntityManager();		
 	}
 
 	public Connection getConnection() {
 
 		Session session = null;
 
-		session = mEntityManagerEHR_AA.unwrap(Session.class);
+		session = mEntityManagerEHR_GR.unwrap(Session.class);
 
 		JdbcWork work = new JdbcWork();
 		session.doWork(work);
@@ -72,13 +72,13 @@ public class MydataAAManager implements DatabaseManager {
 	@Override
 	public EntityManager getEntityManager() {
 
-		return mEntityManagerEHR_AA;
+		return mEntityManagerEHR_GR;
 
 	}
 
 	@Override
 	public EntityManager getEntityManager(String DBLocate) {
-		return mEntityManagerEHR_AA;
+		return mEntityManagerEHR_GR;
 
 	}
 
@@ -99,25 +99,25 @@ public class MydataAAManager implements DatabaseManager {
 
 	@Override
 	public boolean isOpen() {
-		return mEntityManagerEHR_AA.isOpen();
+		return mEntityManagerEHR_GR.isOpen();
 
 	}
 	
 	@Override
 	public String[] getDatabaseNames() {
 		return new String[] {
-				"안암 RODB"
+				"구로 RODB"
 		};
 	}
 	
 	@Override
 	public String getDatabaseName(String databaseCode) {
 		switch (databaseCode) {
-		case EHR.DataSource.AARODB: {
-			return "안암 RODB";
+		case EHR.DataSource.GRRODB: {
+			return "구로 RODB";
 		}
 		default:
-			return "안암 RODB";
+			return "구로 RODB";
 		}
 	}
 	
@@ -126,7 +126,7 @@ public class MydataAAManager implements DatabaseManager {
 		String dbLinkName = null;
 		
 		if ( databaseName.equals(getDatabaseNames()[0]) ) {
-			dbLinkName = EHR.DataSource.AARODB;
+			dbLinkName = EHR.DataSource.GRRODB;
 		}
 		
 		return dbLinkName;

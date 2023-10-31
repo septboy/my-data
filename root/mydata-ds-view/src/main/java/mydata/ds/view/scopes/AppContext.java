@@ -12,12 +12,14 @@ import de.saxsys.mvvmfx.ViewModel;
 import jakarta.enterprise.context.ApplicationScoped;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.layout.Pane;
 import mydata.ds.view.dataset.DataSetRelation;
 import mydata.ds.view.dataset.DataSetView;
 import mydata.ds.view.dataset.DataSetViewModel;
 import mydata.ds.view.dataset.record.RelationHashCodePair;
 import mydata.ds.view.events.BackgroundEventHandler;
 import mydata.ds.view.events.DataSetEventHander;
+import mydata.ds.view.function.BaseFunction;
 import mydata.ds.view.grid.IntegratedIcon;
 import mydata.ds.view.relation.RelationView;
 import mydata.ds.view.relation.RelationViewModel;
@@ -49,6 +51,10 @@ public class AppContext {
 
 	private Map<Integer, RelationView> relationViewMap;
 
+	private Map<Integer, BaseFunction> functionColMap = new HashMap<>();
+	
+	private Map<Integer, Pane> rootFuncPaneMap = new HashMap<>();
+	
 	public AppContext() {
 		dataSetRelationMap = new HashMap<>();
 		//////////////////////////////////////////////
@@ -65,6 +71,15 @@ public class AppContext {
 		relationHashCodePairMap = new HashMap<>();
 		
 		//////////////////////////////////////////////
+		// 다양한 함수의 공통 interface를 저장한다.
+		// 데이터셋 화면을 닫으면 같이 삭제되어야 함.
+		functionColMap = new HashMap<>();
+		
+		//////////////////////////////////////////////
+		// 다양한 함수의 입력 폼을 저장한다.
+		// 데이터셋 화면을 닫으면 같이 삭제되어야 함.
+		rootFuncPaneMap = new HashMap<>();
+		
 		appContextIntegratedDataSetHashcodeList = new ArrayList<>();
 		mouseEventStatus = new DataSetEventHander(this);
 		backgroundEventHandler = new BackgroundEventHandler(this);
@@ -171,7 +186,14 @@ public class AppContext {
 		
 	}
 
+	public Map<Integer, Pane> getRootFuncPaneMap() {
+		return this.rootFuncPaneMap ;
+	}
 
+	public Map<Integer, BaseFunction> getBaseFunctionMap() {
+		return this.functionColMap;
+	}
+	
 	public List<DataSetViewModel> getDataSetViewModelList(List<Integer> targetDataSetHashcodeList) {
 		List<DataSetViewModel> list = new ArrayList<>();
 		for (int targetDataSetHashcode: targetDataSetHashcodeList) {

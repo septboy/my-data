@@ -5,17 +5,17 @@ import ds.data.core.column.Col;
 import ds.data.core.column.ColumnInfo;
 import ds.data.core.column.ColumnType;
 
-public class RelationColumnInfo extends ColumnInfo{
+public class RelationInfo extends ColumnInfo{
 
 	private Col<?> relationTargetCol;
 	private Object value ;
 	private Integer relationHashcode;
 
-	public RelationColumnInfo(String columnName, ColumnType columnType, String comment) {
+	public RelationInfo(String columnName, ColumnType columnType, String comment) {
 		super(columnName, columnType, comment);
 	}
 
-	public RelationColumnInfo(String columnName, ColumnType columnType, String comment,
+	public RelationInfo(String columnName, ColumnType columnType, String comment,
 			Col<?> conditionTargetCol) {
 		super(columnName, columnType, comment);
 		this.relationTargetCol = conditionTargetCol;

@@ -11,7 +11,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.VBox;
 import mydata.ds.view.grid.IntegratedIcon;
-import mydata.ds.view.relation.RelationColumnInfo;
+import mydata.ds.view.relation.RelationInfo;
 import mydata.ds.view.relation.RelationView;
 import mydata.ds.view.relation.RelationViewModel;
 import mydata.ds.view.scopes.AppContext;
@@ -92,7 +92,7 @@ public class BackgroundEventHandler {
 	}
 
 	private void bindEvent_DRAG_REMOVE_ON_BACKGROUND_RELATION_COLUMN(Node source) {
-		RelationColumnInfo relationColumnInfo = (RelationColumnInfo)source.getUserData();
+		RelationInfo relationColumnInfo = (RelationInfo)source.getUserData();
 		RelationViewModel relationViewModel = appContext.getRelationViewModel(relationColumnInfo.getRelationHashcode());
 		RelationView relationView = appContext.getRelationView(relationColumnInfo.getRelationHashcode());
 		

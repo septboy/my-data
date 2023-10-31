@@ -2,7 +2,10 @@ package mydata.ds.view.relation;
 
 import de.saxsys.mvvmfx.FxmlView;
 import de.saxsys.mvvmfx.InjectViewModel;
+import ds.data.core.column.C;
+import ds.data.core.column.Col;
 import ds.data.core.column.ColumnInfo;
+import ds.data.core.column.ColumnType;
 import jakarta.inject.Inject;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -38,6 +41,9 @@ public class RelationView implements FxmlView<RelationViewModel> {
 	@FXML
 	private VBox relationViewBox ;
 	
+	@FXML
+	private Label relationPatnoLabel ;
+	
 	@InjectViewModel
 	private RelationViewModel viewModel;
 
@@ -53,6 +59,10 @@ public class RelationView implements FxmlView<RelationViewModel> {
 		
 		viewModel.putRelationViewModel(relationHashcode, viewModel);
 		viewModel.putRelationView(relationHashcode, this);
+		
+		
+		RelationInfo relationPatno = new RelationInfo("patno", ColumnType.String, "환자번호", C.s("patno"));
+		viewModel.addRelationColumnInfo(relationPatno);
 		
 	}
 
@@ -96,7 +106,7 @@ public class RelationView implements FxmlView<RelationViewModel> {
             	Label sourceLabel = (Label)eventSourceObj;
             	ColumnInfo columnInfo = (ColumnInfo)sourceLabel.getUserData();
             	
-            	RelationColumnInfo relationColumnInfo = new RelationColumnInfo( //
+            	RelationInfo relationColumnInfo = new RelationInfo( //
             			columnInfo.getColumnName()      //
             			, columnInfo.getColumnType()    //
             			, columnInfo.getColumnComment() //
@@ -121,7 +131,7 @@ public class RelationView implements FxmlView<RelationViewModel> {
         });
 	}
 
-	private Label getRelationColumnLabel(RelationColumnInfo relationColumnInfo) {
+	private Label getRelationColumnLabel(RelationInfo relationColumnInfo) {
 		String columnName = relationColumnInfo.getColumnComment();
 		Label relationColumnLabel = new Label(columnName);
 		relationColumnLabel.setUserData(relationColumnInfo);

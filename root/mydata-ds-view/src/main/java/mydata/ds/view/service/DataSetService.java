@@ -48,7 +48,7 @@ public class DataSetService extends Service<List<Tuple>> {
 		logger.debug("Service Task is cancelled.");
 		Thread myThread = new Thread(()->{
 			tableViewData.getDatabaseManager().close();
-			tableViewData.getDatabaseManager().initialize();
+			tableViewData.getDatabaseManager().refresh();
 		});
         myThread.start();
 	}

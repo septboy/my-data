@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.control.Label?>
+
+
+<Tab text="Tab 2">
+    <content>
+        <StackPane>
+            <children>
+                <Label text="Content of Tab 2"/>
+            </children>
+        </StackPane>
+    </content>
+</Tab>

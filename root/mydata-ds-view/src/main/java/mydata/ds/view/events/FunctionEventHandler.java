@@ -3,6 +3,7 @@ package mydata.ds.view.events;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ds.data.core.column.Col;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.image.WritableImage;
@@ -12,9 +13,11 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseDragEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import mydata.ds.view.executor.Executor;
 import mydata.ds.view.function.FunctionInfo;
+import mydata.ds.view.function.FunctionViewModel;
 import mydata.ds.view.util.ViewUtils;
 
 public class FunctionEventHandler {
@@ -35,32 +38,32 @@ public class FunctionEventHandler {
 			+ "-fx-background-color: blue; "
 			+ "-fx-text-fill: white;";
 
-	private Node node;
+	private Node functionLabel;
 
 	private Executor<Integer> executor;
 
 	private VBox parent;
 
-	private FunctionEventHandler(VBox parent, Node node) {
-		this.parent = parent;
-		this.node = node;
-	}
+	private FunctionViewModel functionViewModel;
 
-	public static FunctionEventHandler newInstance(VBox parent, Node node) {
+	private FunctionEventHandler() {}
 
-		FunctionEventHandler functionEventHandler = new FunctionEventHandler(parent, node);
+	public static FunctionEventHandler newInstance(FunctionViewModel viewModel, VBox parent, Node node) {
 
-		functionEventHandler.initializeEvent(node);
+		FunctionEventHandler functionEventHandler = new FunctionEventHandler();
+		functionEventHandler.functionViewModel = viewModel;
+		functionEventHandler.parent = parent;
+		functionEventHandler.functionLabel = node;
 
 		return functionEventHandler;
 	}
 
-	private void initializeEvent(Node node) {
+	public void initialize() {
 
-		node.addEventHandler(MouseDragEvent.DRAG_DETECTED, event -> {
+		this.functionLabel.addEventHandler(MouseDragEvent.DRAG_DETECTED, event -> {
 			logger.debug("drag detected");
 
-			FunctionInfo functionInfo = (FunctionInfo) node.getUserData();
+			FunctionInfo functionInfo = (FunctionInfo) functionLabel.getUserData();
 			if (functionInfo == null) {
 				event.consume();
 				return ;
@@ -71,12 +74,23 @@ public class FunctionEventHandler {
 				}
 			}
 			
-			WritableImage snapshot = node.snapshot(null, null);
+			Col<?> functionCol = getFunctionCol(functionLabel);
+					
+			functionInfo.setCol(functionCol);
+			String funcName = functionViewModel.getFunctionLabelNameSelected(functionInfo.getFuncItemPaneHashcode());
+			logger.debug("Function label Name selected ! -> {}", funcName);
+			
+			if (funcName != null)
+				functionInfo.setColumnComment(funcName);
+			
+			this.functionLabel.setUserData(functionInfo);
+			
+			WritableImage snapshot = this.functionLabel.snapshot(null, null);
 
 			ClipboardContent content = new ClipboardContent();
 			content.putString(FUNCTION_SELECTED);
 
-			Dragboard db = node.startDragAndDrop(TransferMode.MOVE);
+			Dragboard db = functionLabel.startDragAndDrop(TransferMode.MOVE);
 			db.setContent(content);
 			db.setDragView(snapshot);
 			db.setDragViewOffsetX(snapshot.getWidth() / 2);
@@ -86,7 +100,7 @@ public class FunctionEventHandler {
 
 		});
 
-		node.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
+		this.functionLabel.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
 			logger.debug("MouseEvent.MOUSE_CLICKED");
 			if (event.getButton() == MouseButton.PRIMARY) {
 
@@ -113,16 +127,24 @@ public class FunctionEventHandler {
 				if (functionInfo.isSelected()) {
 					functionInfo.setSelected(false);
 					label.setStyle(css_function_label);
+					
 				} else {
 					setLabelsUnSelected();
 					functionInfo.setSelected(true);
 					label.setStyle(css_function_label_selected);
+					int eachFuncRootPainHashcode = functionInfo.getFuncItemPaneHashcode();
+					this.functionViewModel.makeVisibleLinkedFuncPane(eachFuncRootPainHashcode);
 				}
 			}
 
 			event.consume();
 		});
 
+	}
+
+	private Col<?> getFunctionCol(Node functionLabel) {
+		FunctionInfo functionInfo = (FunctionInfo)functionLabel.getUserData();
+		return this.functionViewModel.getFunctionCol(functionInfo.getFuncItemPaneHashcode()) ;
 	}
 
 	private void setLabelsUnSelected() {

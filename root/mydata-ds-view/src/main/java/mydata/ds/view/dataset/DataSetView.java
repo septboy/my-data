@@ -207,6 +207,89 @@ public class DataSetView implements FxmlView<DataSetViewModel> {
 		viewModel.updatedbLinkNameProperty();
 	}
 
+	private void initializeTitle() {
+		// 데이터셋 타이틀
+		String datasetTitle = viewModel.getDataSetTitle();
+		LinkUtils.link(dataSetTitleLabel, datasetTitle);
+	
+		dataSetTitlePane.setOnMousePressed(this::handleMousePressedTitlePane);
+		dataSetTitlePane.setOnMouseDragged(this::handleMouseDraggedTitlePane);
+		dataSetTitlePane.setOnMouseClicked(this::handleMouseClickedTitlePane);
+	
+		dataSetTitleLabel.setOnMousePressed(this::handleDummyEvent);
+		dataSetTitleLabel.setOnMouseDragged(this::handleDummyEvent);
+		dataSetTitleLabel.setOnMouseClicked(this::handleDummyEvent);
+	
+	}
+
+	private void initializeTableView() {
+		dataSetTableView.setPlaceholder(new Label("데이터를 검색하세요."));
+	
+		dataSetTableView.addEventFilter(MouseEvent.MOUSE_PRESSED, event -> {
+			if (event.isShiftDown()) {
+				dataSetTableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+			} else {
+				dataSetTableView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
+			}
+		});
+	
+		dataSetTableView.setOnMousePressed(this::handleParentEvent);
+	
+		dataSetTableView.setOnMouseClicked(event -> {
+			if (event.isControlDown() && event.getClickCount() == 1) { // Single click
+				TablePosition<Tuple, ?> pos = dataSetTableView.getSelectionModel().getSelectedCells().get(0);
+				int row = pos.getRow();
+				TableColumn<Tuple, ?> col = pos.getTableColumn();
+				String cellText = col.getCellData(row).toString();
+				viewModel.copyToClipboard(cellText);
+	
+				event.consume();
+			}
+		});
+	
+		this.viewModel.getAppContext().getScene().addEventFilter(javafx.scene.input.KeyEvent.KEY_PRESSED, event -> {
+			if (event.isControlDown() && event.getCode() == KeyCode.C) {
+				copySelectedRows(dataSetTableView);
+			}
+		});
+	
+		// Handle row selection
+		dataSetTableView.getSelectionModel().selectedItemProperty().addListener((obs, oldRowSelected, newRowSelected) -> {
+	
+			if (newRowSelected != null) {
+				//////////////////////////////////////////////////////////////////////////////
+				int baseHashcode = this.dataSetRootAnchorPane.hashCode();
+				DataSetRelation dataSetRelation = viewModel.getAppContext().getDataSetRelation(baseHashcode);
+				List<RelatedPane> RelatedPaneList = dataSetRelation.getRelatedPaneList();
+				
+				///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+				// for 문 상단에서의 viewModel.setJoinConditionInfos(conditionInfos); 코드를
+				// for 문 내에서 처리해야 한다.
+				for (RelatedPane relatedPane : RelatedPaneList) {
+					// 연결된 데이터 셋에서의 
+					int targetHashcode = relatedPane.endPane().hashCode();
+	
+					if (targetHashcode == baseHashcode)
+						continue;
+	
+					ConditionInfo[] conditionInfos = viewModel.getJoinConditionInfos(relatedPane, this.tableViewData, newRowSelected);
+					viewModel.setJoinConditionInfos(conditionInfos);
+					
+					DataSetView targetDataSetView = viewModel.getAppContext().getDataSetView(targetHashcode);
+					DataSetViewModel targetDataSetViewModel = viewModel.getAppContext().getDataSetViewModel(targetHashcode);
+					if (targetDataSetView != null) {
+						targetDataSetViewModel.setConditionInfosFromRowSelected(conditionInfos);
+						targetDataSetView.searchOrCancel();
+					}
+					
+				}
+	
+				// 처리후 원복
+				viewModel.setJoinConditionInfos(null);
+			}
+		});
+	}
+
 	private void initializeRelationCircle() {
 		topRelationCircle.setVisible(false);
 		bottomRelationCircle.setVisible(false);
@@ -414,96 +497,6 @@ public class DataSetView implements FxmlView<DataSetViewModel> {
 		return i ;
 	}
 
-	private void initializeTitle() {
-		// 데이터셋 타이틀
-		String datasetTitle = viewModel.getDataSetTitle();
-		LinkUtils.link(dataSetTitleLabel, datasetTitle);
-
-		dataSetTitlePane.setOnMousePressed(this::handleMousePressedTitlePane);
-		dataSetTitlePane.setOnMouseDragged(this::handleMouseDraggedTitlePane);
-		dataSetTitlePane.setOnMouseClicked(this::handleMouseClickedTitlePane);
-
-		dataSetTitleLabel.setOnMousePressed(this::handleDummyEvent);
-		dataSetTitleLabel.setOnMouseDragged(this::handleDummyEvent);
-		dataSetTitleLabel.setOnMouseClicked(this::handleDummyEvent);
-
-	}
-
-	private void initializeTableView() {
-		dataSetTableView.setPlaceholder(new Label("데이터를 검색하세요."));
-
-		dataSetTableView.addEventFilter(MouseEvent.MOUSE_PRESSED, event -> {
-			if (event.isShiftDown()) {
-				dataSetTableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-			} else {
-				dataSetTableView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
-			}
-		});
-
-		dataSetTableView.setOnMousePressed(this::handleParentEvent);
-
-		dataSetTableView.setOnMouseClicked(event -> {
-			if (event.isControlDown() && event.getClickCount() == 1) { // Single click
-				TablePosition<Tuple, ?> pos = dataSetTableView.getSelectionModel().getSelectedCells().get(0);
-				int row = pos.getRow();
-				TableColumn<Tuple, ?> col = pos.getTableColumn();
-				String cellText = col.getCellData(row).toString();
-				viewModel.copyToClipboard(cellText);
-
-				event.consume();
-			}
-		});
-
-		this.viewModel.getAppContext().getScene().addEventFilter(javafx.scene.input.KeyEvent.KEY_PRESSED, event -> {
-			if (event.isControlDown() && event.getCode() == KeyCode.C) {
-				copySelectedRows(dataSetTableView);
-			}
-		});
-
-		// Handle row selection
-		dataSetTableView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
-
-			if (newSelection != null) {
-				// You can access the values of the selected row here
-				String patno = newSelection.get(this.tableViewData.getColumnExpreesion("patno", String.class));
-//                long medregno = newSelection.get((Expression<Long>)ColUtils.getColumnExpression("medregno", ColumnType.Long));
-				// viewModel.setRelationColumnValue(patno);
-				logger.debug("selected record patno -> {}", patno);
-
-				///////////////////////////////
-				ConditionInfo[] conditionInfos = UIConditions
-						.getConditionInfosFromCondtions(this.viewModel.getUIConditions(), "patno"
-				// , "medregno"
-				);
-
-				for (ConditionInfo conditionInfo : conditionInfos) {
-					if (conditionInfo.getColumnName().equals("patno"))
-						conditionInfo.setValue(patno);
-//                	else
-//                		conditionInfo.setValue(medregno);
-				}
-
-				viewModel.setJoinConditionInfos(conditionInfos);
-				//////////////////////////////////////////////////////////////////////////////
-				int baseHashcode = this.dataSetRootAnchorPane.hashCode();
-				DataSetRelation dataSetRelation = viewModel.getAppContext().getDataSetRelation(baseHashcode);
-				List<RelatedPane> RelatedPaneList = dataSetRelation.getRelatedPaneList();
-				for (RelatedPane relatedPane : RelatedPaneList) {
-					int targetHashcode = relatedPane.endPane().hashCode();
-
-					if (targetHashcode == baseHashcode)
-						continue;
-
-					DataSetView targetDataSetView = viewModel.getAppContext().getDataSetView(targetHashcode);
-					if (targetDataSetView != null)
-						targetDataSetView.searchOrCancel();
-				}
-
-				viewModel.setJoinConditionInfos(null);
-			}
-		});
-	}
-
 	public TableColumn<Tuple, ?>[] getTableColumns() {
 		ObservableList<Node> columnLabels = this.columInfoLabelVBox.getChildren();
 		TableColumn<Tuple, ?>[] tableColumnSelected = null;
@@ -533,16 +526,31 @@ public class DataSetView implements FxmlView<DataSetViewModel> {
 	}
 
 	public UIConditions getUIConditions() {
+		return getUIConditions(null);
+	}
 
+	private UIConditions getUIConditions(ConditionInfo[] conditionInfosFromRowSelected) {
+		
 		viewModel.addDataSetContext();
 
 		UIConditions c = null;
-
-		if (viewModel.haveTargetDataSet())
-			c = viewModel.getValueBindedConditions(viewModel.getJoinConditionInfos());
-		else
-			c = viewModel.getValueBindedConditions(conditionInfoLabelVBox);
-
+		ConditionInfo[] conditionInfos = null; 
+		if ( conditionInfosFromRowSelected != null ) {
+			conditionInfos = viewModel.getConditionInfos(conditionInfoLabelVBox);
+			conditionInfos = ArrayUtil.mergeArray(conditionInfos, conditionInfosFromRowSelected);
+			c = viewModel.getValueBindedConditions(conditionInfos);
+			
+		} else if (viewModel.haveTargetDataSet()) {
+			ConditionInfo[] joinConditionInfos = viewModel.getJoinConditionInfos();
+			conditionInfos = viewModel.getConditionInfos(conditionInfoLabelVBox);
+			conditionInfos = ArrayUtil.mergeArray(conditionInfos, joinConditionInfos);
+			c = viewModel.getValueBindedConditions(conditionInfos);
+			
+		} else {
+			conditionInfos = viewModel.getConditionInfos(conditionInfoLabelVBox);
+			c = viewModel.getValueBindedConditions(conditionInfos);
+		}
+		
 		Col<?>[] columns = viewModel.getColumnCols(columInfoLabelVBox);
 		if (ArrayUtils.isNotEmpty(columns))
 			c.select(columns);
@@ -550,16 +558,27 @@ public class DataSetView implements FxmlView<DataSetViewModel> {
 		return c;
 	}
 
+	/**
+	 * Query를 생성한다.
+	 * @return
+	 */
 	private TableViewData getTableViewData() {
 
 		TableViewData tableViewData = null;
 
 		if (viewModel.hasBaseDataSet()) {
-			DataSetView baseDataSetView = viewModel.getBaseDataSetView();
-			TableViewData baseTableViewData = baseDataSetView.getTableViewData();
-			SubQueryExpression<?> baseQuery = baseTableViewData.getQuery();
-			UIConditions conditions = getUIConditions();			
-			tableViewData = viewModel.getTableViewData(baseQuery, conditions);
+			
+			if ( viewModel.isBaseTableRowSelected()) {
+				UIConditions conditions = getUIConditions(viewModel.getConditionInfosFromRowSelected());			
+				tableViewData = viewModel.getTableViewData(conditions);
+				
+			} else {
+				DataSetView baseDataSetView = viewModel.getBaseDataSetView();
+				TableViewData baseTableViewData = baseDataSetView.getTableViewData();
+				SubQueryExpression<?> baseQuery = baseTableViewData.getQuery();
+				UIConditions conditions = getUIConditions();			
+				tableViewData = viewModel.getTableViewData(baseQuery, conditions);
+			}
 
 		} else {
 			UIConditions conditions = getUIConditions();
@@ -583,14 +602,21 @@ public class DataSetView implements FxmlView<DataSetViewModel> {
 			this.searchOrCancelButton.setText("검색취소");
 		}
 
-		this.progressIndicator.visibleProperty().bind((new SimpleBooleanProperty(true)));
-
 		this.dataSetTableView.getItems().clear();
 		this.dataSetTableView.refresh();
 
-		this.tableViewData = getTableViewData();
-		// query 생성후 query 생성관련 context clear
-		IntegratedContext.getInstance().clear();
+		try {
+			this.tableViewData = getTableViewData();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ;
+		} finally {
+			// query 생성후 query 생성관련 context clear
+			IntegratedContext.getInstance().clear();
+			this.searchOrCancelButton.setText("검색");
+		}
+		
+		this.progressIndicator.visibleProperty().bind((new SimpleBooleanProperty(true)));
 
 		this.dataSetService = new DataSetService();
 		this.dataSetService.setTableViewData(this.tableViewData);
@@ -598,7 +624,7 @@ public class DataSetView implements FxmlView<DataSetViewModel> {
 		this.dataSetService.setOnSucceeded(this::handleSearchSucceed);
 		this.dataSetService.setOnCancelled(this::handleSearchCancel);
 		this.dataSetService.setOnFailed(this::handelSearchFail);
-
+		
 	}
 
 	private void handleSearchSucceed(WorkerStateEvent event) {

@@ -110,6 +110,38 @@ public class MydataManager implements DatabaseManager {
 		
 	}
 	
+	public void refresh() {
+		logger.info("refresh");
+		
+		if (EHR.Locate.EHRDEV == mLocate)
+			mEntityManagerDev = mEntityManagerFactoryDev.createEntityManager();
+		
+		else if (EHR.DataSource.AAEHRPROD == mLocate)
+			mEntityManagerEHR_AA = mEntityManagerFactoryEHR_AA.createEntityManager();
+		
+		else if (EHR.DataSource.GREHRPROD == mLocate)
+			mEntityManagerEHR_GR = mEntityManagerFactoryEHR_GR.createEntityManager();
+		
+		else if (EHR.DataSource.ASEHRPROD == mLocate)
+			mEntityManagerEHR_AS = mEntityManagerFactoryEHR_AS.createEntityManager();
+		
+		else if (EHR.DataSource.AAEHRTEST == mLocate)
+			mEntityManagerTest_AA = mEntityManagerFactoryTest_AA.createEntityManager();
+		
+		else if (EHR.DataSource.GREHRTEST == mLocate)
+			mEntityManagerTest_GR = mEntityManagerFactoryTest_GR.createEntityManager();
+		
+		else if (EHR.DataSource.ASEHRTEST == mLocate)
+			mEntityManagerTest_AS = mEntityManagerFactoryTest_AS.createEntityManager();
+		
+		else if (META.DataSource.META == mLocate)
+			mEntityManagerMeta = mEntityManagerFactoryMeta.createEntityManager();
+		
+		else if (LOCAL.DataSource.LOCAL == mLocate)
+			mEntityManagerLocal = mEntityManagerFactoryLocal.createEntityManager();
+		
+	}
+	
 	public Connection getConnection() {
 		
 		Session session = null ;
