@@ -12,6 +12,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
+import mydata.ds.view.events.FunctionDropEventManager;
 
 public class CountView implements FxmlView<CountViewModel>  {
 
@@ -32,6 +33,9 @@ public class CountView implements FxmlView<CountViewModel>  {
 	@InjectViewModel
 	private CountViewModel viewModel;
 
+	@Inject
+	FunctionDropEventManager functionDropEventManager;
+	
 	public void initialize() {
 		int countFuncPaneHashcode = CountRootStackPane.hashCode();
 
@@ -44,8 +48,8 @@ public class CountView implements FxmlView<CountViewModel>  {
 		// 테스트 코드
 		functionAliasTextField.textProperty().bindBidirectional(viewModel.functionNameProperty());
 		
-		FunctionView.initializeHBoxDragAndDropEvent(countHBox);
-		FunctionView.initializeHBoxDragAndDropEvent(countPartitionByHbox);
+		functionDropEventManager.initializeHBoxDragAndDropEvent(countHBox);
+		functionDropEventManager.initializeHBoxDragAndDropEvent(countPartitionByHbox);
 	}
 	
 }

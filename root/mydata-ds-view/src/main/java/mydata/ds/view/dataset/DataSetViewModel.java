@@ -22,8 +22,11 @@ import ds.data.core.column.ColumnInfo;
 import ds.data.core.column.ColumnSet;
 import ds.data.core.column.ColumnType;
 import ds.data.core.condition.ConditionInfo;
+import ds.data.core.condition.ConditionValue;
+import ds.data.core.condition.ConditionValueSetter;
 import ds.data.core.condition.ui.UIConditions;
 import ds.data.core.join.JoinOn;
+import ds.data.core.regexp.AnalyzedType;
 import ds.ui.condition.DataSetUI;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
@@ -406,7 +409,14 @@ public class DataSetViewModel extends DSViewModel {
 		for (ConditionInfo conditionInfo : conditionInfos) {
 			for( String joinColumnName: joinColumnNames ) {
 				if ( conditionInfo.getColumnName().equals(joinColumnName) ) {
-					conditionInfo.setValue(columnNameMap.get(joinColumnName));
+					// TODO 20231110-1321 조인 함수에 대한 처리 개선 예정 
+					// 현재는 equal만 가능
+					if (conditionInfo.getColumnType() == ColumnType.String) {
+						String value = (String)columnNameMap.get(joinColumnName);
+						ConditionValue conditionValue = new ConditionValue(AnalyzedType.equal, value);
+						conditionInfo.setValue(conditionValue);
+					} else
+						conditionInfo.setValue(columnNameMap.get(joinColumnName));
 				}
 			}
 		}

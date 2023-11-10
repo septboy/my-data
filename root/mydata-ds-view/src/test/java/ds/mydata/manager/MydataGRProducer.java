@@ -10,7 +10,7 @@ import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
 
 
-//@Vetoed
+@Vetoed
 public class MydataGRProducer {
 	
 	@Produces

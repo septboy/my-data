@@ -153,7 +153,7 @@ public class DataSetView implements FxmlView<DataSetViewModel> {
 	private double initialPressedHeight;
 	private Node tmpConditionView;
 
-	private Control tmpConditionControlButton;
+	private Control tmpConditionConditionLabel;
 
 	private ConditionViewModel tmpConditionViewModel;
 
@@ -168,6 +168,8 @@ public class DataSetView implements FxmlView<DataSetViewModel> {
 	private TableViewData tableViewData;
 
 	private DataSetService dataSetService;
+	
+	private boolean isFunctionLabelAddedIntoLast = false;
 
 	public void initialize() {
 
@@ -203,8 +205,7 @@ public class DataSetView implements FxmlView<DataSetViewModel> {
 
 	@FXML
 	private void codeTest() {
-		viewModel.setDbLinkCode(EHR.DataSource.GREHRTEST);
-		viewModel.updatedbLinkNameProperty();
+		dataSetColumnScrollPane.setVvalue(1.0);
 	}
 
 	private void initializeTitle() {
@@ -343,7 +344,7 @@ public class DataSetView implements FxmlView<DataSetViewModel> {
 		viewModel.subscribe(DataSetViewModel.CLOSE_DATASET_NOTIFICATION, (key, payload) -> {
 			if (tmpConditionViewModel != null)
 				tmpConditionViewModel.publish(ConditionViewModel.CLOSE_CONDITION_VIEW_NOTIFICATION,
-						tmpConditionControlButton, tmpConditionView);
+						tmpConditionConditionLabel, tmpConditionView);
 
 			viewModel.removeRelations(dataSetHashcode);
 
@@ -442,7 +443,7 @@ public class DataSetView implements FxmlView<DataSetViewModel> {
 			//logger.debug("columInfoLabelVBox setOnDragOver");
 			
 			//아래 코드가 빠진면 setOnDragDropped가 실행이 안됨.
-			 event.acceptTransferModes(TransferMode.MOVE);
+			event.acceptTransferModes(TransferMode.MOVE);
 			event.consume();
 	    });
 		
@@ -475,13 +476,29 @@ public class DataSetView implements FxmlView<DataSetViewModel> {
 					ViewUtils.setWidth(functionLabel, width);
 				}
 				
+				int columnLabelCount = columInfoLabelVBox.getChildren().size() - 1 /*컬럼항목 타이틀 제목 제외 */;
+				// Scroll to the end of the content
+				if (columnLabelCount == position) {
+					this.isFunctionLabelAddedIntoLast = true ;
+				}
 				columInfoLabelVBox.getChildren().add(position+1, functionLabel);
+				
 	            success = true;
 	        }
 	        
 	        event.setDropCompleted(success);
 	        event.consume();
 	    });
+		
+		dataSetColumnScrollPane.vvalueProperty().addListener(new ChangeListener<Number>() {
+			@Override
+            public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+            	if (isFunctionLabelAddedIntoLast )
+            		dataSetColumnScrollPane.setVvalue(1.0); // Scroll to the end
+            	
+            	isFunctionLabelAddedIntoLast = false ;
+            }
+        });
 	}
 	
 	
@@ -682,14 +699,14 @@ public class DataSetView implements FxmlView<DataSetViewModel> {
 
 		conditionLabel.setStyle("-fx-background-color: blue;" + "-fx-text-fill: white;" + css_column_label_border);
 
-		conditionViewInfo.setPrevControlButton(tmpConditionControlButton);
+		conditionViewInfo.setPrevConditionLabel(tmpConditionConditionLabel);
 		// root Scene를 기준으로 값을 가져온다.
 
-		conditionViewInfo.setControlButton(conditionLabel);
+		conditionViewInfo.setConditionLabel(conditionLabel);
 		openConditionView(conditionViewInfo, buttonX, buttonY);
 
 		// open한 다음에는 이전버튼으로 저장한다.
-		tmpConditionControlButton = conditionLabel;
+		tmpConditionConditionLabel = conditionLabel;
 	}
 
 	private void openConditionView(ConditionViewInfo conditionViewInfo, double posX, double posY) {
@@ -760,7 +777,9 @@ public class DataSetView implements FxmlView<DataSetViewModel> {
 			double buttonX = conditionLabel.localToScene(conditionLabel.getBoundsInLocal()).getMinX(); //
 			double buttonY = conditionLabel.localToScene(conditionLabel.getBoundsInLocal()).getMinY(); //
 
-			if (conditionLabel == tmpConditionControlButton) {
+			if (conditionLabel == tmpConditionConditionLabel) {
+				// TODO 20231110 : 검색조건 라벨 클릭시 선택되어 지지 않는 상황 수정 필요.
+				// tmpConditionView 닫혔는데 null처리 되지 않는 상황 수정필요
 				if (existConditionViewOpened()) {
 					tmpConditionViewModel.publish(ConditionViewModel.CLOSE_CONDITION_VIEW_NOTIFICATION);
 					tmpConditionView = null; // 같은 조건버튼을 여러번 클릭할 때 필요함.
@@ -782,7 +801,7 @@ public class DataSetView implements FxmlView<DataSetViewModel> {
 
 		if (tmpConditionViewModel != null)
 			tmpConditionViewModel.publish(ConditionViewModel.CLOSE_CONDITION_VIEW_NOTIFICATION,
-					tmpConditionControlButton, tmpConditionView);
+					tmpConditionConditionLabel, tmpConditionView);
 	}
 
 	private void handleParentEvent(MouseEvent event) {
@@ -790,7 +809,7 @@ public class DataSetView implements FxmlView<DataSetViewModel> {
 
 		if (tmpConditionViewModel != null)
 			tmpConditionViewModel.publish(ConditionViewModel.CLOSE_CONDITION_VIEW_NOTIFICATION,
-					tmpConditionControlButton, tmpConditionView);
+					tmpConditionConditionLabel, tmpConditionView);
 	}
 
 	///////////////////////////////////////////////////////////////////////
@@ -804,7 +823,7 @@ public class DataSetView implements FxmlView<DataSetViewModel> {
 
 		if (tmpConditionViewModel != null)
 			tmpConditionViewModel.publish(ConditionViewModel.CLOSE_CONDITION_VIEW_NOTIFICATION,
-					tmpConditionControlButton, tmpConditionView);
+					tmpConditionConditionLabel, tmpConditionView);
 
 		event.consume();
 	}
@@ -864,7 +883,7 @@ public class DataSetView implements FxmlView<DataSetViewModel> {
 
 		if (tmpConditionViewModel != null)
 			tmpConditionViewModel.publish(ConditionViewModel.CLOSE_CONDITION_VIEW_NOTIFICATION,
-					tmpConditionControlButton, tmpConditionView);
+					tmpConditionConditionLabel, tmpConditionView);
 
 		event.consume();
 	}

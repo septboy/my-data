@@ -304,4 +304,11 @@ public class ViewUtils {
         return null; // Node with the specified ID not found
 	}
 	
+	public static boolean existNodeWithId(Node wrapper, String id) {
+		if ( findNodeById(wrapper, id) == null)
+			return false ;
+		else
+			return true ;
+	}
+	
 }

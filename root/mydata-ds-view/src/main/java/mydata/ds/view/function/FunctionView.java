@@ -1,5 +1,8 @@
 package mydata.ds.view.function;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.saxsys.mvvmfx.FxmlView;
 import de.saxsys.mvvmfx.InjectViewModel;
 import ds.common.util.ArrayUtil;
@@ -17,10 +20,13 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseDragEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -28,11 +34,14 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 import mydata.ds.view.events.ColumnEventHandler;
-import mydata.ds.view.events.FunctionEventHandler;
+import mydata.ds.view.events.FunctionDragEventHandler;
+import mydata.ds.view.events.FunctionDropEventManager;
 import mydata.ds.view.util.ViewUtils;
 
 public class FunctionView implements FxmlView<FunctionViewModel> {
 
+	private static final Logger logger = LoggerFactory.getLogger(FunctionView.class);
+	
 	@FXML
 	private AnchorPane functionViewPain;
 	
@@ -49,19 +58,49 @@ public class FunctionView implements FxmlView<FunctionViewModel> {
 	private Stage primaryStage;
 
 	private AnchorPane sourceDataSetPane;
-
+	
 	public void initialize() {
 		initializeCloseButton();
 		initializeFunctionLabels();
-		initializeDragEventBlcok();
+		initializeDragEventBlock();
 		
 	}
 
-	private void initializeDragEventBlcok() {
+	private void initializeDragEventBlock() {
 		//DataSetView로의 이벤트버블링 방지.
 		functionViewPain.addEventHandler(MouseEvent. MOUSE_DRAGGED, event -> {
 			event.consume();
 		});
+		
+		functionViewPain.setOnDragOver(event -> {
+			logger.debug("setOnDragOver");
+			 Dragboard db = event.getDragboard();
+	    	if (db.hasString() && db.getString().equals(FunctionDropEventManager.FUNCTION_PARAMETER_LABEL_DRAG) ) {
+	            event.acceptTransferModes(TransferMode.MOVE);
+	        }
+	
+	        event.consume();
+	    });
+		
+		functionViewPain.setOnDragDropped(event -> {
+	        Dragboard db = event.getDragboard();
+	        logger.debug("Dropped: {}", db.getString());
+	        boolean success = false;
+	
+	        if (db.hasString()) {
+	            if (db.getString().equals(FunctionDropEventManager.FUNCTION_PARAMETER_LABEL_DRAG)) {
+	            	Node source = (Node)event.getGestureSource();
+	            	ColumnInfo columnInfo = (ColumnInfo)source.getUserData();
+	            	Pane wapperPane = (Pane)columnInfo.getObject();
+	            	ViewUtils.removeFromPane(wapperPane, source);
+	            	columnInfo.setObject(null);
+	            	success = true;
+	            }
+	        }
+	        
+	        event.setDropCompleted(success);
+	        event.consume();
+	    });
 	}
 
 	private void initializeFunctionLabels() {
@@ -82,7 +121,7 @@ public class FunctionView implements FxmlView<FunctionViewModel> {
 			}
 			
 			label.setUserData(functionInfo);
-			FunctionEventHandler functionEventHandler = FunctionEventHandler.newInstance(viewModel, functionLabelVBox, label);
+			FunctionDragEventHandler functionEventHandler = FunctionDragEventHandler.newInstance(viewModel, functionLabelVBox, label);
 			functionEventHandler.initialize();
 		}
 		
@@ -112,67 +151,6 @@ public class FunctionView implements FxmlView<FunctionViewModel> {
 		
 	}
 	
-	protected static Label getColumnLabel(ColumnInfo columnInfo) {
-		String columnName = columnInfo.getColumnComment();
-		Label fuctionParamLabel = new Label(columnName);
-		fuctionParamLabel.setUserData(columnInfo);
-		fuctionParamLabel.setAlignment(javafx.geometry.Pos.CENTER);
-		fuctionParamLabel.setContentDisplay(javafx.scene.control.ContentDisplay.CENTER);
-		ViewUtils.setWidth(fuctionParamLabel, 80.0);
-		ViewUtils.setHeight(fuctionParamLabel, 25.0);
-		fuctionParamLabel.setStyle("-fx-background-color: orange;-fx-background-radius: 5;");
-		fuctionParamLabel.setTextFill(Color.web("white"));
-
-		// Set the font for the label
-		Font font = Font.font("Arial Rounded MT Bold",FontWeight.BOLD, 14.0);
-		fuctionParamLabel.setFont(font);
-		
-		return fuctionParamLabel;
-	}
-	
-	public static void initializeHBoxDragAndDropEvent(HBox hBox) {
-		hBox.setOnDragOver(new EventHandler<DragEvent>() {
-            public void handle(DragEvent event) {
-            	
-            	String dragBoardString = event.getDragboard().getString();
-                if (event.getGestureSource() != hBox && event.getDragboard().hasString()) {
-                	if ( dragBoardString.equals(ColumnEventHandler.COLUM_JOIN_SELECTED)) {
-                        event.acceptTransferModes(TransferMode.COPY_OR_MOVE);
-                	}
-                }
-
-                event.consume();
-            }
-        });
-
-		hBox.setOnDragDropped((DragEvent event) -> {
-            Dragboard db = event.getDragboard();
-            if (db.hasString()) {
-            	System.out.println("Dropped: " + db.getString());
-            	
-            	Object eventSourceObj = event.getGestureSource();
-            	if (! (eventSourceObj instanceof Label) ) {
-            		event.setDropCompleted(false);
-            		event.consume();
-            		return ;
-            	}
-            		
-            	Label sourceLabel = (Label)eventSourceObj;
-            	ColumnInfo columnInfo = (ColumnInfo)sourceLabel.getUserData();
-            	
-            	Label columnLabel = getColumnLabel(columnInfo);
-            	hBox.setAlignment(Pos.CENTER);
-            	hBox.getChildren().add(columnLabel);
-            	hBox.setMargin(columnLabel, new Insets(10.0, 5.0, 10.0, 5.0));
-            	
-                event.setDropCompleted(true);
-            } else {
-                event.setDropCompleted(false);
-            }
-            event.consume();
-        });
-	}
-
 	public ColumnInfo[] getColumnInfos(ObservableList<Node> nodeList) {
 		ColumnInfo[] columnInfos = null ;
 		for (Node node: nodeList) {

@@ -6,10 +6,12 @@ import org.slf4j.LoggerFactory;
 
 import de.saxsys.mvvmfx.FxmlView;
 import de.saxsys.mvvmfx.InjectViewModel;
+import jakarta.inject.Inject;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
+import mydata.ds.view.events.FunctionDropEventManager;
 
 public class EmpNameView implements FxmlView<EmpNameViewModel>  {
 
@@ -27,6 +29,9 @@ public class EmpNameView implements FxmlView<EmpNameViewModel>  {
 	@InjectViewModel
 	private EmpNameViewModel viewModel;
 
+	@Inject
+	FunctionDropEventManager functionDropEventManager;
+	
 	public void initialize() {
 		int empNameFuncPaneHashcode = EmpNameRootStackPane.hashCode();
 
@@ -38,7 +43,9 @@ public class EmpNameView implements FxmlView<EmpNameViewModel>  {
 		// 테스트 코드
 		functionAliasTextField.textProperty().bindBidirectional(viewModel.functionNameProperty());
 		
-		FunctionView.initializeHBoxDragAndDropEvent(empNameHBox);
+		functionDropEventManager.initializeHBoxDragAndDropEvent(empNameHBox);
+		
 	}
+
 	
 }

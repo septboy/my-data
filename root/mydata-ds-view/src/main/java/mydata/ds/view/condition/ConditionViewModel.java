@@ -17,7 +17,13 @@ public class ConditionViewModel implements ViewModel {
 
 	public static final String CLOSE_CONDITION_VIEW_NOTIFICATION = "CLOSE_CONDITION_VIEW_NOTIFICATION";
 	
-	private final StringProperty text = new SimpleStringProperty();
+	private final StringProperty firstInputTextProperty = new SimpleStringProperty();
+	
+	private final StringProperty firstLabelTextProperty = new SimpleStringProperty();
+
+	private final StringProperty secondInputTextProperty = new SimpleStringProperty();
+	
+	private final StringProperty secondLabelTextProperty = new SimpleStringProperty();
 	
 	private BooleanProperty checkRegexp = new SimpleBooleanProperty(false);	
 	
@@ -33,10 +39,27 @@ public class ConditionViewModel implements ViewModel {
 		return conditionScope.getConditionViewInfo();
 	}
 
-	public StringProperty textPropery() {
-		return text;
+	public StringProperty firstInputTextPropery() {
+		return firstInputTextProperty;
+	}
+	
+	public StringProperty firstLabelTextProperty() {
+		if ( firstLabelTextProperty.get() == null)
+			firstLabelTextProperty.set("=");
+		
+		return firstLabelTextProperty;
+	}
+	
+	public StringProperty secondInputTextPropery() {
+		return secondInputTextProperty;
 	}
 
+	public StringProperty secondLabelTextProperty() {
+		if ( secondLabelTextProperty.get() == null)
+			secondLabelTextProperty.set("<");
+		return secondLabelTextProperty;
+	}
+	
 	public BooleanProperty  checkRegexpProverty() {
 		return checkRegexp;
 	}

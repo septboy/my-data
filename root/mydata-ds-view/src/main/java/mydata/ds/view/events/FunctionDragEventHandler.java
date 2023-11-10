@@ -20,11 +20,11 @@ import mydata.ds.view.function.FunctionInfo;
 import mydata.ds.view.function.FunctionViewModel;
 import mydata.ds.view.util.ViewUtils;
 
-public class FunctionEventHandler {
+public class FunctionDragEventHandler {
 
 	public static final String FUNCTION_SELECTED = "FUNCTION_SELECTED";
 
-	private static final Logger logger = LoggerFactory.getLogger(FunctionEventHandler.class);
+	private static final Logger logger = LoggerFactory.getLogger(FunctionDragEventHandler.class);
 
 	public static final String css_function_label= 
 			"-fx-border-width: 0 0 1 0; "
@@ -46,11 +46,11 @@ public class FunctionEventHandler {
 
 	private FunctionViewModel functionViewModel;
 
-	private FunctionEventHandler() {}
+	private FunctionDragEventHandler() {}
 
-	public static FunctionEventHandler newInstance(FunctionViewModel viewModel, VBox parent, Node node) {
+	public static FunctionDragEventHandler newInstance(FunctionViewModel viewModel, VBox parent, Node node) {
 
-		FunctionEventHandler functionEventHandler = new FunctionEventHandler();
+		FunctionDragEventHandler functionEventHandler = new FunctionDragEventHandler();
 		functionEventHandler.functionViewModel = viewModel;
 		functionEventHandler.parent = parent;
 		functionEventHandler.functionLabel = node;

@@ -29,7 +29,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 
 @Singleton
-@Vetoed
+//@Vetoed
 public class MydataManager implements DatabaseManager {
 
 	private static final Logger logger = LoggerFactory.getLogger(MydataManager.class);
